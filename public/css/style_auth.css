@@ -1,0 +1,52 @@
+/* public/assets/css/style_auth.css */
+
+body {
+    background-color: #f8f9fa; /* Couleur de fond standard de Bootstrap */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 650px; /* On définit une largeur max pour le formulaire sur grand écran */
+}
+
+/* Agrandir la hauteur de la boîte Select2 */
+.select2-container .select2-selection--single {
+    height: 50px !important;
+    padding: 10px 14px;
+    font-size: 16px;
+}
+
+/* Centrer verticalement le texte */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 30px !important;
+    font-size: 16px;
+}
+
+/* Agrandir la flèche (dropdown icon) */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 50px !important;
+}
+
+/* Pour les champs multiples */
+.select2-container--default .select2-selection--multiple {
+    min-height: 50px;
+    font-size: 16px;
+    padding: 8px;
+}
+
+.btn-success {
+    padding: 15px 50px;      /* Plus de hauteur et largeur */
+    font-size: 1.5rem;       /* Texte plus grand */
+    font-weight: 600;        /* Texte un peu plus épais */
+    border-radius: 8px;      /* Coins légèrement arrondis */
+}
+.btn-primary {
+    padding: 15px 50px;      /* Plus de hauteur et largeur */
+    font-size: 1.5rem;       /* Texte plus grand */
+    font-weight: 600;        /* Texte un peu plus épais */
+    border-radius: 8px;      /* Coins légèrement arrondis */
+}

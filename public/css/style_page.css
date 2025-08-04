@@ -1,0 +1,91 @@
+/* Style pour tous les inputs et selects */
+input.form-control,
+select.form-select {
+    background-color: #f1f4f9;           /* Fond légèrement gris-bleu */
+    color: #212529;                      /* Texte foncé */
+    border: 1px solid #ced4da;           /* Bord gris clair */
+    border-radius: 6px;
+    font-size: 14px;
+    padding: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Placeholder gris doux */
+input::placeholder {
+    color: #999;
+}
+
+/* Focus : surlignage en bleu foncé */
+input.form-control:focus,
+select.form-select:focus {
+    background-color: #ffffff;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    color: #000;
+}
+
+/* Input désactivé */
+input:disabled,
+select:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+}
+
+/* Input valide (si `required`) */
+input.form-control:valid,
+select.form-select:valid {
+    border-color: #198754;
+}
+
+/* Input invalide */
+input.form-control:invalid,
+select.form-select:invalid {
+    border-color: #dc3545;
+}
+
+/* Labels */
+label.form-label {
+    color: #343a40;
+    font-weight: 500;
+}
+
+
+/* Agrandir la hauteur de la boîte Select2 */
+.select2-container .select2-selection--single {
+    height: 50px !important;
+    padding: 10px 14px;
+    font-size: 16px;
+}
+
+/* Centrer verticalement le texte */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 30px !important;
+    font-size: 16px;
+}
+
+/* Agrandir la flèche (dropdown icon) */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 50px !important;
+}
+
+/* Pour les champs multiples */
+.select2-container--default .select2-selection--multiple {
+    min-height: 50px;
+    font-size: 16px;
+    padding: 8px;
+}
+
+.btn-success {
+    padding: 15px 50px;      /* Plus de hauteur et largeur */
+    font-size: 1.5rem;       /* Texte plus grand */
+    font-weight: 600;        /* Texte un peu plus épais */
+    border-radius: 8px;      /* Coins légèrement arrondis */
+}
+.btn-primary {
+    padding: 15px 50px;      /* Plus de hauteur et largeur */
+    font-size: 1.5rem;       /* Texte plus grand */
+    font-weight: 600;        /* Texte un peu plus épais */
+    border-radius: 8px;      /* Coins légèrement arrondis */
+}
+

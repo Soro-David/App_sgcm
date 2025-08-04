@@ -1,0 +1,302 @@
+/* ===================================================================
+// Fichier de style personnalisé pour le Dashboard Admin
+// =================================================================*/
+
+
+
+
+/* Style général des inputs et selects */
+
+.select2-container--default .select2-selection--multiple {
+    border: 1px solid #0d6efd;
+    border-radius: 0.375rem;
+    padding: 0.375rem;
+}
+
+input.form-control,
+select.form-select {
+    background-color: #f5f8fa;           /* Fond clair */
+    color: #333;                         /* Texte sombre */
+    border: 1px solid #ced4da;           /* Bord gris clair */
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+/* Placeholder */
+input::placeholder {
+    color: #aaa;
+}
+
+/* Style quand le champ est en focus */
+input.form-control:focus,
+select.form-select:focus {
+    background-color: #ffffff;
+    color: #000;
+    border-color: #007bff;              /* Bord bleu focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+/* Champ valide (si HTML5 utilisé avec required) */
+input.form-control:valid,
+select.form-select:valid {
+    border-color: #28a745;              /* Vert */
+}
+
+/* Champ invalide */
+input.form-control:invalid,
+select.form-select:invalid {
+    border-color: #dc3545;              /* Rouge */
+}
+
+/* Désactivé */
+input:disabled,
+select:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+}
+
+/* --- 1. Variables de Couleur et de Style (Palette) --- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-color: #4a69bd;       /* Un bleu élégant pour les éléments actifs */
+    --primary-color-light: #6a89cc;
+    --sidebar-bg: #2c3e50;          /* Un bleu nuit/charbon pour la sidebar */
+    --sidebar-text-color: #ecf0f1;  /* Texte clair pour la sidebar */
+    --sidebar-hover-bg: #34495e;    /* Fond au survol dans la sidebar */
+    --sidebar-active-bg: var(--primary-color); /* Fond de l'élément actif */
+    --content-bg: #f4f6f9;          /* Fond principal du contenu (très clair) */
+    --card-bg: #ffffff;             /* Fond des cartes */
+    --text-color: #333;             /* Couleur de texte principale */
+    --border-color: #e9ecef;        /* Couleur des bordures */
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+    --shadow-md: 0 5px 15px rgba(0,0,0,0.08);
+    --border-radius: 12px;          /* Rayon des bordures pour un look doux */
+    --sidebar-width: 260px;         /* Largeur de la sidebar */
+}
+
+/* --- 2. Styles Généraux & Corps de page --- */
+body {
+    font-size: 1.1rem; /* Taille de police globale */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    background-color: #f4f6f9 !important;
+}
+
+/* Le conteneur principal qui s'adapte à la sidebar */
+.content-wrapper {
+    margin-left: var(--sidebar-width);
+    padding-top: 80px; /* Espace pour la navbar fixe */
+    transition: margin-left .3s ease-in-out;
+}
+
+/* --- 3. Style de la Sidebar --- */
+.main-sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    border-right: none;
+    box-shadow: var(--shadow-md);
+}
+
+/* Logo dans la sidebar */
+.main-sidebar .navbar-brand-box {
+    padding: 10px 0;
+    text-align: center;
+}
+.main-sidebar .custom-logo {
+    max-height: 70px !important;
+    transition: all 0.3s ease;
+}
+.main-sidebar .custom-logo:hover {
+    transform: scale(1.05);
+}
+
+/* Liens de navigation dans la sidebar */
+.nav-sidebar .nav-link {
+    color: var(--sidebar-text-color);
+    border-radius: 8px;
+    margin: 5px 10px;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+}
+.nav-sidebar .nav-link p {
+    font-weight: 500;
+}
+.nav-sidebar .nav-link .nav-icon {
+    width: 22px;
+    font-size: 1.1rem;
+    margin-right: 0.7rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.3s ease;
+}
+
+/* Effet au survol */
+.nav-sidebar .nav-item:not(.menu-open) > .nav-link:hover {
+    background-color: var(--sidebar-hover-bg);
+}
+.nav-sidebar .nav-link:hover .nav-icon {
+    color: #fff;
+}
+
+/* Élément actif ou menu ouvert */
+.nav-sidebar .nav-item.menu-open > .nav-link,
+.nav-sidebar .nav-link.active {
+    background-color: var(--sidebar-active-bg);
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(74, 105, 189, 0.4);
+}
+.nav-sidebar .nav-link.active .nav-icon {
+    color: #fff;
+}
+
+/* Sous-menu */
+.nav-treeview {
+    padding-left: 15px;
+    margin-left: 15px;
+    border-left: 2px solid var(--sidebar-hover-bg);
+}
+.nav-treeview .nav-link {
+    font-size: 0.9em;
+    padding-left: 20px;
+}
+.nav-treeview .nav-link:hover {
+    background-color: rgba(255,255,255,0.05);
+}
+.nav-treeview .nav-icon {
+    font-size: 0.6em !important; /* Rend les puces plus petites */
+    margin-right: 1.2rem !important;
+}
+
+
+/* --- 4. Style de la Navbar (Haut) --- */
+.main-header.navbar {
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    padding: 0.5rem 1rem;
+    margin-left: var(--sidebar-width);
+    transition: margin-left .3s ease-in-out;
+}
+
+/* Dropdown de profil utilisateur */
+.navbar .nav-profile .nav-link {
+    display: flex;
+    align-items: center;
+}
+.navbar .nav-profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+    border: 2px solid var(--primary-color-light);
+}
+.navbar .nav-profile .nav-profile-name {
+    font-weight: 600;
+    color: var(--text-color);
+}
+.navbar .dropdown-menu {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    padding: 0.5rem 0;
+}
+.navbar .dropdown-item {
+    padding: 10px 20px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.navbar .dropdown-item:hover {
+    background-color: var(--primary-color-light);
+    color: #fff;
+}
+.navbar .dropdown-item i {
+    margin-right: 10px;
+    color: var(--primary-color);
+    transition: color 0.2s ease;
+}
+.navbar .dropdown-item:hover i {
+    color: #fff;
+}
+
+/* --- 5. Style du Contenu Principal (Dashboard) --- */
+.content {
+    padding: 2rem;
+}
+
+/* Style des cartes pour un look unifié */
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    margin-bottom: 1.5rem;
+}
+.card-header {
+    background-color: transparent;
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 1.5rem;
+}
+.card-header .card-title {
+    font-weight: 600;
+}
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Carte de bienvenue spécifique */
+.card-welcome {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-light));
+    color: #fff;
+}
+.card-welcome h2 {
+    font-weight: 700;
+}
+.card-welcome p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+
+/* --- 6. Style du Footer --- */
+.main-footer {
+    margin-left: var(--sidebar-width);
+    background-color: var(--content-bg);
+    border-top: 1px solid var(--border-color);
+    padding: 1rem;
+    color: #888;
+    font-size: 0.9em;
+    transition: margin-left .3s ease-in-out;
+}
+/* La structure HTML du footer était dans un .card, on l'annule */
+.footer .card {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    margin-bottom: 0;
+}
+.footer .card-body {
+    padding: 0 !important;
+}
+
+
+/* --- 7. Responsive: Sidebar repliée --- */
+body.sidebar-collapse .content-wrapper,
+body.sidebar-collapse .main-header,
+body.sidebar-collapse .main-footer {
+    margin-left: 4.6rem; /* Largeur de la sidebar repliée par défaut dans AdminLTE */
+}
+
+.btn-success {
+    padding: 15px 50px;      /* Plus de hauteur et largeur */
+    font-size: 1.5rem;       /* Texte plus grand */
+    font-weight: 600;        /* Texte un peu plus épais */
+    border-radius: 8px;      /* Coins légèrement arrondis */
+}
+.btn-primary {
+    padding: 15px 50px;      /* Plus de hauteur et largeur */
+    font-size: 1.5rem;       /* Texte plus grand */
+    font-weight: 600;        /* Texte un peu plus épais */
+    border-radius: 8px;      /* Coins légèrement arrondis */
+}

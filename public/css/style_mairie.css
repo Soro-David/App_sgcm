@@ -1,0 +1,431 @@
+.custom-container {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+/* Appliquer une taille de police plus grande sur les éléments de navigation */
+.sidebar .nav-link,
+.sidebar .menu-title,
+.sidebar .nav-item,
+.sidebar .sub-menu a,
+.sidebar span,
+.sidebar li {
+    font-size: 1rem !important;
+    font-weight: 500; /* Légèrement en gras */
+}
+
+/* Optionnel : agrandir encore plus les titres principaux */
+.sidebar .menu-title {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+/* Optionnel : augmenter l'espacement vertical pour aérer */
+.sidebar .nav-item {
+    margin-bottom: 8px;
+}
+
+/* Optionnel : ajuster les icônes pour être proportionnels */
+.sidebar .menu-icon {
+    font-size: 2rem;
+    margin-right: 10px;
+}
+.rotate-icon {
+  transition: transform 0.3s ease;
+}
+
+.nav-link[aria-expanded="true"] .rotate-icon {
+  transform: rotate(180deg);
+}
+
+
+.navbar .navbar-brand-wrapper {
+  background: #F77F00;
+  transition: width 0.25s ease, background 0.25s ease;
+  -webkit-transition: width 0.25s ease, background 0.25s ease;
+  -moz-transition: width 0.25s ease, background 0.25s ease;
+  -ms-transition: width 0.25s ease, background 0.25s ease;
+  width: calc(236px + 0.5rem);
+  height: 4.625rem;
+}
+
+.navbar {
+  font-weight: 400;
+  transition: background 0.25s ease;
+  -webkit-transition: background 0.25s ease;
+  -moz-transition: background 0.25s ease;
+  -ms-transition: background 0.25s ease;
+  border-bottom: 4px solid #F77F00;
+  /* Navbar color variations */
+}
+
+.sidebar {
+  /* position: fixed; */
+  min-height: calc(100vh - 4.625rem);
+  background: #ffffff;
+  font-family: "Poppins", sans-serif;
+  font-weight: normal;
+  padding: 0;
+  width: 300px;
+  z-index: 11;
+  transition: width 0.25s ease, background 0.25s ease;
+  -webkit-transition: width 0.25s ease, background 0.25s ease;
+  -moz-transition: width 0.25s ease, background 0.25s ease;
+  -ms-transition: width 0.25s ease, background 0.25s ease;
+  box-shadow: 0 5px 10px 0 rgba(230, 230, 243, 0.88);
+  -webkit-box-shadow: 0 5px 10px 0 rgba(230, 230, 243, 0.88);
+  -moz-box-shadow: 0 5px 10px 0 rgba(230, 230, 243, 0.88);
+  -ms-box-shadow: 0 5px 10px 0 rgba(230, 230, 243, 0.88);
+  margin-left: 0.5rem;
+  margin-bottom: 2.062rem;
+  border-radius: 6px;
+  border: 2px solid #F77F00;
+}
+.sidebar .nav {
+  overflow: hidden;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  margin-bottom: 60px;
+}
+.sidebar .nav .nav-item {
+  -webkit-transition-duration: 0.25s;
+  -moz-transition-duration: 0.25s;
+  -o-transition-duration: 0.25s;
+  transition-duration: 0.25s;
+  transition-property: background;
+  -webkit-transition-property: background;
+}
+.sidebar .nav .nav-item .collapse {
+  z-index: 999;
+}
+.sidebar .nav .nav-item .nav-link {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  white-space: nowrap;
+  padding: 0.87rem 0.875rem 0.87rem 0.6rem;
+  color: #001737;
+  -webkit-transition-duration: 0.45s;
+  -moz-transition-duration: 0.45s;
+  -o-transition-duration: 0.45s;
+  transition-duration: 0.45s;
+  transition-property: color;
+  -webkit-transition-property: color;
+}
+.sidebar .nav .nav-item .nav-link i {
+  color: inherit;
+}
+.sidebar .nav .nav-item .nav-link i.menu-icon {
+  font-size: 1.215rem;
+  line-height: 1;
+  margin-right: 0.75rem;
+  color: #6c7293;
+}
+
+
+.rtl .sidebar .nav .nav-item .nav-link i.menu-icon {
+  margin-left: 2rem;
+  margin-right: 0;
+}
+.sidebar .nav .nav-item .nav-link i.menu-icon:before {
+  vertical-align: middle;
+}
+.sidebar .nav .nav-item .nav-link i.menu-arrow {
+  display: inline-block;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin-left: auto;
+  margin-right: 0;
+  color: #686868;
+}
+.rtl .sidebar .nav .nav-item .nav-link i.menu-arrow {
+  margin-left: 0;
+  margin-right: auto;
+}
+.sidebar .nav .nav-item .nav-link i.menu-arrow:before {
+  content: "\e0cf";
+  font-family: "typicons";
+  font-style: normal;
+  display: block;
+  font-size: 1rem;
+  line-height: 10px;
+  -webkit-transition: all 0.2s ease-in;
+  -moz-transition: all 0.2s ease-in;
+  -ms-transition: all 0.2s ease-in;
+  -o-transition: all 0.2s ease-in;
+  transition: all 0.2s ease-in;
+}
+.sidebar .nav .nav-item .nav-link .menu-title {
+  color: inherit;
+  display: inline-block;
+  font-size: 0.875rem;
+  line-height: 1;
+  vertical-align: middle;
+}
+.sidebar .nav .nav-item .nav-link .badge {
+  margin-left: auto;
+}
+.rtl .sidebar .nav .nav-item .nav-link .badge {
+  margin-left: 0;
+  margin-right: auto;
+}
+.sidebar .nav .nav-item .nav-link[aria-expanded=true] i.menu-arrow:before {
+  content: "\e0bd";
+}
+.sidebar .nav .nav-item.active > .nav-link {
+  background: #f7f8fc;
+  position: relative;
+}
+.sidebar .nav .nav-item.active > .nav-link i,
+.sidebar .nav .nav-item.active > .nav-link .menu-title,
+.sidebar .nav .nav-item.active > .nav-link .menu-arrow {
+  color: #12253f;
+}
+.sidebar .nav:not(.sub-menu) {
+  margin-top: 1rem;
+  margin-left: 1.3rem;
+  margin-right: 1.25rem;
+}
+.sidebar .nav:not(.sub-menu) > .nav-item {
+  margin-top: 0;
+}
+.sidebar .nav:not(.sub-menu) > .nav-item > .nav-link {
+  margin: 0;
+}
+.sidebar .nav:not(.sub-menu) > .nav-item:hover > .nav-link {
+  background: #f7f8fc;
+  color: #56595a;
+}
+.sidebar .nav.sub-menu {
+  margin-bottom: 0;
+  margin-top: 0;
+  list-style: none;
+  padding: 0.25rem 0 0 1.1rem;
+}
+.sidebar .nav.sub-menu .nav-item {
+  padding: 0;
+  position: relative;
+}
+.sidebar .nav.sub-menu .nav-item::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  position: absolute;
+  margin-top: 16px;
+  border-radius: 50%;
+  background: #8e95aa;
+}
+.sidebar .nav.sub-menu .nav-item .nav-link {
+  color: #001737;
+  padding: 0.7rem 1rem;
+  position: relative;
+  font-size: 0.875rem;
+  line-height: 1;
+  height: auto;
+  border-top: 0;
+}
+.sidebar .nav.sub-menu .nav-item .nav-link:hover {
+  color: #844fc1;
+}
+.sidebar .nav.sub-menu .nav-item .nav-link.active {
+  color: #844fc1;
+  background: transparent;
+}
+.sidebar .nav.sub-menu .nav-item:hover {
+  background: transparent;
+}
+
+.sidebar-dark .sidebar {
+  background: #282f3a;
+}
+.sidebar-dark .sidebar .nav .nav-item .nav-link {
+  color: #d0cfcf;
+}
+.sidebar-dark .sidebar .nav .nav-item .nav-link i {
+  color: inherit;
+}
+.sidebar-dark .sidebar .nav .nav-item .nav-link i.menu-icon {
+  color: #d0cfcf;
+}
+.sidebar-dark .sidebar .nav .nav-item .nav-link .menu-title {
+  color: inherit;
+}
+.sidebar-dark .sidebar .nav .nav-item.active > .nav-link {
+  background: initial;
+}
+.sidebar-dark .sidebar .nav .nav-item.active > .nav-link .menu-title,
+.sidebar-dark .sidebar .nav .nav-item.active > .nav-link i {
+  color: #c0bbbb;
+}
+.sidebar-dark .sidebar .nav:not(.sub-menu) > .nav-item:hover > .nav-link {
+  background: #3b424c;
+  color: #d0cfcf;
+}
+.sidebar-dark .sidebar .nav:not(.sub-menu) > .nav-item.active {
+  background: #3b424c;
+  color: #d0cfcf;
+}
+.sidebar-dark .sidebar .nav.sub-menu .nav-item .nav-link {
+  color: #d0cfcf;
+}
+
+/* Agrandir la hauteur de la boîte Select2 */
+.select2-container .select2-selection--single {
+    height: 50px !important;
+    padding: 10px 14px;
+    font-size: 16px;
+}
+
+/* Centrer verticalement le texte */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 30px !important;
+    font-size: 16px;
+}
+
+/* Agrandir la flèche (dropdown icon) */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 50px !important;
+}
+
+/* Pour les champs multiples */
+.select2-container--default .select2-selection--multiple {
+    min-height: 50px;
+    font-size: 16px;
+    padding: 8px;
+}
+
+/* Agrandit la hauteur et la police du Select2 avec la classe select2-lg */
+.select2-lg + .select2-container .select2-selection {
+    min-height: 60px !important;   /* Hauteur plus grande */
+    padding: 10px;
+    font-size: 18px;
+}
+
+/* Texte rendu */
+.select2-lg + .select2-container .select2-selection__rendered {
+    line-height: 38px !important;
+}
+
+/* Flèche dropdown */
+.select2-lg + .select2-container .select2-selection__arrow {
+    height: 60px !important;
+}
+
+.btn-success {
+    padding: 12px 50px !important;
+    font-size: 1.5rem; 
+    font-weight: 650 !important;
+    border-radius: 10px !important; 
+}
+.btn-primary {
+    padding: 15px 50px !important;  
+    font-size: 1.5rem;     
+    font-weight: 600 !important;  
+    border-radius: 8px !important;  
+}
+
+/* .btn-danger {
+    padding: 15px 50px !important;     
+    font-size: 1.5rem;     
+    font-weight: 600 !important;     
+    border-radius: 8px !important; 
+} */
+
+
+
+.custom-logo {
+  max-height: 600px !important;        /* Hauteur visible adaptée */
+  width: auto;             /* Conserve les proportions */
+  object-fit: contain;     /* Garde une belle mise en forme */
+  padding-left: 10px;      /* Un peu d'espace à gauche */
+}
+
+.navbar-brand-wrapper {
+  background-color: #fff;   /* Optionnel : fond blanc pour contraste */
+  height: 80px;             /* Augmente la hauteur si nécessaire */
+}
+
+.navbar-brand-inner-wrapper {
+  padding-right: 20px;      /* Décale le contenu vers la droite */
+}
+
+.card{
+  max-width: 100% !important;
+  /* min-height: 600px !important; */
+}
+
+
+@media (max-width: 576px) {
+    .card {
+        margin: 0 10px !important;
+    }
+}
+
+
+/* Appliquer une taille de base plus grande */
+body {
+    font-size: 1.1rem; /* Taille de police globale */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    background-color: #f4f6f9 !important;
+}
+
+/* Titres */
+h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+h2 {
+    font-size: 2rem;
+    font-weight: bold;
+}
+h3 {
+    font-size: 1.75rem;
+}
+h4 {
+    font-size: 1.5rem;
+}
+h5 {
+    font-size: 1.25rem;
+}
+h6 {
+    font-size: 1.1rem;
+}
+
+/* Libellés et formulaires */
+label, .form-label {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+input, select, textarea {
+    font-size: 1.2rem !important;
+}
+
+/* Boutons */
+button, .btn {
+    font-size: 1.3rem !important;
+}
+
+/* Menu / navigation */
+.navbar .nav-link,
+.sidebar .nav-link {
+    font-size: 1.1rem;
+}
+
+/* Alertes */
+.alert {
+    font-size: 1.1rem;
+}
+
+/* Liens */
+a {
+    font-size: 1.05rem;
+}
+
+/* Cartes */
+.card-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+}

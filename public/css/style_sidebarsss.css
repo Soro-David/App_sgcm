@@ -1,0 +1,90 @@
+/* Appliquer une taille de police plus grande sur les éléments de navigation */
+.sidebar .nav-link,
+.sidebar .menu-title,
+.sidebar .nav-item,
+.sidebar .sub-menu a,
+.sidebar span,
+.sidebar li {
+    font-size: 1rem !important;
+    font-weight: 500; /* Légèrement en gras */
+}
+
+/* Optionnel : agrandir encore plus les titres principaux */
+.sidebar .menu-title {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+/* Optionnel : augmenter l'espacement vertical pour aérer */
+.sidebar .nav-item {
+    margin-bottom: 8px;
+}
+
+/* Optionnel : ajuster les icônes pour être proportionnels */
+.sidebar .menu-icon {
+    font-size: 2rem;
+    margin-right: 10px;
+}
+.rotate-icon {
+  transition: transform 0.3s ease;
+}
+
+.nav-link[aria-expanded="true"] .rotate-icon {
+  transform: rotate(180deg);
+}
+
+/* Agrandir la hauteur de la boîte Select2 */
+.select2-container .select2-selection--single {
+    height: 50px !important;
+    padding: 10px 14px;
+    font-size: 16px;
+}
+
+/* Centrer verticalement le texte */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 30px !important;
+    font-size: 16px;
+}
+
+/* Agrandir la flèche (dropdown icon) */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 50px !important;
+}
+
+/* Pour les champs multiples */
+.select2-container--default .select2-selection--multiple {
+    min-height: 50px;
+    font-size: 16px;
+    padding: 8px;
+}
+
+/* Agrandit la hauteur et la police du Select2 avec la classe select2-lg */
+.select2-lg + .select2-container .select2-selection {
+    min-height: 60px !important;   /* Hauteur plus grande */
+    padding: 10px;
+    font-size: 18px;
+}
+
+/* Texte rendu */
+.select2-lg + .select2-container .select2-selection__rendered {
+    line-height: 38px !important;
+}
+
+/* Flèche dropdown */
+.select2-lg + .select2-container .select2-selection__arrow {
+    height: 60px !important;
+}
+
+
+.btn-success {
+    padding: 15px 50px;      /* Plus de hauteur et largeur */
+    font-size: 1.5rem;       /* Texte plus grand */
+    font-weight: 600;        /* Texte un peu plus épais */
+    border-radius: 8px;      /* Coins légèrement arrondis */
+}
+.btn-primary {
+    padding: 15px 50px;      /* Plus de hauteur et largeur */
+    font-size: 1.5rem;       /* Texte plus grand */
+    font-weight: 600;        /* Texte un peu plus épais */
+    border-radius: 8px;      /* Coins légèrement arrondis */
+}

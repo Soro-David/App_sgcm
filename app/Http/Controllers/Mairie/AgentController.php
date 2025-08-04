@@ -1,0 +1,266 @@
+<?php
+
+namespace App\Http\Controllers\Mairie;
+
+use App\Http\Controllers\Controller;
+use App\Models\Commune;
+use App\Models\Mairie;
+use App\Models\Agent;
+use App\Models\Taxe;
+use App\Models\Secteur;
+use App\Notifications\MairieInvitationNotification;
+use App\Notifications\AgentInvitationNotification;
+use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Auth;
+
+
+class AgentController extends Controller
+{
+   
+    public function index(Request $request)
+    { 
+        // dd($request); 
+        $regions = Commune::select('region')->distinct()->orderBy('region', 'asc')->get();
+        $mairieId = Auth::guard('mairie')->id();
+
+        // dd($mairieId);
+         return view('mairie.agents.index', compact('regions','mairieId'));
+    }
+
+   
+    public function programer_agent()
+    {
+        $mairie_id = Auth::guard('mairie')->id();
+
+        $agents = Agent::where('mairie_id', $mairie_id)->get();
+        $taxes = Taxe::where('mairie_id', $mairie_id)->get();
+        $secteurs = Secteur::where('mairie_id', $mairie_id)->get();
+
+        return view('mairie.agents.programme_agent', compact('agents', 'taxes','secteurs'));
+    }
+
+    public function storeProgramme(Request $request)
+    {
+        $request->validate([
+            'agent_id' => 'required|exists:agents,id',
+            'taxe_ids' => 'required|array',
+            'taxe_ids.*' => 'exists:taxes,id',
+            'secteur_id' => 'required|exists:secteurs,id',
+        ]);
+
+        $agent = Agent::findOrFail($request->agent_id);
+
+        // On stocke taxe_ids comme tableau JSON (champ taxe_id)
+        $agent->taxe_id = $request->taxe_ids;
+
+        // secteur_id est une valeur unique, donc on peut stocker en tableau avec 1 seul élément ou en string
+        // je te conseille d'être cohérent, donc en tableau
+        $agent->secteur_id = [$request->secteur_id];
+
+        $agent->save();
+
+        return redirect()->back()->with('success', 'Taxes assignées avec succès à l\'agent.');
+    }
+
+    public function get_list_programmes(Request $request)
+    {
+        if ($request->ajax()) {
+
+            // Récupérer la mairie connectée
+            $mairie_id = Auth::guard('mairie')->id();
+
+            // Filtrer les agents par mairie_id
+            $data = Agent::where('mairie_id', $mairie_id)
+                        ->whereNotNull('taxe_id')
+                        ->latest()
+                        ->get();
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('secteur', function ($row) {
+                    $secteur_id = is_array($row->secteur_id) ? ($row->secteur_id[0] ?? null) : $row->secteur_id;
+                    $secteur = $secteur_id ? Secteur::find($secteur_id) : null;
+                    return $secteur ? $secteur->nom : 'Non défini';
+                })
+                ->addColumn('taxes', function ($row) {
+                    if (!empty($row->taxe_id)) {
+                        $taxeNames = Taxe::whereIn('id', $row->taxe_id)->pluck('nom')->implode(', ');
+                        return $taxeNames;
+                    }
+                    return 'Aucune';
+                })
+                ->addColumn('action', function ($row) {
+                    $btn = '<a href="javascript:void(0)" class="edit btn btn-primary btn-sm">Modifier</a>';
+                    $btn .= ' <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Supprimer</a>';
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+    }
+
+
+    
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'type_agent' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $otp = random_int(100000, 999999);
+
+        // Récupération sécurisée de la mairie connectée
+        $mairieId = Auth::guard('mairie')->id(); 
+
+        if (!$mairieId) {
+            return redirect()->back()->with('error', 'Impossible de déterminer la mairie connectée.');
+        }
+        // dd( $request);
+
+        $agent = Agent::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'type' => $request->type_agent,
+            'remember_token' => $request->_token,
+            'otp_code' => $otp,
+            'otp_expires_at' => now()->addMinutes(30),
+            'mairie_id' => $mairieId,
+        ]);
+
+        try {
+            $agent->notify(new AgentInvitationNotification($otp));
+        } catch (\Exception $e) {
+            $agent->delete();
+            return redirect()->back()->withInput()->with('error', 'Échec de l\'envoi de l’e-mail : ' . $e->getMessage());
+        }
+
+        return redirect()->route('mairie.agents.index')
+            ->with('success', "L'agent a été ajouté. Un e-mail d'invitation a été envoyé.");
+    }
+
+
+    /**
+     * Affiche les détails d'une mairie spécifique.
+     * (Actuellement vide)
+     */
+    public function show(string $id)
+    {
+        //
+    }
+
+
+    public function edit(string $id)
+    {
+        $mairie = Agent::with('commune')->findOrFail($id);
+
+        $regions = Commune::select('region')->distinct()->orderBy('region', 'asc')->get();
+
+        $regionActuelle = $mairie->commune;
+
+        $communesDeLaRegion = Commune::where('id', $regionActuelle)->orderBy('nom', 'asc')->get();
+        // dd($communesDeLaRegion);
+        
+        return view('mairie.agents.edit_mairie', compact(
+            'mairie', 
+            'regions', 
+            'communesDeLaRegion'
+        ));
+    }
+
+    public function create(Request $request)
+    {
+         // dd($request); 
+        $regions = Commune::select('region')->distinct()->orderBy('region', 'asc')->get();
+        $mairieId = Auth::guard('mairie')->id();
+        
+        return view('mairie.agents.create', compact('regions','mairieId'));
+    }
+
+   
+    public function update(Request $request, string $id)
+    {
+        $request->validate([
+            // 'name' => 'required|string|max:255',
+            // 'email' => 'required|email',
+            // 'region' => 'required|string',
+            // 'commune' => 'required|integer|exists:communes,id'
+        ]);
+
+        $mairie = Agent::findOrFail($id);
+        $mairie->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'region' => $request->region,
+            'commune_id' => $request->commune,
+        ]);
+
+        return redirect()->route('superadmin.mairies.index')->with('success', 'Mairie mise à jour avec succès.');
+    }
+
+    public function destroy(string $id)
+    {
+        //
+    }
+
+
+    public function get_list_mairie(Request $request)
+    {
+        try {
+            if (!$request->ajax()) {
+                return response()->json(['error' => 'Requête non autorisée.'], 403);
+            }
+
+            // Récupérer la mairie connectée
+            $mairieId = Auth::guard('mairie')->id();
+
+            if (!$mairieId) {
+                return response()->json(['error' => 'Mairie non authentifiée.'], 401);
+            }
+
+            // Requête filtrée par mairie_id
+            $query = Agent::where('mairie_id', $mairieId)
+                        ->select(['id', 'name', 'email', 'created_at']);
+
+            return DataTables::of($query)
+                ->editColumn('created_at', function ($agent) {
+                    return $agent->created_at ? $agent->created_at->format('d/m/Y H:i') : 'N/A';
+                })
+                ->addColumn('action', function ($agent) {
+                    $editUrl = route('mairie.agents.edit', $agent->id);
+                    $deleteUrl = route('mairie.agents.destroy', $agent->id);
+
+                    return '<a href="' . $editUrl . '" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></a>
+                            <button class="btn btn-danger btn-sm btn-delete" data-url="' . $deleteUrl . '"><i class="fa fa-trash"></i></button>';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+
+        } catch (\Exception $e) {
+            \Log::error("Erreur DataTable agents mairie : " . $e->getMessage());
+            return response()->json([
+                'error' => 'Erreur serveur',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    
+    public function get_communes(string $regionName): JsonResponse
+    {
+        $communes = Commune::where('region', $regionName)
+                            ->orderBy('nom', 'asc')
+                            ->get(['id', 'nom']);
+        
+        return response()->json($communes);
+    }
+}
