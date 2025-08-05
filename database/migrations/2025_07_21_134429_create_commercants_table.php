@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('commercants', function (Blueprint $table) {
@@ -18,11 +15,21 @@ return new class extends Migration
             $table->string('telephone')->nullable();
             $table->string('adresse')->nullable();
             $table->string('num_commerce')->unique();
-            $table->string('mot_de_passe')->nullable();
-            // Relation vers l'agent qui a ajouté le commerçant
+            $table->string('password')->nullable();
+
+            $table->string('type_piece');
+            $table->string('numero_piece')->nullable();
+            $table->string('autre_type_piece')->nullable();
+            $table->string('photo_profil')->nullable();
+            $table->string('photo_recto')->nullable();
+            $table->string('photo_verso')->nullable();
+            $table->json('autre_images')->nullable();
+
+            // Relations
             $table->foreignId('agent_id')->constrained()->onDelete('cascade');
             $table->foreignId('mairie_id')->constrained()->onDelete('cascade');
 
+            // Champs JSON
             $table->json('taxe_id')->nullable();
             $table->json('secteur_id')->nullable();
 
@@ -30,9 +37,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('commercants');

@@ -12,16 +12,23 @@ class Commercant extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
-        'nom',
-        'email',
-        'telephone',
-        'adresse',
-        'num_commerce',
-        'agent_id',
-        'mairie_id',
-        'secteur_id',
-        'taxe_id',
-        'password',
+    'nom',
+    'email',
+    'telephone',
+    'adresse',
+    'secteur_id',
+    'num_commerce',
+    'mot_de_passe',
+    'type_piece',
+    'numero_piece',
+    'autre_type_piece',
+    'photo_profil',
+    'photo_recto',
+    'photo_verso',
+    'autre_images',
+    'mairie_id',
+    'agent_id',
+    'taxe_id',
     ];
 
     

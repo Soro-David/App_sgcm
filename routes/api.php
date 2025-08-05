@@ -31,21 +31,19 @@ Route::middleware('auth:sanctum')->group(function () {
     // Routes pour les Agents de Recouvrement
     Route::middleware('abilities:agent-recouvrement')->prefix('agent-recouvrement')->name('agent.recouvrement.')->group(function () {
         Route::get('/me', [AgentRecouvrementController::class, 'me']);
-        // Route pour encaisser le paiement
+        // Route pour encaisser le paiement 
         Route::post('/encaissement', [AgentRecouvrementController::class, 'encaisserPaiement'])->name('encaisser');
         // route pour récupérer les périodes dues
         Route::post('/paiement/periodes-dues', [AgentRecouvrementController::class, 'dernierPaiementEtDues'])->name('periodes_dues');
         Route::post('/logout', [AgentRecouvrementController::class, 'logout']);
     });
 
-
-
     // Routes pour les Commerçants
    Route::middleware('abilities:commercant')->prefix('commercant')->name('commercant')->group(function () {
-    Route::get('/me', [CommercantController::class, 'me']);
-    Route::get('/taxes', [CommercantController::class, 'list_taxes_a_payer']);
-    Route::post('/paiement', [CommercantController::class, 'effectuer_paiement']);
-    Route::get('/paiements', [CommercantController::class, 'historique_paiements']);
-    Route::post('/logout', [CommercantController::class, 'logout']);
-});
+        Route::get('/me', [CommercantController::class, 'me']);
+        Route::get('/taxes', [CommercantController::class, 'list_taxes_a_payer']);
+        Route::post('/paiement', [CommercantController::class, 'effectuer_paiement']);
+        Route::get('/paiements', [CommercantController::class, 'historique_paiements']);
+        Route::post('/logout', [CommercantController::class, 'logout']);
+    });
 });

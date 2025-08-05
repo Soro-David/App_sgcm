@@ -14,7 +14,7 @@ class AuthController extends Controller
      */
     protected function logoutAllGuards(Request $request): void
     {
-        foreach (['web', 'mairie', 'agent'] as $guard) {
+        foreach (['web','commercant', 'mairie', 'agent'] as $guard) {
             Auth::guard($guard)->logout();
         }
         $request->session()->invalidate();
@@ -23,6 +23,7 @@ class AuthController extends Controller
 
     public function showLogin()        { return view('auth.login'); }
     public function showLoginMairie()  { return view('auth.login_mairie'); }
+    public function showLoginFinancier()  { return view('auth.login_commercant'); }
     public function showLoginAgent()   { return view('auth.login_agent'); }
     public function showRegister()     { return view('auth.register'); }
 
@@ -59,6 +60,36 @@ class AuthController extends Controller
 
         return back()->withErrors(['email' => 'Identifiants mairie incorrects.']);
     }
+
+
+    public function login_commercant(Request $request)
+{
+    $credentials = $request->validate([
+        'num_commerce' => 'required',
+        'password' => 'required',
+    ]);
+
+    $this->logoutAllGuards($request);
+
+    // Adapter les credentials pour utiliser le champ `password`
+    $attemptCredentials = [
+        'num_commerce' => $credentials['num_commerce'],
+        'password' => $credentials['password'],
+    ];
+
+    // dd($attemptCredentials);
+    if (Auth::guard('commercant')->attempt($attemptCredentials)) {
+        // dd($attemptCredentials);
+
+        $request->session()->regenerate();
+        return redirect()->route('commercant.dashboard');
+    }
+
+    return back()->withErrors([
+        'email' => 'Identifiants incorrects.',
+    ]);
+}
+
 
     public function login_agent(Request $request)
     {
@@ -108,7 +139,7 @@ class AuthController extends Controller
     {
         // Si aucun guard explicitement passé, on détecte celui en session
         if (! $guard) {
-            foreach (['web','mairie','agent'] as $g) {
+            foreach (['web','mairie','commercant','agent'] as $g) {
                 if (Auth::guard($g)->check()) {
                     $guard = $g;
                     break;
@@ -116,7 +147,7 @@ class AuthController extends Controller
             }
         }
 
-        if (! in_array($guard, ['web', 'mairie', 'agent'])) {
+        if (! in_array($guard, ['web', 'mairie','commercant', 'agent'])) {
             abort(403);
         }
 
@@ -128,6 +159,7 @@ class AuthController extends Controller
             'web'    => 'login',
             'mairie' => 'login.mairie',
             'agent'  => 'login.agent',
+            'commercant'  => 'login.commercant',
         ];
 
         return redirect()->route($redirectRoutes[$guard])

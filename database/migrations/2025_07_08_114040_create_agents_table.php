@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('agents', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('mairie_id')->constrained('mairies')->onDelete('cascade'); // ← ajout
+            $table->foreignId('mairie_id')->constrained('mairies')->onDelete('cascade');
             $table->string('name');
             $table->string('type')->default('recouvrement');
             $table->string('email')->unique();
@@ -23,12 +23,12 @@ return new class extends Migration
             $table->timestamp('otp_expires_at')->nullable();
             $table->string('status')->default('pending');
 
-            $table->json('taxe_id')->nullable()->after('mairie_id');
-            $table->json('secteur_id')->nullable()->after('taxe_id');
+            $table->json('taxe_id')->nullable();
+            $table->json('secteur_id')->nullable();
+
             $table->rememberToken();
             $table->timestamps();
         });
-
     }
 
     /**

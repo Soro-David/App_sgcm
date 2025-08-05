@@ -27,9 +27,7 @@ class TacheController extends Controller
         $agents = Agent::where('mairie_id', $mairieId)->get();
         $secteurs = Secteur::where('mairie_id', $mairieId)->get();
         $taxes = Taxe::where('mairie_id', $mairieId)->get();
-        // dd($agents,$secteurs,$taxes); 
 
-        // dd($agents);
         return view('mairie.tache.index',compact('agents','secteurs','taxes'));
     }
 
@@ -43,17 +41,16 @@ class TacheController extends Controller
      */
     public function create()
     {
-        //
+        $mairieId = Auth::guard('mairie')->id();
+
+        return view('mairie.tache.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    public function store(Request $request)
+    {
 
-
-    /**
-     * Display the specified resource.
-     */
+    }
+    
     public function show(string $id)
     {
         //

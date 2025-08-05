@@ -13,23 +13,35 @@
       </li>
 
       {{-- Pour les agents de type "agent de mairie" --}}
-      @if($agent && $agent->type === 'mairie')
-      <li class="nav-item">
-        <a class="nav-link" href="{{ route('agent.commerce.index') }}">
-          <i class="fa-solid fa-users"></i>
-          <span class="menu-title">Espace commerçant</span>
-        </a>
-      </li>
+      @if($agent && $agent->type === 'recenssement')
+          {{-- <li class="nav-item">
+            <a class="nav-link" href="{{ route('agent.commerce.index') }}">
+              <i class="fa-solid fa-users"></i>
+              <span class="menu-title">Ajouter un commerçant</span>
+            </a>
+          </li> --}}
+          <li class="nav-item">
+                <a class="nav-link" href="{{ route('agent.commerce.create') }}">
+                    <i class="typcn typcn-document-text menu-icon"></i>
+                    <span class="menu-title">Ajouter un contribuable</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('agent.commerce.index') }}">
+                    <i class="typcn typcn-document-text menu-icon"></i>
+                    <span class="menu-title">Liste des contribuable</span>
+                </a>
+            </li>
       @endif
 
       {{-- Pour les agents de type "recouvrement" --}}
       @if($agent && $agent->type === 'recouvrement')
-      <li class="nav-item">
-        <a class="nav-link" href="">
-          <i class="typcn typcn-group-outline menu-icon"></i>
-          <span class="menu-title">Recouvrement</span>
-        </a>
-      </li>
+            <li class="nav-item">
+              <a class="nav-link" href="">
+                <i class="typcn typcn-group-outline menu-icon"></i>
+                <span class="menu-title">Recouvrement</span>
+              </a>
+            </li>
       @endif
 
       {{-- Pour les agents de type "admin" --}}

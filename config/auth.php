@@ -18,6 +18,11 @@ return [
             'provider' => 'mairies',
         ],
 
+        'commercant' => [
+            'driver' => 'session',
+            'provider' => 'commercants',
+        ],
+
         'agent' => [
             'driver' => 'session',
             'provider' => 'agents',
@@ -46,6 +51,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\Mairie::class,
         ],
+        'commercants' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Commercant::class,
+        ],
 
         'agents' => [
             'driver' => 'eloquent',
@@ -67,6 +76,11 @@ return [
 
         'mairies' => [
             'provider' => 'mairies',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+        ],
+         'commercants' => [
+            'provider' => 'commercants',
             'table' => 'password_reset_tokens',
             'expire' => 60,
         ],

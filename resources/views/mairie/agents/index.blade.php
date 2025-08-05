@@ -26,6 +26,7 @@
                             <tr>
                                 <th>Date de Création</th>
                                 <th>Nom</th>
+                                <th>Rôle</th>
                                 <th>Email</th>
                                 <th>Action</th>
                             </tr>

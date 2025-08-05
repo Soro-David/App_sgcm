@@ -25,6 +25,7 @@ $(document).ready(function () {
             { data: 'created_at', name: 'created_at' },
             { data: 'name', name: 'name' },
             { data: 'email', name: 'email' },
+            { data: 'role', name: 'role' },
             {
                 data: 'action',
                 name: 'action',

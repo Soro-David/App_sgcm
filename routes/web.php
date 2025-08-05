@@ -10,12 +10,13 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\MailRegistrationController;
 use App\Http\Controllers\SuperAdmin\MairieController;
-use App\Http\Controllers\SuperAdmin\TaxeController;
+use App\Http\Controllers\Mairie\TaxeController;
 use App\Http\Controllers\Mairie\AgentController;
 use App\Http\Controllers\Mairie\TacheController;
 use App\Http\Controllers\Mairie\SecteurController;
 use App\Http\Controllers\Mairie\CommerceController;
 use App\Http\Controllers\Agent\CommerceController as AgentCommerce;
+use App\Http\Controllers\Agent\AgentController as Commercants;
 use App\Http\Controllers\Mairie\VersementController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OrderController;
@@ -44,6 +45,12 @@ Route::post('/login-mairie', [AuthController::class, 'login_mairie'])->name('log
 Route::get('/mairie-logout', fn(Request $request) => 
     app(AuthController::class)->logout($request, 'mairie')
 )->name('logout.mairie');
+
+Route::get('/login-commercant', [AuthController::class, 'showLoginFinancier'])->name('login.commercant');
+Route::post('/login-commercant', [AuthController::class, 'login_commercant'])->name('login.commercant');
+Route::get('/commercant-logout', fn(Request $request) => 
+    app(AuthController::class)->logout($request, 'commercant')
+)->name('logout.commercant');
 
 Route::get('/login-agent', [AuthController::class, 'showLoginAgent'])->name('login.agent');
 Route::post('/login-agent', [AuthController::class, 'login_agent'])->name('login.agent');
@@ -105,6 +112,102 @@ Route::middleware(['auth:web', 'role:user'])->prefix('user')->name('user.')->gro
 // Mairie
 Route::middleware(['auth:mairie'])->prefix('mairie')->name('mairie.')->group(function () {
     Route::get('/dashboard', fn() => view('mairie.dashboard'))->name('dashboard');
+
+    Route::prefix('agents')->name('agents.')->group(function () {
+        Route::get('/', [AgentController::class, 'index'])->name('index');
+        Route::get('/create', [AgentController::class, 'create'])->name('create');
+
+        Route::get('/programmer-agent', [AgentController::class, 'programer_agent'])->name('programme_agent');
+        Route::post('/programmer-agent/store', [AgentController::class, 'storeProgramme'])->name('store_programme_agent');
+        Route::get('/programme-liste', [AgentController::class, 'get_list_programmes'])->name('list_programmes');
+
+        Route::post('/', [AgentController::class, 'store'])->name('store');
+        Route::get('/{mairie}/edit', [AgentController::class, 'edit'])->name('edit');
+        Route::put('/{mairie}', [AgentController::class, 'update'])->name('update');
+        Route::delete('/{mairie}', [AgentController::class, 'destroy'])->name('destroy');
+        Route::get('/get-communes-by-region/{region}', [AgentController::class, 'get_communes'])->name('get_communes');
+        Route::get('/liste/data', [AgentController::class, 'get_list_mairie'])->name('get_list_mairie');
+    });
+
+     Route::prefix('commerce')->name('commerce.')->group(function () {
+        Route::get('/', [CommerceController::class, 'index'])->name('index');
+        Route::get('/create', [CommerceController::class, 'create'])->name('create');
+        Route::post('/', [CommerceController::class, 'store'])->name('store');
+        
+        Route::put('/{mairie}', [CommerceController::class, 'update'])->name('update');
+
+        Route::get('{id}', [CommerceController::class, 'show'])->name('show');
+        Route::get('{id}/edit', [CommerceController::class, 'edit'])->name('edit');
+        Route::delete('{id}', [CommerceController::class, 'destroy'])->name('destroy');
+
+        Route::get('/commerce/list', [CommerceController::class, 'get_list_commercants'])->name('list_commercant');
+    });
+
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::get('/create', [UserController::class, 'create'])->name('create');
+        Route::post('/', [UserController::class, 'store'])->name('store');
+    });
+
+    Route::prefix('taxe')->name('taxe.')->group(function () {
+        Route::resource('/', TaxeController::class);
+       
+    });
+     Route::prefix('taches')->name('taches.')->group(function () {
+        Route::get('/', [TacheController::class, 'index'])->name('index');
+        Route::resource('/', TacheController::class);
+
+        Route::get('/list', [TacheController::class, 'list_tache'])->name('list_tache');
+        Route::get('/liste/data', [TacheController::class, 'get_list_taches'])->name('get_list_tache');
+        Route::get('/shwo', [TacheController::class, 'show'])->name('show');
+
+        Route::get('/secteurs', [TacheController::class, 'index'])->name('secteurs.index');
+
+        // Traite la soumission du formulaire pour créer un secteur
+        Route::post('/secteurs', [TacheController::class, 'store'])->name('secteurs.store');
+
+        // Route pour la récupération des données par DataTables
+        Route::get('/secteurs/liste', [TacheController::class, 'get_list_secteurs'])->name('secteurs.list');
+
+        // Route pour la génération du code via AJAX
+        Route::get('/secteurs/generer-code', [TacheController::class, 'genererCodeSecteurAjax'])->name('secteurs.genererCode');
+
+        Route::get('/list/secteurs', [TacheController::class, 'get_list_secteurs'])->name('get_list_secteurs');
+
+        Route::get('/create', [TacheController::class, 'create'])->name('create');
+        Route::post('/', [TacheController::class, 'store'])->name('store');
+        Route::post('/secteur-store', [TacheController::class, 'store_secteur'])->name('store_secteur');
+    });
+    Route::prefix('secteurs')->name('secteurs.')->group(function () {
+        Route::resource('/', SecteurController::class);
+        Route::get('/liste', [SecteurController::class, 'get_list_secteurs'])->name('list');
+        Route::get('/generer-code', [SecteurController::class, 'genererCodeSecteurAjax'])->name('genererCode');
+    });
+
+    Route::prefix('versements')->name('versements.')->group(function () {
+        Route::resource('/', VersementController::class);
+        Route::get('/{agent_id}', [VersementController::class, 'get_montant_non_verse'])->name('montant_nonverse');
+        Route::get('/liste', [VersementController::class, 'get_liste_versement'])->name('versements_liste');
+
+    });
+
+
+    Route::prefix('roles')->name('roles.')->group(function () {
+        Route::get('/', [RoleController::class, 'index'])->name('index');
+        Route::post('/assign', [RoleController::class, 'assign'])->name('assign');
+    });
+
+    Route::post('/logout', function (Request $request) {
+        Auth::guard('mairie')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/')->with('success', 'Déconnecté.');
+    })->name('logout');
+});
+
+// financier
+Route::middleware(['auth:commercant'])->prefix('commercant')->name('commercant.')->group(function () {
+    Route::get('/dashboard', fn() => view('commercant.dashboard'))->name('dashboard');
 
     Route::prefix('agents')->name('agents.')->group(function () {
         Route::get('/', [AgentController::class, 'index'])->name('index');
@@ -194,21 +297,21 @@ Route::middleware(['auth:mairie'])->prefix('mairie')->name('mairie.')->group(fun
     })->name('logout');
 });
 
+
 // Agent
 Route::middleware(['auth:agent'])->prefix('agent')->name('agent.')->group(function () {
     Route::get('/dashboard', fn() => view('agent.dashboard'))->name('dashboard');
 
     Route::prefix('commerce')->name('commerce.')->group(function () {
-        Route::get('/', [AgentCommerce::class, 'index'])->name('index');
-        Route::get('/create', [AgentCommerce::class, 'create'])->name('create');
-        Route::post('/', [AgentCommerce::class, 'store'])->name('store');
-        Route::put('/{mairie}', [AgentCommerce::class, 'update'])->name('update');
+        // Route::get('/', [AgentCommerce::class, 'index'])->name('index');
+        // Route::get('/create', [AgentCommerce::class, 'create'])->name('create');
+        // Route::post('/', [AgentCommerce::class, 'store'])->name('store');
+        // Route::put('/{mairie}', [AgentCommerce::class, 'update'])->name('update');
+        Route::resource('/', Commercants::class);
+        // Route::get('/liste/commercant', [Commercants::class, 'get_list_commercants'])->name('get_list_commercants');
+        Route::post('/type-contribuable/ajouter', [Commercants::class, 'ajouter_contribuable'])->name('ajouter_contribuable');
 
-        Route::get('{id}', [AgentCommerce::class, 'show'])->name('show');
-        Route::get('{id}/edit', [AgentCommerce::class, 'edit'])->name('edit');
-        Route::delete('{id}', [AgentCommerce::class, 'destroy'])->name('destroy');
-
-        Route::get('/commerce/list', [AgentCommerce::class, 'get_list_commercants'])->name('list_commercant');
+        Route::get('/commerce/list', [Commercants::class, 'get_list_commercants'])->name('list_commercant');
         Route::get('/get-communes-by-region/{region}', [AgentCommerce::class, 'get_communes'])->name('get_communes');
         Route::get('/liste/data', [AgentCommerce::class, 'get_list_mairie'])->name('get_list_mairie');
     });

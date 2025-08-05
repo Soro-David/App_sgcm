@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// IMPORTANT : Étendre Authenticatable pour que le modèle puisse être utilisé pour la connexion
 use Illuminate\Foundation\Auth\User as Authenticatable; 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,14 +15,9 @@ class Mairie extends Authenticatable
     protected $guard = 'mairie';
 
     protected $fillable = [
-        'name',
-        'email',
-        'region',
-        'commune',
-        'status',
-        'otp_code',
-        'otp_expires_at',
-        'password',
+        'name', 'genre', 'date_naissance', 'type_piece', 'numero_piece',
+        'adresse', 'telephone1', 'telephone2', 'type', 'region', 'commune',
+        'role', 'email', 'password', 'otp_code', 'otp_expires_at', 'status',
         "created_at"
     ];
 

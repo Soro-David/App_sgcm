@@ -28,6 +28,9 @@ class Authenticate extends Middleware
         if ($request->is('agent/*')) {
             return route('login.agent');
         }
+        if ($request->is('commercant/*')) {
+            return route('login.commercant');
+        }
 
         return route('login');
     }
