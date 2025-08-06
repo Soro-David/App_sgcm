@@ -104,61 +104,61 @@ class AgentController extends Controller
     }
 
 
-public function store(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'name' => 'required|string|max:255',
-        'genre' => 'required|in:masculin,féminin',
-        'date_naissance' => 'required|date',
-        'type_piece' => 'required|string|max:50',
-        'numero_piece' => 'required|string|max:100',
-        'type_agent' => 'required|string|max:50',
-        'adresse' => 'required|string|max:255',
-        'telephone1' => 'required|string|max:20',
-        'telephone2' => 'nullable|string|max:20',
-        'email' => 'required|email|max:255|unique:mairies,email',
-    ]);
-
-    if ($validator->fails()) {
-        return redirect()->back()->withErrors($validator)->withInput();
-    }
-
-    $otp = random_int(100000, 999999);
-
-    $mairieId = Auth::guard('mairie')->id();
-    if (!$mairieId) {
-        return redirect()->back()->with('error', 'Impossible de déterminer la mairie connectée.');
-    }
-
-    try {
-        $agent = Mairie::create([ 
-            'name' => $request->name,
-            'genre' => $request->genre,
-            'date_naissance' => $request->date_naissance,
-            'type_piece' => $request->type_piece,
-            'numero_piece' => $request->numero_piece,
-            'type' => $request->type_agent,
-            'adresse' => $request->adresse,
-            'telephone1' => $request->telephone1,
-            'telephone2' => $request->telephone2,
-            'email' => $request->email,
-            'remember_token' => $request->_token,
-            'otp_code' => $otp,
-            'otp_expires_at' => now()->addMinutes(30),
-            'mairie_id' => $mairieId,
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'genre' => 'required|in:masculin,féminin',
+            'date_naissance' => 'required|date',
+            'type_piece' => 'required|string|max:50',
+            'numero_piece' => 'required|string|max:100',
+            'type_agent' => 'required|string|max:50',
+            'adresse' => 'required|string|max:255',
+            'telephone1' => 'required|string|max:20',
+            'telephone2' => 'nullable|string|max:20',
+            'email' => 'required|email|max:255|unique:mairies,email',
         ]);
 
-        $agent->notify(new AgentInvitationNotification($otp));
-
-        return redirect()->route('mairie.agents.index')
-            ->with('success', "L'agent a été ajouté. Un e-mail d'invitation a été envoyé.");
-    } catch (\Exception $e) {
-        if (isset($agent)) {
-            $agent->delete();
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
         }
-        return redirect()->back()->withInput()->with('error', 'Erreur lors de l’enregistrement : ' . $e->getMessage());
+
+        $otp = random_int(100000, 999999);
+
+        $mairieId = Auth::guard('mairie')->id();
+        if (!$mairieId) {
+            return redirect()->back()->with('error', 'Impossible de déterminer la mairie connectée.');
+        }
+
+        try {
+            $agent = Mairie::create([ 
+                'name' => $request->name,
+                'genre' => $request->genre,
+                'date_naissance' => $request->date_naissance,
+                'type_piece' => $request->type_piece,
+                'numero_piece' => $request->numero_piece,
+                'type' => $request->type_agent,
+                'adresse' => $request->adresse,
+                'telephone1' => $request->telephone1,
+                'telephone2' => $request->telephone2,
+                'email' => $request->email,
+                'remember_token' => $request->_token,
+                'otp_code' => $otp,
+                'otp_expires_at' => now()->addMinutes(30),
+                'mairie_id' => $mairieId,
+            ]);
+
+            $agent->notify(new AgentInvitationNotification($otp));
+
+            return redirect()->route('mairie.agents.index')
+                ->with('success', "L'agent a été ajouté. Un e-mail d'invitation a été envoyé.");
+        } catch (\Exception $e) {
+            if (isset($agent)) {
+                $agent->delete();
+            }
+            return redirect()->back()->withInput()->with('error', 'Erreur lors de l’enregistrement : ' . $e->getMessage());
+        }
     }
-}
 
 
 

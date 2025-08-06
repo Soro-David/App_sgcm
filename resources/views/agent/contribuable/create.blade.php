@@ -10,6 +10,17 @@
                     <h3 class="modal-title">Ajoute d'un contribuable</h3>
                 </div>
 
+                 @if(session('error'))
+                    <div class="alert alert-danger">
+                        {{ session('error') }}
+                    </div>
+                @endif
+                @if(session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+                
                 <div class="modal-body">
                     {{-- Section des champs --}}
                     <div class="row g-3 mt-2">
@@ -85,6 +96,8 @@
 </div>
     @include('agent.contribuable.partials.add_contribuable')
 @endsection
+
+
 
 @push('js')
     <script src="{{ asset('assets/js/agent_commerce_create.js') }}"></script>

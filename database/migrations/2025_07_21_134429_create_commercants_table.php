@@ -23,15 +23,19 @@ return new class extends Migration
             $table->string('photo_profil')->nullable();
             $table->string('photo_recto')->nullable();
             $table->string('photo_verso')->nullable();
+            $table->string('qr_code_path')->nullable();
             $table->json('autre_images')->nullable();
+
 
             // Relations
             $table->foreignId('agent_id')->constrained()->onDelete('cascade');
             $table->foreignId('mairie_id')->constrained()->onDelete('cascade');
+            $table->foreignId('secteur_id')->constrained()->onDelete('cascade');
+            $table->foreignId('type_contribuable_id')->nullable() ->constrained('type_contribuables')->onDelete('set null');
 
             // Champs JSON
-            $table->json('taxe_id')->nullable();
-            $table->json('secteur_id')->nullable();
+            // $table->json('taxe_id')->nullable();
+            // $table->json('secteur_id')->nullable();
 
             $table->timestamps();
         });

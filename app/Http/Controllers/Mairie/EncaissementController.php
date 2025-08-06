@@ -12,7 +12,8 @@ class EncaissementController extends Controller
      */
     public function index()
     {
-        //
+        
+        return view('mairie.encaissement.index');
     }
 
     /**

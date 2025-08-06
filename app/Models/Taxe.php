@@ -24,7 +24,9 @@ class Taxe extends Model
         return $this->belongsToMany(Agent::class, 'agent_taxe');
     }
 
-    public function commercants() {
+
+    public function commercants()
+    {
         return $this->belongsToMany(Commercant::class, 'commercant_taxe');
     }
 

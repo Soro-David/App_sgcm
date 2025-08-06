@@ -5,12 +5,20 @@ namespace App\Http\Controllers\Agent;
 use App\Http\Controllers\Controller;
 use App\Notifications\MairieInvitationNotification;
 use App\Notifications\AgentInvitationNotification;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Auth;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Writer\PngWriter;
+use App\Services\QrCodeService;
+use Illuminate\Support\Facades\Log;
+use App\Http\Requests\StoreCommercantRequest;
 use App\Models\Commercant;
 use App\Models\Commune;
 use App\Models\Mairie;
@@ -145,104 +153,6 @@ class AgentController extends Controller
         }
     }
 
-
-    
-public function store(Request $request)
-{
-    $agent = Auth::guard('agent')->user();
-    if (!$agent) {
-        return response()->json(['error' => 'Connexion requise.'], 401);
-    }
-
-    // dd($request);
-    $data = $request->validate([
-        'nom' => 'required|string|max:255',
-        'email' => 'nullable|email|max:255',
-        'telephone' => 'nullable|string|max:20',
-        'adresse' => 'nullable|string|max:255',
-        'secteur_id' => 'required|integer|exists:secteurs,id',
-        'taxe_ids' => 'required|array',
-        'taxe_ids.*' => 'exists:taxes,id',
-        'num_commerce' => 'required|string|max:255|unique:commercants,num_commerce',
-        'type_piece' => 'required|string',
-        'numero_piece' => 'nullable|string',
-        'autre_type_piece' => 'nullable|string|required_if:type_piece,autre', // Requis si type_piece est "autre"
-        'photo_profil' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Validation de l'image
-        'photo_recto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        'photo_verso' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        'autre_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-    ]);
-
-    $mairie = $agent->mairie;
-    $commerceData = $data; // Copie des données validées
-
-    // Gestion des uploads
-    foreach (['photo_profil', 'photo_recto', 'photo_verso'] as $photoField) {
-        if ($request->hasFile($photoField)) {
-            // Stocke le fichier dans storage/app/public/commercants et récupère le chemin
-            $path = $request->file($photoField)->store('commercants', 'public');
-            $commerceData[$photoField] = $path;
-        }
-    }
-    
-    // Gérer les images du type "autre"
-    if ($request->hasFile('autre_images')) {
-        $autreImagesPaths = [];
-        foreach ($request->file('autre_images') as $file) {
-            $autreImagesPaths[] = $file->store('commercants/autres', 'public');
-        }
-        $commerceData['autre_images'] = json_encode($autreImagesPaths);
-    }
-
-    $commerceData['mairie_id'] = $mairie->id;
-    $commerceData['agent_id'] = $agent->id;
-
-    // Retirer les taxes pour la création directe, on les synchronisera après
-    unset($commerceData['taxe_ids']);
-    
-    $commerce = Commercant::create($commerceData);
-
-    // Synchroniser les taxes (relation Many-to-Many)
-    if (!empty($data['taxe_ids'])) {
-        $commerce->taxes()->sync($data['taxe_ids']);
-    }
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Commerçant ajouté avec succès.'
-    ]);
-    
-}
-
-
-    /**
-     * Affiche les détails d'une mairie spécifique.
-     * (Actuellement vide)
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-
-    public function edit(string $id)
-    {
-        $mairie = Agent::with('commune')->findOrFail($id);
-
-        $regions = Commune::select('region')->distinct()->orderBy('region', 'asc')->get();
-
-        $regionActuelle = $mairie->commune;
-
-        $communesDeLaRegion = Commune::where('id', $regionActuelle)->orderBy('nom', 'asc')->get();
-        // dd($communesDeLaRegion);
-        
-        return view('agent.edit_mairie', compact(
-            'mairie', 
-            'regions', 
-            'communesDeLaRegion'
-        ));
-    }
-
     public function create(Request $request)
     {
         $agent = Auth::guard('agent')->user();
@@ -285,12 +195,114 @@ public function store(Request $request)
         $taxes = Taxe::whereIn('id', $taxeIds)->get();
         $secteurs = Secteur::whereIn('id', $secteurIds)->get();
 
-     $type_contribuables = TypeContribuable::where('mairie_id', $mairie_id)->get();
-    //  dd($type_contribuables);
+        $type_contribuables = TypeContribuable::where('mairie_id', $mairie_id)->get();
 
 
         return view('agent.contribuable.create', compact('secteurs', 'taxes', 'num_commerce', 'agent', 'warningMessage','type_contribuables'));
     }
+        
+public function store(StoreCommercantRequest $request, QrCodeService $qrCodeService)
+{
+    $validatedData = $request->validated();
+    $agent = $request->user('agent');
+
+    $commercant = null;
+    
+    $profilPath = null;
+    $rectoPath = null;
+    $versoPath = null;
+
+    try {
+        if ($request->hasFile('photo_profil')) {
+            $profilPath = $request->file('photo_profil')->store('commercants/profils', 'public');
+        }
+        if ($request->hasFile('photo_recto')) {
+            $rectoPath = $request->file('photo_recto')->store('commercants/pieces', 'public');
+        }
+        if ($request->hasFile('photo_verso')) {
+            $versoPath = $request->file('photo_verso')->store('commercants/pieces', 'public');
+        }
+
+        $commercant = DB::transaction(function () use ($validatedData, $agent, $profilPath, $rectoPath, $versoPath) {
+            
+            $mairie = $agent->mairie;
+            if (!$mairie) {
+                throw new \Exception("L'agent connecté n'est rattaché à aucune mairie.");
+            }
+
+            $commercantData = collect($validatedData)->except('taxe_ids')->all();
+
+            $commercantData['photo_profil'] = $profilPath;
+            $commercantData['photo_recto'] = $rectoPath;
+            $commercantData['photo_verso'] = $versoPath;
+            $commercantData['mairie_id'] = $mairie->id;
+            $commercantData['agent_id'] = $agent->id;
+
+            $newCommercant = Commercant::create($commercantData);
+
+            if (!empty($validatedData['taxe_ids'])) {
+                $newCommercant->taxes()->sync($validatedData['taxe_ids']);
+            }
+
+            return $newCommercant;
+        });
+        
+        if ($commercant) {
+            $qrCodePath = $qrCodeService->generateForCommercant($commercant);
+            $commercant->update(['qr_code_path' => $qrCodePath]);
+        }
+
+        return redirect()
+            ->route('agent.commerce.virtual_card', ['commercant' => $commercant->id])
+            ->with('success', 'Contribuable ajouté avec succès ! Voici sa carte virtuelle.');
+
+    } catch (\Exception $e) {
+        if ($profilPath) Storage::disk('public')->delete($profilPath);
+        if ($rectoPath) Storage::disk('public')->delete($rectoPath);
+        if ($versoPath) Storage::disk('public')->delete($versoPath);
+        
+        Log::error("Échec de la création du commerçant : " . $e->getMessage() . "\n" . $e->getTraceAsString());
+        report($e);
+
+        return redirect()->back()
+            ->withInput()
+            ->with('error', 'Une erreur interne est survenue lors de la création du contribuable. L\'administrateur a été notifié.');
+    }
+}
+
+    public function show_virtual_card(Commercant $commercant)
+    {
+        $commercant->load('mairie', 'secteur', 'taxes');
+        return view('agent.contribuable.virtual_carte', compact('commercant'));
+    }
+
+
+
+    public function show(string $id)
+    {
+        //
+    }
+
+
+    public function edit(string $id)
+    {
+        $mairie = Agent::with('commune')->findOrFail($id);
+
+        $regions = Commune::select('region')->distinct()->orderBy('region', 'asc')->get();
+
+        $regionActuelle = $mairie->commune;
+
+        $communesDeLaRegion = Commune::where('id', $regionActuelle)->orderBy('nom', 'asc')->get();
+        // dd($communesDeLaRegion);
+        
+        return view('agent.edit_mairie', compact(
+            'mairie', 
+            'regions', 
+            'communesDeLaRegion'
+        ));
+    }
+
+
 
     public function ajouter_contribuable(Request $request)
     {

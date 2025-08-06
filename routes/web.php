@@ -16,7 +16,7 @@ use App\Http\Controllers\Mairie\TacheController;
 use App\Http\Controllers\Mairie\SecteurController;
 use App\Http\Controllers\Mairie\CommerceController;
 use App\Http\Controllers\Agent\CommerceController as AgentCommerce;
-use App\Http\Controllers\Agent\AgentController as Commercants;
+use App\Http\Controllers\Agent\AgentController as AgentCommercants;
 use App\Http\Controllers\Mairie\VersementController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OrderController;
@@ -303,15 +303,12 @@ Route::middleware(['auth:agent'])->prefix('agent')->name('agent.')->group(functi
     Route::get('/dashboard', fn() => view('agent.dashboard'))->name('dashboard');
 
     Route::prefix('commerce')->name('commerce.')->group(function () {
-        // Route::get('/', [AgentCommerce::class, 'index'])->name('index');
-        // Route::get('/create', [AgentCommerce::class, 'create'])->name('create');
-        // Route::post('/', [AgentCommerce::class, 'store'])->name('store');
-        // Route::put('/{mairie}', [AgentCommerce::class, 'update'])->name('update');
-        Route::resource('/', Commercants::class);
-        // Route::get('/liste/commercant', [Commercants::class, 'get_list_commercants'])->name('get_list_commercants');
-        Route::post('/type-contribuable/ajouter', [Commercants::class, 'ajouter_contribuable'])->name('ajouter_contribuable');
+        Route::resource('/', AgentCommercants::class);
+        Route::get('carte-virtuelle/{commercant}', [AgentCommercants::class, 'show_virtual_card'])->name('virtual_card');
 
-        Route::get('/commerce/list', [Commercants::class, 'get_list_commercants'])->name('list_commercant');
+        Route::post('/type-contribuable/ajouter', [AgentCommercants::class, 'ajouter_contribuable'])->name('ajouter_contribuable');
+
+        Route::get('/commerce/list', [AgentCommercants::class, 'get_list_commercants'])->name('list_commercant');
         Route::get('/get-communes-by-region/{region}', [AgentCommerce::class, 'get_communes'])->name('get_communes');
         Route::get('/liste/data', [AgentCommerce::class, 'get_list_mairie'])->name('get_list_mairie');
     });

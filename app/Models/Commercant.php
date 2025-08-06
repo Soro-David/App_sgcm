@@ -5,36 +5,43 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Sanctum\HasApiTokens;
 
 class Commercant extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $fillable = [
-    'nom',
-    'email',
-    'telephone',
-    'adresse',
-    'secteur_id',
-    'num_commerce',
-    'mot_de_passe',
-    'type_piece',
-    'numero_piece',
-    'autre_type_piece',
-    'photo_profil',
-    'photo_recto',
-    'photo_verso',
-    'autre_images',
-    'mairie_id',
-    'agent_id',
-    'taxe_id',
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+     protected $fillable = [
+        'nom',
+        'email',
+        'telephone',
+        'adresse',
+        'secteur_id',
+        'type_contribuable_id',
+        'num_commerce',
+        'password',
+        'type_piece',
+        'numero_piece',
+        'autre_type_piece',
+        'photo_profil',
+        'photo_recto',
+        'photo_verso',
+        'mairie_id',
+        'agent_id',
+        'qr_code_path',
+        'autre_images',
     ];
 
-    
     protected $casts = [
-        'taxe_id' => 'array',
-        'secteur_id' => 'array',
+        // 'taxes_ids' => 'array',  // C'est correct de l'avoir retiré
+        // 'secteur_id' => 'array', // C'est correct de l'avoir retiré
     ];
 
     public function agent()
@@ -42,35 +49,27 @@ class Commercant extends Authenticatable
         return $this->belongsTo(Agent::class);
     }
 
+
+    public function secteur(): BelongsTo {
+        return $this->belongsTo(Secteur::class);
+    }
+
+
+
+    public function taxes(): BelongsToMany
+    {
+        return $this->belongsToMany(Taxe::class);
+    }
+
+
+
     public function mairie()
     {
         return $this->belongsTo(Mairie::class);
     }
 
-    // Relation personnalisée si tu veux  charger les secteurs depuis le champ JSON
-    public function secteurs()
-    {
-        return $this->belongsToMany(Secteur::class);
-    }
-
-    public function taxes()
-    {
-        return $this->belongsToMany(Taxe::class);
-    }
-
-    public function versement()
-    {
-        return $this->belongsToMany(Versement::class);
-    }
-
-    public function encaissement()
-    {
-        return $this->belongsToMany(Encaissement::class);
-    }
     public function encaissements()
-{
-    return $this->hasMany(Encaissement::class);
-}
-
-    
+    {
+        return $this->hasMany(Encaissement::class);
+    }
 }
