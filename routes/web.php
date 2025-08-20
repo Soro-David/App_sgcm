@@ -10,6 +10,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\MailRegistrationController;
 use App\Http\Controllers\SuperAdmin\MairieController;
+use App\Http\Controllers\SuperAdmin\TaxeController as SuperAdminTaxe;
 use App\Http\Controllers\Mairie\TaxeController;
 use App\Http\Controllers\Mairie\AgentController;
 use App\Http\Controllers\Mairie\TacheController;
@@ -17,10 +18,17 @@ use App\Http\Controllers\Mairie\SecteurController;
 use App\Http\Controllers\Mairie\CommerceController;
 use App\Http\Controllers\Agent\CommerceController as AgentCommerce;
 use App\Http\Controllers\Agent\AgentController as AgentCommercants;
+use App\Http\Controllers\Agent\EncaissementController;
+use App\Http\Controllers\Mairie\EncaissementController as EncaissementMairie;
+use App\Http\Controllers\Mairie\PaiementController as PaiementMairie;
 use App\Http\Controllers\Mairie\VersementController;
+use App\Http\Controllers\Mairie\DashboardController;
+use App\Http\Controllers\Mairie\ComptabiliteController;
+use App\Http\Controllers\Commercant\PayementController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RoleController; 
+
 
 /*
 |--------------------------------------------------------------------------
@@ -61,13 +69,13 @@ Route::get('/agent-logout', fn(Request $request) =>
 
 
 
-// Finalisation inscription
+// Finalisation inscription 
 Route::get('/mairie/finaliser-inscription/{email}', [MailRegistrationController::class, 'showCompletionForm'])->name('mairie.complete-registration.show');
 Route::get('/agent/finaliser-inscription/{email}', [MailRegistrationController::class, 'showCompletionFormAgent'])->name('agent.complete-registration.show');
 Route::post('/mairie/finaliser-inscription', [MailRegistrationController::class, 'completeRegistration'])->name('mairie.complete-registration.store');
 Route::post('/agent/finaliser-inscription', [MailRegistrationController::class, 'completeRegistrationAgent'])->name('agent.complete-registration.store');
 
-// Test mail
+// Test mail 
 Route::get('/test-mail', function () {
     Mail::raw('Test Zoho Mail depuis Laravel', function ($message) {
         $message->to('sorodavi3@zohomail.com')->subject('Test SMTP Laravel');
@@ -88,11 +96,6 @@ Route::get('/dashboard', function () {
     return redirect('/lfogin')->withErrors('Vous devez être connecté.');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Routes protégées
-|--------------------------------------------------------------------------
-*/
 
 // Utilisateur simple (guard: web)
 Route::middleware(['auth:web', 'role:user'])->prefix('user')->name('user.')->group(function () {
@@ -111,11 +114,28 @@ Route::middleware(['auth:web', 'role:user'])->prefix('user')->name('user.')->gro
 
 // Mairie
 Route::middleware(['auth:mairie'])->prefix('mairie')->name('mairie.')->group(function () {
-    Route::get('/dashboard', fn() => view('mairie.dashboard'))->name('dashboard');
+    // Route::get('/dashboard', fn() => view('mairie.dashboard'))->name('dashboard');
+    // Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::prefix('dashboard')->name('dashboard.')->group(function () {
+        
+        Route::get('/', [DashboardController::class, 'index'])->name('index');
+        
+        // CORRECTION : On retire le /dashboard redondant et on utilise le bon nom de méthode
+        Route::get('/users-status', [DashboardController::class, 'getUsersStatus'])->name('users_status');
+
+    });
+
 
     Route::prefix('agents')->name('agents.')->group(function () {
         Route::get('/', [AgentController::class, 'index'])->name('index');
         Route::get('/create', [AgentController::class, 'create'])->name('create');
+
+        //agent de recouvrement et agent de recenssement
+        Route::get('/list-agent', [AgentController::class, 'list_agent'])->name('list_agent');
+        Route::get('/add-agent', [AgentController::class, 'add_agent'])->name('add_agent');
+         Route::post('/recensement-recouvrement', [AgentController::class, 'store_agent'])->name('store_agent');
+         Route::get('/liste/agent', [AgentController::class, 'get_list_agent'])->name('get_list_agent');
 
         Route::get('/programmer-agent', [AgentController::class, 'programer_agent'])->name('programme_agent');
         Route::post('/programmer-agent/store', [AgentController::class, 'storeProgramme'])->name('store_programme_agent');
@@ -153,11 +173,23 @@ Route::middleware(['auth:mairie'])->prefix('mairie')->name('mairie.')->group(fun
         Route::resource('/', TaxeController::class);
        
     });
+    Route::prefix('encaissement')->name('encaissement.')->group(function () {
+        // Route pour afficher la page avec la table 
+        Route::get('/', [EncaissementMairie::class, 'index'])->name('index');
+        Route::get('/get-list', [EncaissementMairie::class, 'get_list_encaissement'])->name('get_list');
+    });
+
+    Route::prefix('paiement')->name('paiement.')->group(function () {
+        // Route pour afficher la page avec la table
+        Route::get('/', [PaiementMairie::class, 'index'])->name('index');
+        Route::get('/get-list', [PaiementMairie::class, 'get_list_paiement'])->name('get_list');
+    });
      Route::prefix('taches')->name('taches.')->group(function () {
         Route::get('/', [TacheController::class, 'index'])->name('index');
         Route::resource('/', TacheController::class);
 
         Route::get('/list', [TacheController::class, 'list_tache'])->name('list_tache');
+        
         Route::get('/liste/data', [TacheController::class, 'get_list_taches'])->name('get_list_tache');
         Route::get('/shwo', [TacheController::class, 'show'])->name('show');
 
@@ -184,11 +216,37 @@ Route::middleware(['auth:mairie'])->prefix('mairie')->name('mairie.')->group(fun
         Route::get('/generer-code', [SecteurController::class, 'genererCodeSecteurAjax'])->name('genererCode');
     });
 
-    Route::prefix('versements')->name('versements.')->group(function () {
-        Route::resource('/', VersementController::class);
-        Route::get('/{agent_id}', [VersementController::class, 'get_montant_non_verse'])->name('montant_nonverse');
-        Route::get('/liste', [VersementController::class, 'get_liste_versement'])->name('versements_liste');
 
+    Route::prefix('versements')->name('versements.')->group(function () {
+        Route::get('/', [VersementController::class, 'index'])->name('index');
+        Route::get('/create', [VersementController::class, 'create'])->name('create');
+        Route::post('/store', [VersementController::class, 'store'])->name('store');
+        // Route AJAX pour récupérer la liste des versements (pour DataTables) 
+        Route::get('/liste-ajax', [VersementController::class, 'get_liste_versement'])->name('versements_liste');
+        
+        // Route AJAX pour récupérer les montants d'un agent
+        Route::get('/get-montant/agent/{agent}', [VersementController::class, 'get_montant_non_verse'])->name('montant_nonverse');
+        
+    });
+
+    Route::prefix('comptabilite')->name('comptabilite.')->group(function () {
+        Route::get('/', [ComptabiliteController::class, 'index'])->name('index');
+        Route::get('/journal-depense', [ComptabiliteController::class, 'journal_depense'])->name('journal_depense');
+        Route::get('/journal-recette', [ComptabiliteController::class, 'journal_recette'])->name('journal_recette');
+
+        Route::post('/store/journal-depense', [ComptabiliteController::class, 'store_journal_depense'])->name('store_journal_depense');
+        Route::post('/store/journal-recette', [ComptabiliteController::class, 'store_journal_recette'])->name('store_journal_recette');
+
+        Route::post('/journal-recette/recette-effectuee', [ComptabiliteController::class, 'recette_effectuee'])->name('recette_effectuee');
+
+        Route::post('/store', [ComptabiliteController::class, 'store'])->name('store');
+        Route::get('/liste-ajax', [ComptabiliteController::class, 'get_liste_versement'])->name('versements_liste');
+        
+        // Route AJAX pour récupérer les montants d'un agent
+        Route::get('/get-montant/agent/{agent}', [ComptabiliteController::class, 'get_montant_non_verse'])->name('montant_nonverse');
+        
+        Route::get('/journal-recette/export-pdf', [ComptabiliteController::class, 'exportPdf'])->name('journal_recette.export_pdf');
+        Route::get('/journal-recette/export-excel', [ComptabiliteController::class, 'exportExcel'])->name('journal_recette.export_excel');
     });
 
 
@@ -207,7 +265,8 @@ Route::middleware(['auth:mairie'])->prefix('mairie')->name('mairie.')->group(fun
 
 // financier
 Route::middleware(['auth:commercant'])->prefix('commercant')->name('commercant.')->group(function () {
-    Route::get('/dashboard', fn() => view('commercant.dashboard'))->name('dashboard');
+    // Route::get('/dashboard', fn() => view('commercant.dashboard'))->name('dashboard');
+     Route::get('/dashboard', [AuthController::class, 'showDashboard'])->name('dashboard');
 
     Route::prefix('agents')->name('agents.')->group(function () {
         Route::get('/', [AgentController::class, 'index'])->name('index');
@@ -224,6 +283,17 @@ Route::middleware(['auth:commercant'])->prefix('commercant')->name('commercant.'
         Route::delete('/{mairie}', [AgentController::class, 'destroy'])->name('destroy');
         Route::get('/get-communes-by-region/{region}', [AgentController::class, 'get_communes'])->name('get_communes');
         Route::get('/liste/data', [AgentController::class, 'get_list_mairie'])->name('get_list_mairie');
+    });
+
+    Route::prefix('payement')->name('payement.')->group(function () {
+        // Route::get('/', [PayementController::class, 'index'])->name('index');
+        Route::resource('/', PayementController::class);
+        // Route::get('/', [PayementController::class, 'create'])->name('create');
+        Route::get('/taxes', [PayementController::class, 'listTaxes'])->name('taxes');
+        Route::post('/effectuer', [PayementController::class, 'effectuer_paiement'])->name('effectuer');
+        Route::get('/historique', [PayementController::class, 'historique'])->name('historique');
+        // Le paramètre {taxeId} est plus explicite
+        Route::get('/periodes/{taxeId}', [PayementController::class, 'periodes_impayees'])->name('periodes_impayees');
     });
 
      Route::prefix('commerce')->name('commerce.')->group(function () {
@@ -305,6 +375,12 @@ Route::middleware(['auth:agent'])->prefix('agent')->name('agent.')->group(functi
     Route::prefix('commerce')->name('commerce.')->group(function () {
         Route::resource('/', AgentCommercants::class);
         Route::get('carte-virtuelle/{commercant}', [AgentCommercants::class, 'show_virtual_card'])->name('virtual_card');
+        Route::get('/commerce/{commercant}/edit', [AgentCommercants::class, 'edit_commercant'])->name('commerce_edit');
+        Route::put('/commerce/{commercant}', [AgentCommercants::class, 'update_commercant'])->name('commerce_update');
+
+
+        Route::get('carte-virtuelle/edit/{commercant}', [AgentCommercants::class, 'edit_virtual_card'])->name('virtual_card');
+        
 
         Route::post('/type-contribuable/ajouter', [AgentCommercants::class, 'ajouter_contribuable'])->name('ajouter_contribuable');
 
@@ -322,6 +398,13 @@ Route::middleware(['auth:agent'])->prefix('agent')->name('agent.')->group(functi
     Route::prefix('roles')->name('roles.')->group(function () {
         Route::get('/', [RoleController::class, 'index'])->name('index');
         Route::post('/assign', [RoleController::class, 'assign'])->name('assign');
+    });
+
+
+    Route::prefix('encaissement')->name('encaissement.')->group(function () {
+        Route::get('/liste-commercants', [EncaissementController::class, 'get_list_commercant'])->name('get_list_commercant');
+        Route::get('/details-taxe/{commercantId}/{taxeId}', [EncaissementController::class, 'getTaxeDetails'])->name('get_taxe_details');
+        Route::resource('/', EncaissementController::class)->parameters(['' => 'encaissement']);
     });
 
     Route::post('/logout', function (Request $request) {
@@ -348,16 +431,16 @@ Route::middleware(['auth:web', 'role:superadmin'])->prefix('super/admin')->name(
         Route::get('/liste/data', [MairieController::class, 'get_list_mairie'])->name('get_list_mairie');
     });
     Route::prefix('taxes')->name('taxes.')->group(function () {
-        Route::get('/', [TaxeController::class, 'index'])->name('index');
-        Route::get('/create', [TaxeController::class, 'create'])->name('create');
-        Route::post('/', [TaxeController::class, 'store'])->name('store');
-        Route::get('/{mairie}/edit', [TaxeController::class, 'edit_taxe'])->name('edit');
-        Route::get('/mairies/{id}/infos', [TaxeController::class, 'get_infos_mairie'])->name('infos.mairie');
-        Route::put('/{mairie}', [TaxeController::class, 'update'])->name('update');
-        Route::delete('/{mairie}', [TaxeController::class, 'destroy'])->name('destroy');
-        Route::get('/get-communes-by-region/{region}', [TaxeController::class, 'get_communes'])->name('get_communes');
-        Route::get('/liste/data', [TaxeController::class, 'get_list_taxes'])->name('get_list_taxes');
-        Route::get('/mairie-list', [TaxeController::class, 'get_mairie_taxe_list'])->name('mairie.list');
+        Route::get('/', [SuperAdminTaxe::class, 'index'])->name('index');
+        Route::get('/create', [SuperAdminTaxe::class, 'create'])->name('create');
+        Route::post('/', [SuperAdminTaxe::class, 'store'])->name('store');
+        Route::get('/{mairie}/edit', [SuperAdminTaxe::class, 'edit_taxe'])->name('edit');
+        Route::get('/mairies/{id}/infos', [SuperAdminTaxe::class, 'get_infos_mairie'])->name('infos.mairie');
+        Route::put('/{mairie}', [SuperAdminTaxe::class, 'update'])->name('update');
+        Route::delete('/{mairie}', [SuperAdminTaxe::class, 'destroy'])->name('destroy');
+        Route::get('/get-communes-by-region/{region}', [SuperAdminTaxe::class, 'get_communes'])->name('get_communes');
+        Route::get('/liste/data', [SuperAdminTaxe::class, 'get_list_taxes'])->name('get_list_taxes');
+        Route::get('/mairie-list', [SuperAdminTaxe::class, 'get_mairie_taxe_list'])->name('mairie.list');
 
     });
 });

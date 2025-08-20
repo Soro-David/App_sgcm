@@ -11,7 +11,7 @@
         </li>
 
         {{-- Gestion des Mairies --}}
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link d-flex justify-content-between align-items-center" 
                data-bs-toggle="collapse" 
                href="#menu-mairies" 
@@ -33,6 +33,13 @@
                     </li>
                 </ul>
             </div>
+        </li> --}}
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('superadmin.mairies.index') }}">
+                <i class="typcn typcn-group menu-icon"></i>
+                <span class="menu-title">Gestion des Mairies</span>
+            </a>
         </li>
 
         {{-- Gestion des Taxes --}}

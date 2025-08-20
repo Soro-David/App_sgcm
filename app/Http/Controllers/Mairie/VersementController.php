@@ -34,7 +34,6 @@ class VersementController extends Controller
     {
         $mairieId = Auth::guard('mairie')->id();
 
-        // dd($mairieId);
         // Récupère les IDs des agents de la mairie
         $agentIds = Agent::where('mairie_id', $mairieId)->pluck('id');
 
@@ -43,11 +42,8 @@ class VersementController extends Controller
             ->pluck('agent_id')
             ->unique();
 
-        // dd($encaissementAgentIds);
-
         // Récupère les agents correspondants avec leurs noms
         $agents = Agent::whereIn('id', $encaissementAgentIds)->get();
-        // dd($agents);
 
         return view('mairie.versement.create', compact('agents'));
     }
@@ -123,60 +119,58 @@ public function store(Request $request)
         //
     }
 
+    /**
+     * Fournit la liste des versements pour DataTables avec un traitement serveur optimisé.
+     */
     public function get_liste_versement(Request $request)
     {
-        $mairieId = auth()->guard('mairie')->id();
+        if (!$request->ajax()) {
+            abort(403);
+        }
 
-        $versements = Versement::with('agent')
-            ->whereHas('agent', function ($query) use ($mairieId) {
-                $query->where('mairie_id', $mairieId);
-            })
-            ->latest()
-            ->get();
+        $mairieId = Auth::guard('mairie')->id();
 
-        return datatables()->of($versements)
+        $query = Versement::where('mairie_id', $mairieId)
+            ->with('agent:id,name')
+            ->select('versements.*');
+
+        return DataTables::of($query)
             ->addColumn('nom_agent', function ($versement) {
-                return $versement->agent ? $versement->agent->nom . ' ' . $versement->agent->prenom : '';
+                return $versement->agent ? e($versement->agent->name) : '<span class="text-danger">Agent supprimé</span>';
             })
-            ->addColumn('date_creation', function ($versement) {
-                return $versement->created_at->format('d/m/Y H:i');
+            ->editColumn('created_at', function ($versement) {
+                return $versement->created_at->format('d/m/Y à H:i');
             })
-            ->addColumn('montant_percu', function ($versement) {
-                return number_format($versement->montant_percu, 0, ',', ' ') . ' F';
+            ->editColumn('montant_percu', function ($versement) {
+                return number_format($versement->montant_percu, 0, ',', ' ') . ' FCFA';
             })
-            ->addColumn('montant_verse', function ($versement) {
-                return number_format($versement->montant_verse, 0, ',', ' ') . ' F';
+            ->editColumn('montant_verse', function ($versement) {
+                return number_format($versement->montant_verse, 0, ',', ' ') . ' FCFA';
             })
-            ->addColumn('reste', function ($versement) {
-                $reste = $versement->montant_percu - $versement->montant_verse;
-                return number_format($reste, 0, ',', ' ') . ' F';
+            ->editColumn('reste', function ($versement) {
+                return '<b>' . number_format($versement->reste, 0, ',', ' ') . ' FCFA</b>';
             })
-            ->addColumn('actions', function ($versement) {
-                return '<a href="#" class="btn btn-sm btn-info">Voir</a>';
-            })
-            ->rawColumns(['actions'])
+            
+            ->rawColumns(['reste', 'nom_agent'])
             ->make(true);
     }
 
-
     public function get_montant_non_verse($agent_id)
     {
-        // Récupère le dernier versement effectué par cet agent (le plus récent)
         $dernierVersement = Versement::where('agent_id', $agent_id)
             ->orderByDesc('created_at')
             ->first();
 
-        // On récupère 'reste' mais on le renomme en 'dette' dans la réponse
         $dette = $dernierVersement ? $dernierVersement->reste : 0;
 
         // Somme des encaissements non encore versés
         $montantPercu = Encaissement::where('agent_id', $agent_id)
             ->where('statut', 'non verser')
-            ->sum('montant_verse');
+            ->sum('montant_percu');
 
         return response()->json([
             'montant' => $montantPercu,
-            'dette' => $dette  // <- même si ça vient de 'reste', on continue d'appeler ça 'dette' côté JS/vue
+            'dette' => $dette
         ]);
     }
 

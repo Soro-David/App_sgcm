@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Commercant;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Taxe; 
-use App\Models\PayementTaxe;
+use App\Models\PaiementTaxe;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -86,7 +86,7 @@ class CommercantController extends Controller
             return response()->json(['message' => 'Vous n\'êtes pas autorisé à payer cette taxe.'], 403);
         }
 
-        $paiement = PayementTaxe::create([
+        $paiement = PaiementTaxe::create([
             'mairie_id' => $commercant->mairie_id,
             'secteur_id' => $commercant->secteur_id,
             'taxe_id' => $validatedData['taxe_id'],
@@ -107,7 +107,7 @@ class CommercantController extends Controller
     {
         $commercant = $request->user();
 
-        $historique = PayementTaxe::where('num_commerce', $commercant->num_commerce)
+        $historique = PaiementTaxe::where('num_commerce', $commercant->num_commerce)
             ->with('taxe:id,nom') 
             ->orderBy('created_at', 'desc')
             ->paginate(20);

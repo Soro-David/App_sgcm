@@ -5,9 +5,9 @@ $(document).ready(function () {
         ajax: {
             url: $('#commercantsTable').data('ajax-url'),
             type: 'GET',
-            error: function (xhr, error, thrown) {
+            error: function (xhr) {
                 console.error('Erreur AJAX DataTables:', xhr.responseText);
-                alert('Erreur lors du chargement des données. Voir console.');
+                alert('Erreur lors du chargement des données.');
             }
         },
         language: {
@@ -23,4 +23,17 @@ $(document).ready(function () {
         ],
     });
 
+    // ✅ Redirection au clic sur une ligne, sauf colonne Action
+    $('#commercantsTable tbody').on('click', 'tr', function (e) {
+        // Empêche la redirection si le clic vient de la dernière colonne (action)
+        const columnIndex = $(e.target).closest('td').index();
+        const totalColumns = $('#commercantsTable thead th').length;
+        if (columnIndex === totalColumns - 1) return;
+
+        const data = table.row(this).data();
+        if (data && data.id) {
+            const url = `/agent/commerce/carte-virtuelle/edit/${data.id}`;
+            window.location.href = url;
+        }
+    });
 });

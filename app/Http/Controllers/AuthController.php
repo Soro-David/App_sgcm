@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Commercant;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -55,41 +56,41 @@ class AuthController extends Controller
 
         if (Auth::guard('mairie')->attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->route('mairie.dashboard');
+            return redirect()->route('mairie.dashboard.index');
         }
 
         return back()->withErrors(['email' => 'Identifiants mairie incorrects.']);
     }
 
 
+
     public function login_commercant(Request $request)
-{
-    $credentials = $request->validate([
-        'num_commerce' => 'required',
-        'password' => 'required',
-    ]);
+    {
+        $credentials = $request->validate([
+            'num_commerce' => 'required|string',
+            'password' => 'required',
+        ]);
 
-    $this->logoutAllGuards($request);
+        if (Auth::guard('commercant')->attempt($credentials)) {
+            $request->session()->regenerate();
+            
+            return redirect()->intended(route('commercant.dashboard'));
+        }
 
-    // Adapter les credentials pour utiliser le champ `password`
-    $attemptCredentials = [
-        'num_commerce' => $credentials['num_commerce'],
-        'password' => $credentials['password'],
-    ];
-
-    // dd($attemptCredentials);
-    if (Auth::guard('commercant')->attempt($attemptCredentials)) {
-        // dd($attemptCredentials);
-
-        $request->session()->regenerate();
-        return redirect()->route('commercant.dashboard');
+        return back()->withErrors([
+            'num_commerce' => 'Le numéro de commerce ou le mot de passe est incorrect.',
+        ])->withInput($request->only('num_commerce'));
     }
 
-    return back()->withErrors([
-        'email' => 'Identifiants incorrects.',
-    ]);
-}
 
+    public function showDashboard()
+    {
+        $commercant = Auth::guard('commercant')->user();
+
+        $commercant->load('mairie', 'secteur', 'taxes', 'typeContribuable');
+
+        return view('commercant.dashboard', compact('commercant'));
+    }
 
     public function login_agent(Request $request)
     {

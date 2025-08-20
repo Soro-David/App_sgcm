@@ -31,7 +31,7 @@ return new class extends Migration
             $table->foreignId('agent_id')->constrained()->onDelete('cascade');
             $table->foreignId('mairie_id')->constrained()->onDelete('cascade');
             $table->foreignId('secteur_id')->constrained()->onDelete('cascade');
-            $table->foreignId('type_contribuable_id')->nullable() ->constrained('type_contribuables')->onDelete('set null');
+            $table->foreignId('type_contribuable_id')->nullable()->onDelete('set null');
 
             // Champs JSON
             // $table->json('taxe_id')->nullable();

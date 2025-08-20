@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('agent_id')->constrained()->onDelete('cascade');
             $table->foreignId('mairie_id')->constrained()->onDelete('cascade');
             $table->string('num_commerce')->nullable();
-            $table->string('montant_verse')->nullable();
+            $table->string('montant_percu')->nullable();
             $table->string('statut')->default('non versé');
             $table->timestamps();
         });

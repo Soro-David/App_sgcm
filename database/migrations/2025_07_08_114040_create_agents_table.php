@@ -19,9 +19,18 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
+            $table->timestamp('last_activity')->nullable();
             $table->string('otp_code')->nullable();
             $table->timestamp('otp_expires_at')->nullable();
             $table->string('status')->default('pending');
+
+            $table->string('type_piece')->nullable();
+            $table->string('numero_piece')->nullable();
+            $table->string('genre')->nullable();
+            $table->date('date_naissance')->nullable();
+            $table->string('adresse')->nullable();
+            $table->string('telephone1')->nullable();
+            $table->string('telephone2')->nullable();
 
             $table->json('taxe_id')->nullable();
             $table->json('secteur_id')->nullable();

@@ -73,6 +73,22 @@
   border-radius: 6px;
   border: 3px solid #009E60;
 }
+
+.sidebar .nav .nav-category {
+  padding: 12px 25px 8px; 
+  margin-top: 15px; 
+  color: #a0a0a0;  
+  font-size: 0.75rem; 
+  font-weight: 700;   
+  text-transform: uppercase; 
+  letter-spacing: 1px; 
+  background: none;   
+}
+
+
+.sidebar .nav .nav-category:hover {
+  background: transparent; 
+}
 .sidebar .nav {
   overflow: hidden;
   flex-wrap: nowrap;
@@ -315,5 +331,20 @@
     font-size: 1.5rem;       /* Texte plus grand */
     font-weight: 600;        /* Texte un peu plus épais */
     border-radius: 8px;      /* Coins légèrement arrondis */
+}
+
+    /* Appliquer un hover visuel + curseur sauf sur la colonne "Action" */
+    #commercantsTable tbody tr:hover {
+        background-color: #881313;
+        cursor: pointer;
+    }
+
+    /* Désactiver le pointeur sur les boutons dans la colonne Action */
+    #commercantsTable tbody td:last-child {
+        cursor: default;
+    }
+
+    .camera-modal {
+    backdrop-filter: blur(4px);
 }
 

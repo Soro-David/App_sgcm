@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use App\Models\Commercant;
 use App\Models\Taxe;
-use App\Models\PayementTaxe;
+use App\Models\PaiementTaxe;
 use App\Models\Encaissement;
 use App\Models\Agent;
 
@@ -69,7 +69,7 @@ class AgentRecouvrementController extends Controller
             return response()->json(['message' => "Cette taxe n'est pas assignée à ce commerçant."], 403);
         }
 
-        $dernierPaiement = PayementTaxe::where('num_commerce', $commercant->num_commerce)
+        $dernierPaiement = PaiementTaxe::where('num_commerce', $commercant->num_commerce)
                             ->where('taxe_id', $taxe->id)
                             ->orderByDesc('periode')
                             ->first();
@@ -121,7 +121,7 @@ class AgentRecouvrementController extends Controller
         try {
             DB::beginTransaction();
             foreach ($periodesPayees as $periode) {
-                $existe = PayementTaxe::where('num_commerce', $commercant->num_commerce)
+                $existe = PaiementTaxe::where('num_commerce', $commercant->num_commerce)
                             ->where('taxe_id', $taxe->id)
                             ->where('periode', $periode)
                             ->exists();
@@ -129,7 +129,7 @@ class AgentRecouvrementController extends Controller
                     continue;
                 }
 
-                PayementTaxe::create([
+                PaiementTaxe::create([
                     'mairie_id'    => $commercant->mairie_id,
                     'secteur_id'   => $commercant->secteur_id,
                     'taxe_id'      => $taxe->id,
@@ -190,7 +190,7 @@ class AgentRecouvrementController extends Controller
             ], 403);
         }
 
-        $dernierPaiement = PayementTaxe::where('num_commerce', $numCommerce)
+        $dernierPaiement = PaiementTaxe::where('num_commerce', $numCommerce)
                                         ->where('taxe_id', $taxeId)
                                         ->orderByDesc('periode')
                                         ->first();

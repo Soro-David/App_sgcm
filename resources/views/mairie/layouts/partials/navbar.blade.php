@@ -33,9 +33,9 @@
               </a>
             </div>
           </li>
-          <li class="nav-item nav-user-status dropdown">
+          {{-- <li class="nav-item nav-user-status dropdown">
               <p class="mb-0">Last login was 23 hours ago.</p>
-          </li>
+          </li> --}}
         </ul>
         <ul class="navbar-nav navbar-nav-right">
           <li class="nav-item nav-date dropdown">

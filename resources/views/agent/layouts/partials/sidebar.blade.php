@@ -37,11 +37,18 @@
       {{-- Pour les agents de type "recouvrement" --}}
       @if($agent && $agent->type === 'recouvrement')
             <li class="nav-item">
-              <a class="nav-link" href="">
+              <a class="nav-link" href="{{ route('agent.encaissement.index') }}">
                 <i class="typcn typcn-group-outline menu-icon"></i>
-                <span class="menu-title">Recouvrement</span>
+                <span class="menu-title">Liste des commerçants</span>
               </a>
             </li>
+
+            {{-- <li class="nav-item">
+              <a class="nav-link" href="{{ route('agent.encaissement.create') }}">
+                <i class="typcn typcn-group-outline menu-icon"></i>
+                <span class="menu-title">Encaissement</span>
+              </a>
+            </li> --}}
       @endif
 
       {{-- Pour les agents de type "admin" --}}

@@ -26,7 +26,15 @@ class Agent extends Authenticatable
         'mairie_id',
         'remember_token',
         'taxe_id',
-        'secteur_id'
+        'secteur_id',
+        'genre',
+        'date_naissance',
+        'type_piece',
+        'numero_piece',
+        'adresse',
+        'telephone1',
+        'telephone2',
+        'last_activity',
     ];
 
     protected $casts = [
@@ -61,4 +69,16 @@ class Agent extends Authenticatable
     {
         return $this->hasMany(Encaissement::class, 'agent_id');
     }
+
+    public function logs()
+    {
+        return $this->morphMany(UserLog::class, 'user');
+    }
+
+    public function isOnline()
+{
+    return $this->last_activity && $this->last_activity->gt(now()->subMinutes(5));
+}
+
+
 }

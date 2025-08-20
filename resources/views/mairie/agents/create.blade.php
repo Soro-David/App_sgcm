@@ -21,7 +21,7 @@
             <form method="POST" action="{{ route('mairie.agents.store') }}">
                 @csrf
 
-            <div class="row">
+                <div class="row">
                     {{-- Nom & Prénoms --}}
                     <div class="col-md-6 mb-4">
                         <label for="name" class="form-label">Nom & Prénoms *</label>
@@ -63,7 +63,7 @@
                         <select name="type_agent" id="type_agent" class="form-select" required>
                             <option value="" disabled selected>-- Sélectionnez un type d'agent --</option>
                             <option value="financié" {{ old('type_agent') == 'financié' ? 'selected' : '' }}>Financier</option>
-                            <option value="caisié" {{ old('type_agent') == 'caisié' ? 'selected' : '' }}>Caisier(ère)</option>
+                            <option value="caisié" {{ old('type_agent') == 'caisié' ? 'selected' : '' }}>Caissier(ère)</option>
                         </select>
                     </div>
                     {{-- Lieu d'habitation --}}
@@ -88,7 +88,12 @@
                     </div>
                 </div>
 
-                <input type="hidden" name="mairie_id" value="{{ $mairieId }}">
+                <input type="hidden" name="mairie_id" value="{{ $mairie->id }}">
+                @if($mairie->commune)
+                    <input type="hidden" name="region" value="{{ $mairie->region }}">
+                    <input type="hidden" name="commune" value="{{ $mairie->commune }}">
+                @endif
+
 
                 {{-- Boutons --}}
                 <div class="d-flex justify-content-end mt-5">

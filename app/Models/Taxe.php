@@ -36,7 +36,7 @@ class Taxe extends Model
     }
     public function payement_taxe()
     {
-        return $this->belongsToMany(PayementTaxe::class);
+        return $this->belongsToMany(PaiementTaxe::class);
     }
 
 }

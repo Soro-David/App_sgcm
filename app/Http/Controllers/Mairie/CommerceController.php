@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Secteur;
 use App\Models\Commercant;
+use App\Models\Mairie;
 use App\Models\Taxe;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -24,7 +25,6 @@ class CommerceController extends Controller
     {
         $commercant = Commercant::findOrFail($id);
 
-        // Ici taxe_id et secteur_id sont déjà des tableaux grâce aux casts
         return view('mairie.commercant.show', compact('commercant'));
     }
 
@@ -98,35 +98,42 @@ class CommerceController extends Controller
 
     public function get_list_commercants(Request $request)
     {
-        $mairie = Auth::guard('mairie')->user();
+        $mairieConnectee = Auth::guard('mairie')->user();
 
-        if (!$mairie) {
+        if (!$mairieConnectee) {
             return response()->json(['error' => 'Non autorisé'], 403);
         }
 
-        // Ajuste selon ta structure : souvent c’est $mairie->id
-        $mairieId = $mairie->mairie_id ?? $mairie->id;
+        $mairieIds = Mairie::where('region', $mairieConnectee->region)
+                        ->where('commune', $mairieConnectee->commune)
+                        ->pluck('id');
 
-        $commercants = Commercant::where('mairie_id', $mairieId)
-                                ->select(['id', 'nom','num_commerce', 'email', 'telephone', 'created_at'])
-                                ->orderBy('created_at', 'desc');
+        $commercants = Commercant::whereIn('mairie_id', $mairieIds)
+            ->select([
+                'id', 
+                'nom', 
+                'num_commerce', 
+                'email', 
+                'telephone', 
+                'created_at'
+            ]);
 
         return datatables()->of($commercants)
-            ->addColumn('action', function ($row) {
-                // $detailUrl = route('mairie.commerce.show', $row->id);
-                $editUrl = route('mairie.commerce.edit', $row->id);
-                $deleteUrl = route('mairie.commerce.destroy', $row->id);
+            ->addColumn('action', function ($commercant) {
+                $editUrl = route('mairie.commerce.edit', $commercant->id);
+                $deleteUrl = route('mairie.commerce.destroy', $commercant->id); 
+
                 return '
                     <a href="' . $editUrl . '" class="btn btn-sm btn-warning me-1" title="Modifier">
                         <i class="fas fa-edit"></i>
                     </a>
-                    <button class="btn btn-sm btn-danger" onclick="deleteCommercant(' . $row->id . ')" title="Supprimer">
+                    <button class="btn btn-sm btn-danger btn-delete" data-url="' . $deleteUrl . '" title="Supprimer">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 ';
             })
-            ->editColumn('created_at', function ($row) {
-                return $row->created_at->format('d/m/Y H:i');
+            ->editColumn('created_at', function ($commercant) {
+                return \Carbon\Carbon::parse($commercant->created_at)->format('d/m/Y à H:i');
             })
             ->rawColumns(['action'])
             ->make(true);

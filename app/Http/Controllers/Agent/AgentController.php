@@ -85,29 +85,27 @@ class AgentController extends Controller
             return response()->json(['error' => 'Non autorisé'], 403);
         }
 
-        // Ajuste selon ta structure : souvent c’est $mairie->id
         $mairieId = $mairie->mairie_id ?? $mairie->id;
 
         $commercants = Commercant::where('mairie_id', $mairieId)
                                 ->select(['id', 'nom','num_commerce', 'email', 'telephone', 'created_at'])
                                 ->orderBy('created_at', 'desc');
 
-
-                                // dd($commercants);
         return datatables()->of($commercants)
+            
             ->addColumn('action', function ($row) {
-                // $detailUrl = route('mairie.commerce.show', $row->id);
-                $editUrl = route('agent.commerce.edit', $row->id);
+                $editCardUrl = route('agent.commerce.commerce_edit', $row->id);
                 $deleteUrl = route('agent.commerce.destroy', $row->id);
                 return '
-                    <a href="' . $editUrl . '" class="btn btn-sm btn-warning me-1" title="Modifier">
-                        <i class="fas fa-edit"></i>
+                    <a href="' . $editCardUrl . '" class="btn btn-sm btn-primary me-1" title="Voir carte virtuelle">
+                        <i class="fas fa-id-card"></i>
                     </a>
                     <button class="btn btn-sm btn-danger" onclick="deleteCommercant(' . $row->id . ')" title="Supprimer">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 ';
             })
+
             ->editColumn('created_at', function ($row) {
                 return $row->created_at->format('d/m/Y H:i');
             })
@@ -185,6 +183,7 @@ class AgentController extends Controller
         $taxeIds = is_array($agent->taxe_id) ? $agent->taxe_id : (!is_null($agent->taxe_id) ? json_decode($agent->taxe_id, true) : []);
         $secteurIds = is_array($agent->secteur_id) ? $agent->secteur_id : (!is_null($agent->secteur_id) ? json_decode($agent->secteur_id, true) : []);
 
+        // dd( $secteurIds);
         // Message d’avertissement si vide
         $warningMessage = null;
         if (empty($taxeIds) || empty($secteurIds)) {
@@ -195,80 +194,92 @@ class AgentController extends Controller
         $taxes = Taxe::whereIn('id', $taxeIds)->get();
         $secteurs = Secteur::whereIn('id', $secteurIds)->get();
 
+        $nomsSecteurs = $secteurs->map(function($secteur) {
+            return [
+                'id' => $secteur->id,
+                'nom' => $secteur->nom
+            ];
+        });
+
+        // dd($nomsSecteurs);
+
         $type_contribuables = TypeContribuable::where('mairie_id', $mairie_id)->get();
 
 
-        return view('agent.contribuable.create', compact('secteurs', 'taxes', 'num_commerce', 'agent', 'warningMessage','type_contribuables'));
+        return view('agent.contribuable.create', compact('secteurs','nomsSecteurs', 'taxes', 'num_commerce', 'agent', 'warningMessage','type_contribuables'));
     }
         
-public function store(StoreCommercantRequest $request, QrCodeService $qrCodeService)
-{
-    $validatedData = $request->validated();
-    $agent = $request->user('agent');
+    public function store(StoreCommercantRequest $request, QrCodeService $qrCodeService)
+    {
+        $validatedData = $request->validated();
+        $agent = $request->user('agent');
+        $profilPath = null;
+        $rectoPath = null;
+        $versoPath = null;
 
-    $commercant = null;
-    
-    $profilPath = null;
-    $rectoPath = null;
-    $versoPath = null;
-
-    try {
-        if ($request->hasFile('photo_profil')) {
-            $profilPath = $request->file('photo_profil')->store('commercants/profils', 'public');
-        }
-        if ($request->hasFile('photo_recto')) {
-            $rectoPath = $request->file('photo_recto')->store('commercants/pieces', 'public');
-        }
-        if ($request->hasFile('photo_verso')) {
-            $versoPath = $request->file('photo_verso')->store('commercants/pieces', 'public');
-        }
-
-        $commercant = DB::transaction(function () use ($validatedData, $agent, $profilPath, $rectoPath, $versoPath) {
-            
-            $mairie = $agent->mairie;
-            if (!$mairie) {
-                throw new \Exception("L'agent connecté n'est rattaché à aucune mairie.");
+        try {
+            // Upload fichiers
+            if ($request->hasFile('photo_profil')) {
+                $profilPath = $request->file('photo_profil')->store('commercants/profils', 'public');
+                $validatedData['photo_profil'] = $profilPath;
             }
 
-            $commercantData = collect($validatedData)->except('taxe_ids')->all();
-
-            $commercantData['photo_profil'] = $profilPath;
-            $commercantData['photo_recto'] = $rectoPath;
-            $commercantData['photo_verso'] = $versoPath;
-            $commercantData['mairie_id'] = $mairie->id;
-            $commercantData['agent_id'] = $agent->id;
-
-            $newCommercant = Commercant::create($commercantData);
-
-            if (!empty($validatedData['taxe_ids'])) {
-                $newCommercant->taxes()->sync($validatedData['taxe_ids']);
+            if ($request->hasFile('photo_recto')) {
+                $rectoPath = $request->file('photo_recto')->store('commercants/recto', 'public');
+                $validatedData['photo_recto'] = $rectoPath;
             }
 
-            return $newCommercant;
-        });
-        
-        if ($commercant) {
+            if ($request->hasFile('photo_verso')) {
+                $versoPath = $request->file('photo_verso')->store('commercants/verso', 'public');
+                $validatedData['photo_verso'] = $versoPath;
+            }
+
+            $validatedData['agent_id'] = $agent->id;
+            $validatedData['mairie_id'] = $agent->mairie_id;
+
+
+            $commercant = Commercant::create($validatedData);
+
+            if ($request->has('taxe_ids')) {
+                $commercant->taxes()->sync($request->input('taxe_ids'));
+            }
+
+
             $qrCodePath = $qrCodeService->generateForCommercant($commercant);
             $commercant->update(['qr_code_path' => $qrCodePath]);
+
+            $redirectUrl = route('agent.commerce.virtual_card', ['commercant' => $commercant->id]);
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Contribuable ajouté avec succès ! Vous allez être redirigé.',
+                    'redirect_url' => $redirectUrl
+                ]);
+            }
+
+            return redirect($redirectUrl)->with('success', 'Contribuable ajouté avec succès ! Voici sa carte virtuelle.');
+
+        } catch (\Exception $e) {
+            if ($profilPath) Storage::disk('public')->delete($profilPath);
+            if ($rectoPath) Storage::disk('public')->delete($rectoPath);
+            if ($versoPath) Storage::disk('public')->delete($versoPath);
+
+            Log::error("Erreur ajout commerçant : " . $e->getMessage());
+            dd($e);
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Une erreur interne est survenue. L'administrateur a été notifié."
+                ], 500);
+            }
+
+            return redirect()->back()
+                ->withInput()
+                ->with('error', "Une erreur interne est survenue. L'administrateur a été notifié.");
         }
-
-        return redirect()
-            ->route('agent.commerce.virtual_card', ['commercant' => $commercant->id])
-            ->with('success', 'Contribuable ajouté avec succès ! Voici sa carte virtuelle.');
-
-    } catch (\Exception $e) {
-        if ($profilPath) Storage::disk('public')->delete($profilPath);
-        if ($rectoPath) Storage::disk('public')->delete($rectoPath);
-        if ($versoPath) Storage::disk('public')->delete($versoPath);
-        
-        Log::error("Échec de la création du commerçant : " . $e->getMessage() . "\n" . $e->getTraceAsString());
-        report($e);
-
-        return redirect()->back()
-            ->withInput()
-            ->with('error', 'Une erreur interne est survenue lors de la création du contribuable. L\'administrateur a été notifié.');
     }
-}
 
     public function show_virtual_card(Commercant $commercant)
     {
@@ -276,6 +287,12 @@ public function store(StoreCommercantRequest $request, QrCodeService $qrCodeServ
         return view('agent.contribuable.virtual_carte', compact('commercant'));
     }
 
+    public function edit_virtual_card(Commercant $commercant)
+    {
+
+        $commercant->load('mairie', 'secteur', 'taxes');
+        return view('agent.contribuable.virtual_carte', compact('commercant'));
+    }
 
 
     public function show(string $id)
@@ -284,24 +301,54 @@ public function store(StoreCommercantRequest $request, QrCodeService $qrCodeServ
     }
 
 
-    public function edit(string $id)
+    public function edit_commercant(Commercant $commercant)
     {
-        $mairie = Agent::with('commune')->findOrFail($id);
+        $agent = Auth::guard('agent')->user();
+        $mairieId = $agent->mairie_id ?? $agent->id;
 
-        $regions = Commune::select('region')->distinct()->orderBy('region', 'asc')->get();
+        if ($commercant->mairie_id !== $mairieId) {
+            abort(403, 'Accès non autorisé à ce commerçant.');
+        }
 
-        $regionActuelle = $mairie->commune;
+        $commercant->load('mairie', 'secteur', 'taxes');
 
-        $communesDeLaRegion = Commune::where('id', $regionActuelle)->orderBy('nom', 'asc')->get();
-        // dd($communesDeLaRegion);
-        
-        return view('agent.edit_mairie', compact(
-            'mairie', 
-            'regions', 
-            'communesDeLaRegion'
-        ));
+        $secteurs = Secteur::where('mairie_id', $mairieId)->get();
+        $taxes = Taxe::where('mairie_id', $mairieId)->get();
+
+        $selectedTaxes = $commercant->taxes->pluck('id')->toArray();
+
+        return view('agent.contribuable.edit', compact('commercant', 'secteurs', 'taxes', 'selectedTaxes'));
     }
 
+
+
+    public function update_commercant(Request $request, Commercant $commercant)
+    {
+        $validated = $request->validate([
+            'nom' => 'required|string|max:255',
+            'email' => 'nullable|email',
+            'telephone' => 'nullable|string|max:20',
+            'adresse' => 'nullable|string|max:255',
+            'secteur_id' => 'required|exists:secteurs,id',
+            'taxe_ids' => 'required|array',
+            'taxe_ids.*' => 'exists:taxes,id',
+        ]);
+
+        $commercant->update($validated);
+        $commercant->taxes()->sync($validated['taxe_ids']);
+        if ($request->hasFile('photo_profil')) {
+            $commercant->photo_profil = $request->file('photo_profil')->store('commercants/photos_profil', 'public');
+        }
+        if ($request->hasFile('photo_recto')) {
+            $commercant->photo_recto = $request->file('photo_recto')->store('commercants/photos_recto', 'public');
+        }
+        if ($request->hasFile('photo_verso')) {
+            $commercant->photo_verso = $request->file('photo_verso')->store('commercants/photos_verso', 'public');
+        }
+
+
+        return redirect()->route('agent.commerce.index')->with('success', 'Commerçant mis à jour avec succès.');
+    }
 
 
     public function ajouter_contribuable(Request $request)

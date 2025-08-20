@@ -29,7 +29,15 @@
                         <div class="col-md-6"><label for="email" class="form-label">Adresse e-mail</label><input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}"></div>
                         <div class="col-md-6"><label for="telephone" class="form-label">Téléphone</label><input type="text" class="form-control" id="telephone" name="telephone" value="{{ old('telephone') }}"></div>
                         <div class="col-md-6"><label for="adresse" class="form-label">Adresse</label><input type="text" class="form-control" id="adresse" name="adresse" value="{{ old('adresse') }}"></div>
-                        <div class="col-md-6"><label for="secteur_id" class="form-label">Secteur</label><select name="secteur_id" id="secteur_id" class="form-select" required><option value="" disabled selected>-- Sélectionnez un secteur --</option>@foreach ($secteurs as $secteur)<option value="{{ $secteur->id }}">{{ $secteur->nom }}</option>@endforeach</select></div>
+                        <div class="col-md-6">
+                            <label for="secteur_id" class="form-label">Secteur</label>
+                            <select name="secteur_id" id="secteur_id" class="form-select" required>
+                                <option value="" disabled selected>-- Sélectionnez un secteur --</option>
+                                    @foreach ($nomsSecteurs as $secteur)
+                                        <option value="{{ $secteur['id'] }}">{{ $secteur['nom'] }}</option>
+                                    @endforeach
+                            </select>
+                        </div>
                         <div class="col-md-6 d-flex align-items-end">
                             <div class="flex-grow-1 me-2">
                                 <label for="type_contribuable" class="form-label">Type Contribuable</label>
@@ -86,6 +94,7 @@
                 </div><br>
 
                 <input type="hidden" name="agent_id" value="{{ optional($agent)->id }}">
+                <input type="hidden" name="mairie_id" value="{{ optional($agent)->mairie_id }}">
 
                 <div class="modal-footer d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary">Enregistrer</button>

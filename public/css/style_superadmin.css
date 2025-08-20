@@ -74,6 +74,22 @@
   border-radius: 6px;
   border: 1px solid #e4e4f4;
 }
+
+.sidebar .nav .nav-category {
+  padding: 12px 25px 8px; 
+  margin-top: 15px; 
+  color: #a0a0a0;  
+  font-size: 0.75rem; 
+  font-weight: 700;   
+  text-transform: uppercase; 
+  letter-spacing: 1px; 
+  background: none;   
+}
+
+
+.sidebar .nav .nav-category:hover {
+  background: transparent; 
+}
 .sidebar .nav {
   overflow: hidden;
   flex-wrap: nowrap;

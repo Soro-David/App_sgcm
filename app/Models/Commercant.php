@@ -41,7 +41,7 @@ class Commercant extends Authenticatable
 
     protected $casts = [
         // 'taxes_ids' => 'array',  // C'est correct de l'avoir retiré
-        // 'secteur_id' => 'array', // C'est correct de l'avoir retiré
+        // 'secteur_id' => 'array', // C'est correct de l'avoir retiré 
     ];
 
     public function agent()
@@ -71,5 +71,20 @@ class Commercant extends Authenticatable
     public function encaissements()
     {
         return $this->hasMany(Encaissement::class);
+    }
+
+    public function typeContribuable()
+    {
+        return $this->belongsTo(TypeContribuable::class, 'type_contribuable_id');
+    }
+
+        /**
+     * NOUVELLE MÉTHODE À AJOUTER
+     * Un commerçant peut avoir effectué plusieurs paiements de taxes.
+     * La liaison se fait via le champ 'num_commerce'.
+     */
+    public function paiementTaxes()
+    {
+        return $this->hasMany(PaiementTaxe::class, 'num_commerce', 'num_commerce');
     }
 }

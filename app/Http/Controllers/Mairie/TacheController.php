@@ -3,16 +3,17 @@
 namespace App\Http\Controllers\Mairie;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Mairie;
 use App\Models\Agent;
 use App\Models\Taxe;
 use App\Models\Secteur;
-use Carbon\Carbon;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Validator;
-use Yajra\DataTables\Facades\DataTables;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Encaissement;
 
 
 class TacheController extends Controller
@@ -36,9 +37,9 @@ class TacheController extends Controller
         return view('mairie.tache.list');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+
+
+
     public function create()
     {
         $mairieId = Auth::guard('mairie')->id();

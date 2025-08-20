@@ -15,12 +15,13 @@ return new class extends Migration
             $table->id();
 
             $table->string('name');
-            $table->string('genre');
-            $table->date('date_naissance');
-            $table->string('type_piece');
-            $table->string('numero_piece');
-            $table->string('adresse');
-            $table->string('telephone1');
+            $table->string('genre')->nullable();
+            $table->date('date_naissance')->nullable();
+            // $table->string('type_agent')->nullable();
+            $table->string('type_piece')->nullable();
+            $table->string('numero_piece')->nullable();
+            $table->string('adresse')->nullable();
+            $table->string('telephone1')->nullable();
             $table->string('telephone2')->nullable();
 
             $table->string('region');
@@ -31,6 +32,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
+            $table->timestamp('last_activity')->nullable();
 
             // OTP et statut
             $table->string('otp_code')->nullable();

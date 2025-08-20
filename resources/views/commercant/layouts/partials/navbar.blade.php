@@ -22,7 +22,7 @@
                 <i class="typcn typcn-cog-outline text-primary"></i>
                 Settings
               </a>
-              <form id="logout-form" action="{{ route('logout.mairie') }}" method="GET" style="display: none;">
+              <form id="logout-form" action="{{ route('logout.commercant') }}" method="GET" style="display: none;">
                   @csrf
               </form>
               <!-- Dans votre dropdown : -->

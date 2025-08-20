@@ -82,6 +82,23 @@
   border-radius: 6px;
   border: 2px solid #F77F00;
 }
+
+
+.sidebar .nav .nav-category {
+  padding: 12px 25px 8px; 
+  margin-top: 15px; 
+  color: #a0a0a0;  
+  font-size: 0.75rem; 
+  font-weight: 700;   
+  text-transform: uppercase; 
+  letter-spacing: 1px; 
+  background: none;   
+}
+
+
+.sidebar .nav .nav-category:hover {
+  background: transparent; 
+}
 .sidebar .nav {
   overflow: hidden;
   flex-wrap: nowrap;
@@ -313,7 +330,7 @@
     height: 60px !important;
 }
 
-.btn-success {
+/* .btn-success {
     padding: 12px 50px !important;
     font-size: 1.5rem; 
     font-weight: 650 !important;
@@ -321,10 +338,10 @@
 }
 .btn-primary {
     padding: 15px 50px !important;  
-    font-size: 1.5rem;     
+    font-size: 1rem;     
     font-weight: 600 !important;  
     border-radius: 8px !important;  
-}
+} */
 
 /* .btn-danger {
     padding: 15px 50px !important;     
