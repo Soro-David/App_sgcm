@@ -10,7 +10,7 @@ body {
 
 .auth-card {
     width: 100%;
-    max-width: 650px; /* On définit une largeur max pour le formulaire sur grand écran */
+    max-width: 500px; /* On définit une largeur max pour le formulaire sur grand écran */
 }
 
 /* Agrandir la hauteur de la boîte Select2 */
@@ -45,8 +45,8 @@ body {
     border-radius: 8px;      /* Coins légèrement arrondis */
 }
 .btn-primary {
-    padding: 15px 50px;      /* Plus de hauteur et largeur */
-    font-size: 1.5rem;       /* Texte plus grand */
-    font-weight: 600;        /* Texte un peu plus épais */
+    padding: 10px 30px;      /* Plus de hauteur et largeur */
+    font-size: 1.1rem;       /* Texte plus grand */
+    font-weight: 300;        /* Texte un peu plus épais */
     border-radius: 8px;      /* Coins légèrement arrondis */
 }

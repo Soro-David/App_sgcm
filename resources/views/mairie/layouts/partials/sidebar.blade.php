@@ -323,7 +323,7 @@
             @endif
 
             {{-- Pour les caissiers --}}
-            @if($agent && $agent->role === 'caisiers')
+            @if($agent && $agent->role === 'caisse')
                 <li class="nav-item">
                     <a class="nav-link" href="">
                         <i class="typcn typcn-document-text menu-icon"></i>

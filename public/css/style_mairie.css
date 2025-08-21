@@ -353,7 +353,7 @@
 
 
 .custom-logo {
-  max-height: 600px !important;        /* Hauteur visible adaptée */
+  max-height: 500px !important;        /* Hauteur visible adaptée */
   width: auto;             /* Conserve les proportions */
   object-fit: contain;     /* Garde une belle mise en forme */
   padding-left: 10px;      /* Un peu d'espace à gauche */

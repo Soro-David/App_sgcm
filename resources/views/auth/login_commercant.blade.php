@@ -16,6 +16,14 @@
        <link rel="stylesheet" href="{{ asset('fontawesome/css/all.min.css') }}">
 
 </head>
+<style>
+    body {
+        font-size: 1.1rem;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+        background: url("{{ asset('assets/images/login/login3.jpg') }}") no-repeat center center fixed;
+        background-size: cover;  /* adapte l’image à toute la page */
+    }
+</style>
 <body>
 
     <div class="card shadow-sm auth-card">

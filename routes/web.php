@@ -112,155 +112,290 @@ Route::middleware(['auth:web', 'role:user'])->prefix('user')->name('user.')->gro
     });
 });
 
-// Mairie
-Route::middleware(['auth:mairie'])->prefix('mairie')->name('mairie.')->group(function () {
-    // Route::get('/dashboard', fn() => view('mairie.dashboard'))->name('dashboard');
-    // Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+// // Mairie
+// Route::middleware(['auth:mairie'])->prefix('mairie')->name('mairie.')->group(function () {
+//     // Route::get('/dashboard', fn() => view('mairie.dashboard'))->name('dashboard');
+//     // Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::prefix('dashboard')->name('dashboard.')->group(function () {
+//     Route::prefix('dashboard')->name('dashboard.')->group(function () {
         
-        Route::get('/', [DashboardController::class, 'index'])->name('index');
+//         Route::get('/', [DashboardController::class, 'index'])->name('index');
         
-        // CORRECTION : On retire le /dashboard redondant et on utilise le bon nom de méthode
-        Route::get('/users-status', [DashboardController::class, 'getUsersStatus'])->name('users_status');
+//         // CORRECTION : On retire le /dashboard redondant et on utilise le bon nom de méthode
+//         Route::get('/users-status', [DashboardController::class, 'getUsersStatus'])->name('users_status');
 
-    });
+//     });
 
 
-    Route::prefix('agents')->name('agents.')->group(function () {
-        Route::get('/', [AgentController::class, 'index'])->name('index');
-        Route::get('/create', [AgentController::class, 'create'])->name('create');
+//     Route::prefix('agents')->name('agents.')->group(function () {
+//         Route::get('/', [AgentController::class, 'index'])->name('index');
+//         Route::get('/create', [AgentController::class, 'create'])->name('create');
 
-        //agent de recouvrement et agent de recenssement
-        Route::get('/list-agent', [AgentController::class, 'list_agent'])->name('list_agent');
-        Route::get('/add-agent', [AgentController::class, 'add_agent'])->name('add_agent');
-         Route::post('/recensement-recouvrement', [AgentController::class, 'store_agent'])->name('store_agent');
-         Route::get('/liste/agent', [AgentController::class, 'get_list_agent'])->name('get_list_agent');
+//         //agent de recouvrement et agent de recenssement
+//         Route::get('/list-agent', [AgentController::class, 'list_agent'])->name('list_agent');
+//         Route::get('/add-agent', [AgentController::class, 'add_agent'])->name('add_agent');
+//          Route::post('/recensement-recouvrement', [AgentController::class, 'store_agent'])->name('store_agent');
+//          Route::get('/liste/agent', [AgentController::class, 'get_list_agent'])->name('get_list_agent');
 
-        Route::get('/programmer-agent', [AgentController::class, 'programer_agent'])->name('programme_agent');
-        Route::post('/programmer-agent/store', [AgentController::class, 'storeProgramme'])->name('store_programme_agent');
-        Route::get('/programme-liste', [AgentController::class, 'get_list_programmes'])->name('list_programmes');
+//         Route::get('/programmer-agent', [AgentController::class, 'programer_agent'])->name('programme_agent');
+//         Route::post('/programmer-agent/store', [AgentController::class, 'storeProgramme'])->name('store_programme_agent');
+//         Route::get('/programme-liste', [AgentController::class, 'get_list_programmes'])->name('list_programmes');
 
-        Route::post('/', [AgentController::class, 'store'])->name('store');
-        Route::get('/{mairie}/edit', [AgentController::class, 'edit'])->name('edit');
-        Route::put('/{mairie}', [AgentController::class, 'update'])->name('update');
-        Route::delete('/{mairie}', [AgentController::class, 'destroy'])->name('destroy');
-        Route::get('/get-communes-by-region/{region}', [AgentController::class, 'get_communes'])->name('get_communes');
-        Route::get('/liste/data', [AgentController::class, 'get_list_mairie'])->name('get_list_mairie');
-    });
+//         Route::post('/', [AgentController::class, 'store'])->name('store');
+//         Route::get('/{mairie}/edit', [AgentController::class, 'edit'])->name('edit');
+//         Route::put('/{mairie}', [AgentController::class, 'update'])->name('update');
+//         Route::delete('/{mairie}', [AgentController::class, 'destroy'])->name('destroy');
+//         Route::get('/get-communes-by-region/{region}', [AgentController::class, 'get_communes'])->name('get_communes');
+//         Route::get('/liste/data', [AgentController::class, 'get_list_mairie'])->name('get_list_mairie');
+//     });
 
-     Route::prefix('commerce')->name('commerce.')->group(function () {
-        Route::get('/', [CommerceController::class, 'index'])->name('index');
-        Route::get('/create', [CommerceController::class, 'create'])->name('create');
-        Route::post('/', [CommerceController::class, 'store'])->name('store');
+//      Route::prefix('commerce')->name('commerce.')->group(function () {
+//         Route::get('/', [CommerceController::class, 'index'])->name('index');
+//         Route::get('/create', [CommerceController::class, 'create'])->name('create');
+//         Route::post('/', [CommerceController::class, 'store'])->name('store');
         
-        Route::put('/{mairie}', [CommerceController::class, 'update'])->name('update');
+//         Route::put('/{mairie}', [CommerceController::class, 'update'])->name('update');
 
-        Route::get('{id}', [CommerceController::class, 'show'])->name('show');
-        Route::get('{id}/edit', [CommerceController::class, 'edit'])->name('edit');
-        Route::delete('{id}', [CommerceController::class, 'destroy'])->name('destroy');
+//         Route::get('{id}', [CommerceController::class, 'show'])->name('show');
+//         Route::get('{id}/edit', [CommerceController::class, 'edit'])->name('edit');
+//         Route::delete('{id}', [CommerceController::class, 'destroy'])->name('destroy');
 
-        Route::get('/commerce/list', [CommerceController::class, 'get_list_commercants'])->name('list_commercant');
-    });
+//         Route::get('/commerce/list', [CommerceController::class, 'get_list_commercants'])->name('list_commercant');
+//     });
 
-    Route::prefix('users')->name('users.')->group(function () {
-        Route::get('/', [UserController::class, 'index'])->name('index');
-        Route::get('/create', [UserController::class, 'create'])->name('create');
-        Route::post('/', [UserController::class, 'store'])->name('store');
-    });
+//     Route::prefix('users')->name('users.')->group(function () {
+//         Route::get('/', [UserController::class, 'index'])->name('index');
+//         Route::get('/create', [UserController::class, 'create'])->name('create');
+//         Route::post('/', [UserController::class, 'store'])->name('store');
+//     });
 
-    Route::prefix('taxe')->name('taxe.')->group(function () {
-        Route::resource('/', TaxeController::class);
+//     Route::prefix('taxe')->name('taxe.')->group(function () {
+//         Route::resource('/', TaxeController::class);
        
-    });
-    Route::prefix('encaissement')->name('encaissement.')->group(function () {
-        // Route pour afficher la page avec la table 
-        Route::get('/', [EncaissementMairie::class, 'index'])->name('index');
-        Route::get('/get-list', [EncaissementMairie::class, 'get_list_encaissement'])->name('get_list');
-    });
+//     });
+//     Route::prefix('encaissement')->name('encaissement.')->group(function () {
+//         // Route pour afficher la page avec la table 
+//         Route::get('/', [EncaissementMairie::class, 'index'])->name('index');
+//         Route::get('/get-list', [EncaissementMairie::class, 'get_list_encaissement'])->name('get_list');
+//     });
 
-    Route::prefix('paiement')->name('paiement.')->group(function () {
-        // Route pour afficher la page avec la table
-        Route::get('/', [PaiementMairie::class, 'index'])->name('index');
-        Route::get('/get-list', [PaiementMairie::class, 'get_list_paiement'])->name('get_list');
-    });
-     Route::prefix('taches')->name('taches.')->group(function () {
-        Route::get('/', [TacheController::class, 'index'])->name('index');
-        Route::resource('/', TacheController::class);
+//     Route::prefix('paiement')->name('paiement.')->group(function () {
+//         // Route pour afficher la page avec la table
+//         Route::get('/', [PaiementMairie::class, 'index'])->name('index');
+//         Route::get('/get-list', [PaiementMairie::class, 'get_list_paiement'])->name('get_list');
+//     });
+//      Route::prefix('taches')->name('taches.')->group(function () {
+//         Route::get('/', [TacheController::class, 'index'])->name('index');
+//         Route::resource('/', TacheController::class);
 
-        Route::get('/list', [TacheController::class, 'list_tache'])->name('list_tache');
+//         Route::get('/list', [TacheController::class, 'list_tache'])->name('list_tache');
         
-        Route::get('/liste/data', [TacheController::class, 'get_list_taches'])->name('get_list_tache');
-        Route::get('/shwo', [TacheController::class, 'show'])->name('show');
+//         Route::get('/liste/data', [TacheController::class, 'get_list_taches'])->name('get_list_tache');
+//         Route::get('/shwo', [TacheController::class, 'show'])->name('show');
 
-        Route::get('/secteurs', [TacheController::class, 'index'])->name('secteurs.index');
+//         Route::get('/secteurs', [TacheController::class, 'index'])->name('secteurs.index');
 
-        // Traite la soumission du formulaire pour créer un secteur
-        Route::post('/secteurs', [TacheController::class, 'store'])->name('secteurs.store');
+//         // Traite la soumission du formulaire pour créer un secteur
+//         Route::post('/secteurs', [TacheController::class, 'store'])->name('secteurs.store');
 
-        // Route pour la récupération des données par DataTables
-        Route::get('/secteurs/liste', [TacheController::class, 'get_list_secteurs'])->name('secteurs.list');
+//         // Route pour la récupération des données par DataTables
+//         Route::get('/secteurs/liste', [TacheController::class, 'get_list_secteurs'])->name('secteurs.list');
 
-        // Route pour la génération du code via AJAX
-        Route::get('/secteurs/generer-code', [TacheController::class, 'genererCodeSecteurAjax'])->name('secteurs.genererCode');
+//         // Route pour la génération du code via AJAX
+//         Route::get('/secteurs/generer-code', [TacheController::class, 'genererCodeSecteurAjax'])->name('secteurs.genererCode');
 
-        Route::get('/list/secteurs', [TacheController::class, 'get_list_secteurs'])->name('get_list_secteurs');
+//         Route::get('/list/secteurs', [TacheController::class, 'get_list_secteurs'])->name('get_list_secteurs');
 
-        Route::get('/create', [TacheController::class, 'create'])->name('create');
-        Route::post('/', [TacheController::class, 'store'])->name('store');
-        Route::post('/secteur-store', [TacheController::class, 'store_secteur'])->name('store_secteur');
-    });
-    Route::prefix('secteurs')->name('secteurs.')->group(function () {
-        Route::resource('/', SecteurController::class);
-        Route::get('/liste', [SecteurController::class, 'get_list_secteurs'])->name('list');
-        Route::get('/generer-code', [SecteurController::class, 'genererCodeSecteurAjax'])->name('genererCode');
-    });
+//         Route::get('/create', [TacheController::class, 'create'])->name('create');
+//         Route::post('/', [TacheController::class, 'store'])->name('store');
+//         Route::post('/secteur-store', [TacheController::class, 'store_secteur'])->name('store_secteur');
+//     });
+//     Route::prefix('secteurs')->name('secteurs.')->group(function () {
+//         Route::resource('/', SecteurController::class);
+//         Route::get('/liste', [SecteurController::class, 'get_list_secteurs'])->name('list');
+//         Route::get('/generer-code', [SecteurController::class, 'genererCodeSecteurAjax'])->name('genererCode');
+//     });
 
 
-    Route::prefix('versements')->name('versements.')->group(function () {
-        Route::get('/', [VersementController::class, 'index'])->name('index');
-        Route::get('/create', [VersementController::class, 'create'])->name('create');
-        Route::post('/store', [VersementController::class, 'store'])->name('store');
-        // Route AJAX pour récupérer la liste des versements (pour DataTables) 
-        Route::get('/liste-ajax', [VersementController::class, 'get_liste_versement'])->name('versements_liste');
+//     Route::prefix('versements')->name('versements.')->group(function () {
+//         Route::get('/', [VersementController::class, 'index'])->name('index');
+//         Route::get('/create', [VersementController::class, 'create'])->name('create');
+//         Route::post('/store', [VersementController::class, 'store'])->name('store');
+//         // Route AJAX pour récupérer la liste des versements (pour DataTables) 
+//         Route::get('/liste-ajax', [VersementController::class, 'get_liste_versement'])->name('versements_liste');
         
-        // Route AJAX pour récupérer les montants d'un agent
-        Route::get('/get-montant/agent/{agent}', [VersementController::class, 'get_montant_non_verse'])->name('montant_nonverse');
+//         // Route AJAX pour récupérer les montants d'un agent
+//         Route::get('/get-montant/agent/{agent}', [VersementController::class, 'get_montant_non_verse'])->name('montant_nonverse');
+        
+//     });
+
+//     Route::prefix('comptabilite')->name('comptabilite.')->group(function () {
+//         Route::get('/', [ComptabiliteController::class, 'index'])->name('index');
+//         Route::get('/journal-depense', [ComptabiliteController::class, 'journal_depense'])->name('journal_depense');
+//         Route::get('/journal-recette', [ComptabiliteController::class, 'journal_recette'])->name('journal_recette');
+
+//         Route::post('/store/journal-depense', [ComptabiliteController::class, 'store_journal_depense'])->name('store_journal_depense');
+//         Route::post('/store/journal-recette', [ComptabiliteController::class, 'store_journal_recette'])->name('store_journal_recette');
+
+//         Route::post('/journal-recette/recette-effectuee', [ComptabiliteController::class, 'recette_effectuee'])->name('recette_effectuee');
+
+//         Route::post('/store', [ComptabiliteController::class, 'store'])->name('store');
+//         Route::get('/liste-ajax', [ComptabiliteController::class, 'get_liste_versement'])->name('versements_liste');
+        
+//         // Route AJAX pour récupérer les montants d'un agent
+//         Route::get('/get-montant/agent/{agent}', [ComptabiliteController::class, 'get_montant_non_verse'])->name('montant_nonverse');
+        
+//         Route::get('/journal-recette/export-pdf', [ComptabiliteController::class, 'exportPdf'])->name('journal_recette.export_pdf');
+//         Route::get('/journal-recette/export-excel', [ComptabiliteController::class, 'exportExcel'])->name('journal_recette.export_excel');
+//     });
+
+
+//     Route::prefix('roles')->name('roles.')->group(function () {
+//         Route::get('/', [RoleController::class, 'index'])->name('index');
+//         Route::post('/assign', [RoleController::class, 'assign'])->name('assign');
+//     });
+
+//     Route::post('/logout', function (Request $request) {
+//         Auth::guard('mairie')->logout();
+//         $request->session()->invalidate();
+//         $request->session()->regenerateToken();
+//         return redirect('/')->with('success', 'Déconnecté.');
+//     })->name('logout');
+// });
+
+// On garde le groupe principal qui vérifie que l'utilisateur est authentifié
+Route::middleware(['auth:mairie'])->prefix('mairie')->name('mairie.')->group(function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | Routes communes (accessibles à tous les rôles : admin, financé, caisse)
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('dashboard')->name('dashboard.')->group(function () {
+        Route::get('/', [DashboardController::class, 'index'])->name('index');
+        Route::get('/users-status', [DashboardController::class, 'getUsersStatus'])->name('users_status');
+    });
+
+    Route::prefix('commerce')->name('commerce.')->group(function () {
+        Route::get('/', [CommerceController::class, 'index'])->name('index');
+        Route::get('{id}', [CommerceController::class, 'show'])->name('show');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Routes réservées au rôle 'admin'
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['role:admin'])->group(function () {
+        Route::prefix('agents')->name('agents.')->group(function () {
+            Route::get('/', [AgentController::class, 'index'])->name('index');
+            Route::get('/create', [AgentController::class, 'create'])->name('create');
+            Route::post('/', [AgentController::class, 'store'])->name('store');
+            Route::get('/list-agent', [AgentController::class, 'list_agent'])->name('list_agent');
+            Route::get('/add-agent', [AgentController::class, 'add_agent'])->name('add_agent');
+            Route::post('/recensement-recouvrement', [AgentController::class, 'store_agent'])->name('store_agent');
+            Route::get('/liste/agent', [AgentController::class, 'get_list_agent'])->name('get_list_agent');
+            Route::get('/{mairie}/edit', [AgentController::class, 'edit'])->name('edit');
+            Route::put('/{mairie}', [AgentController::class, 'update'])->name('update');
+            Route::delete('/{mairie}', [AgentController::class, 'destroy'])->name('destroy');
+            Route::get('/liste/data', [AgentController::class, 'get_list_mairie'])->name('get_list_mairie');
+        });
+        
+        Route::prefix('users')->name('users.')->group(function () {
+            Route::get('/', [UserController::class, 'index'])->name('index');
+            Route::get('/create', [UserController::class, 'create'])->name('create');
+            Route::post('/', [UserController::class, 'store'])->name('store');
+        });
+
+        Route::prefix('roles')->name('roles.')->group(function () {
+            Route::get('/', [RoleController::class, 'index'])->name('index');
+            Route::post('/assign', [RoleController::class, 'assign'])->name('assign');
+        });
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Routes réservées au rôle 'financié'
+    |--------------------------------------------------------------------------
+    | Note : Si un admin doit aussi y accéder, on utilisera ->middleware(['role:admin,financié'])
+    */
+    Route::middleware(['role:financié'])->group(function () {
+        Route::prefix('secteurs')->name('secteurs.')->group(function () {
+            Route::resource('/', SecteurController::class);
+            Route::get('/liste', [SecteurController::class, 'get_list_secteurs'])->name('list');
+            Route::get('/generer-code', [SecteurController::class, 'genererCodeSecteurAjax'])->name('genererCode');
+        });
+
+        Route::prefix('encaissement')->name('encaissement.')->group(function () {
+            Route::get('/', [EncaissementMairie::class, 'index'])->name('index');
+            Route::get('/get-list', [EncaissementMairie::class, 'get_list_encaissement'])->name('get_list');
+        });
+
+        Route::prefix('paiement')->name('paiement.')->group(function () {
+            Route::get('/', [PaiementMairie::class, 'index'])->name('index');
+            Route::get('/get-list', [PaiementMairie::class, 'get_list_paiement'])->name('get_list');
+        });
+        
+        Route::prefix('taxe')->name('taxe.')->group(function () {
+            Route::resource('/', TaxeController::class);
+        });
+
+        Route::prefix('versements')->name('versements.')->group(function () {
+            Route::get('/', [VersementController::class, 'index'])->name('index');
+            Route::get('/create', [VersementController::class, 'create'])->name('create');
+            Route::post('/store', [VersementController::class, 'store'])->name('store');
+            Route::get('/liste-ajax', [VersementController::class, 'get_liste_versement'])->name('versements_liste');
+            Route::get('/get-montant/agent/{agent}', [VersementController::class, 'get_montant_non_verse'])->name('montant_nonverse');
+        });
+
+        Route::prefix('comptabilite')->name('comptabilite.')->group(function () {
+            Route::get('/', [ComptabiliteController::class, 'index'])->name('index');
+            Route::get('/journal-depense', [ComptabiliteController::class, 'journal_depense'])->name('journal_depense');
+            Route::get('/journal-recette', [ComptabiliteController::class, 'journal_recette'])->name('journal_recette');
+
+            Route::post('/store/journal-depense', [ComptabiliteController::class, 'store_journal_depense'])->name('store_journal_depense');
+            Route::post('/store/journal-recette', [ComptabiliteController::class, 'store_journal_recette'])->name('store_journal_recette');
+
+            Route::post('/journal-recette/recette-effectuee', [ComptabiliteController::class, 'recette_effectuee'])->name('recette_effectuee');
+
+            Route::post('/store', [ComptabiliteController::class, 'store'])->name('store');
+            Route::get('/liste-ajax', [ComptabiliteController::class, 'get_liste_versement'])->name('versements_liste');
+            
+            // Route AJAX pour récupérer les montants d'un agent
+            Route::get('/get-montant/agent/{agent}', [ComptabiliteController::class, 'get_montant_non_verse'])->name('montant_nonverse');
+            
+            Route::get('/journal-recette/export-pdf', [ComptabiliteController::class, 'exportPdf'])->name('journal_recette.export_pdf');
+            Route::get('/journal-recette/export-excel', [ComptabiliteController::class, 'exportExcel'])->name('journal_recette.export_excel');
+        });
+        
+        // Routes pour la programmation des agents (rôle financé)
+        Route::get('/agents/programmer-agent', [AgentController::class, 'programer_agent'])->name('agents.programme_agent');
+        Route::post('/agents/programmer-agent/store', [AgentController::class, 'storeProgramme'])->name('agents.store_programme_agent');
+        Route::get('/agents/programme-liste', [AgentController::class, 'get_list_programmes'])->name('agents.list_programmes');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Routes réservées au rôle 'caisse'
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['role:caisse'])->group(function () {
+        //ici les routes pour le rôle 'caisse'
         
     });
 
-    Route::prefix('comptabilite')->name('comptabilite.')->group(function () {
-        Route::get('/', [ComptabiliteController::class, 'index'])->name('index');
-        Route::get('/journal-depense', [ComptabiliteController::class, 'journal_depense'])->name('journal_depense');
-        Route::get('/journal-recette', [ComptabiliteController::class, 'journal_recette'])->name('journal_recette');
 
-        Route::post('/store/journal-depense', [ComptabiliteController::class, 'store_journal_depense'])->name('store_journal_depense');
-        Route::post('/store/journal-recette', [ComptabiliteController::class, 'store_journal_recette'])->name('store_journal_recette');
-
-        Route::post('/journal-recette/recette-effectuee', [ComptabiliteController::class, 'recette_effectuee'])->name('recette_effectuee');
-
-        Route::post('/store', [ComptabiliteController::class, 'store'])->name('store');
-        Route::get('/liste-ajax', [ComptabiliteController::class, 'get_liste_versement'])->name('versements_liste');
-        
-        // Route AJAX pour récupérer les montants d'un agent
-        Route::get('/get-montant/agent/{agent}', [ComptabiliteController::class, 'get_montant_non_verse'])->name('montant_nonverse');
-        
-        Route::get('/journal-recette/export-pdf', [ComptabiliteController::class, 'exportPdf'])->name('journal_recette.export_pdf');
-        Route::get('/journal-recette/export-excel', [ComptabiliteController::class, 'exportExcel'])->name('journal_recette.export_excel');
-    });
-
-
-    Route::prefix('roles')->name('roles.')->group(function () {
-        Route::get('/', [RoleController::class, 'index'])->name('index');
-        Route::post('/assign', [RoleController::class, 'assign'])->name('assign');
-    });
-
+    // La route de déconnexion est accessible à tous les utilisateurs connectés
     Route::post('/logout', function (Request $request) {
         Auth::guard('mairie')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('/')->with('success', 'Déconnecté.');
     })->name('logout');
+
+    //  les routes qui ne sont pas spécifiques à un rôle mais qui nécessitent une logique particulière.
+    Route::get('/get-communes-by-region/{region}', [AgentController::class, 'get_communes'])->name('agents.get_communes');
 });
 
 // financier
