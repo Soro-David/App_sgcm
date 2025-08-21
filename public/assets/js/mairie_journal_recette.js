@@ -3,42 +3,66 @@ $(document).ready(function () {
     const searchButton = $('#search_button');
     const resultsContainer = $('#results_container');
     const spinner = searchButton.find('.spinner-border');
+    let dataTableInstance = null; // Pour garder une référence à l'instance de la DataTable
+
+    // Initialiser les selects avec Select2
+    $('.select2').select2({
+        theme: "bootstrap-5"
+    });
 
     // Gérer la soumission du formulaire de recherche en AJAX
     searchForm.on('submit', function (e) {
-        e.preventDefault(); // Empêcher le rechargement de la page
+        e.preventDefault();
 
         $.ajax({
             url: $(this).attr('action'),
             type: 'GET',
             data: $(this).serialize(),
             beforeSend: function () {
-                // Montrer le spinner et désactiver le bouton
                 spinner.removeClass('d-none');
                 searchButton.prop('disabled', true);
                 resultsContainer.html('<div class="text-center p-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+                
+                // Détruire l'instance précédente de DataTable si elle existe
+                if (dataTableInstance) {
+                    dataTableInstance.destroy();
+                }
             },
             success: function (response) {
-                // Mettre à jour la section des résultats avec le HTML reçu
                 resultsContainer.html(response.html);
+
+                // Initialiser DataTable sur la nouvelle table si elle existe
+                if ($('#recettes_datatable').length) {
+                    dataTableInstance = $('#recettes_datatable').DataTable({
+                        "language": {
+                            "url": "https://cdn.datatables.net/plug-ins/1.13.6/i18n/fr-FR.json"
+                        },
+                        "paging": true,
+                        "lengthChange": true,
+                        "searching": true,
+                        "ordering": true,
+                        "info": true,
+                        "autoWidth": false,
+                        "responsive": true,
+                    });
+                }
             },
             error: function (xhr) {
                 console.error("Erreur AJAX:", xhr.responseText);
-                alert("Une erreur est survenue lors de la recherche. Veuillez consulter la console.");
-                resultsContainer.html('<div class="alert alert-danger">Erreur lors du chargement des résultats.</div>');
+                resultsContainer.html('<div class="alert alert-danger">Erreur lors du chargement des résultats. Veuillez réessayer.</div>');
             },
             complete: function () {
-                // Cacher le spinner et réactiver le bouton
                 spinner.addClass('d-none');
                 searchButton.prop('disabled', false);
             }
         });
     });
 
-    // Logique pour la case "Tout sélectionner"
-    // Utiliser la délégation d'événements car le contenu est chargé en AJAX
+    // Gérer la case "Tout sélectionner" en utilisant la délégation d'événements
     resultsContainer.on('change', '#select_all_paiements', function() {
-        $('.paiement-checkbox').prop('checked', $(this).prop('checked'));
+        // Cibler uniquement les checkboxes dans le corps de la DataTable
+        const checkboxes = dataTableInstance.rows({ search: 'applied' }).nodes().to$().find('input.paiement-checkbox');
+        checkboxes.prop('checked', $(this).prop('checked'));
     });
 
     resultsContainer.on('change', '.paiement-checkbox', function() {

@@ -306,15 +306,15 @@
 
                 <li class="nav-item nav-category">Gestion Comptable</li>
 
-                <li class="nav-item {{ request()->routeIs('mairie.comptabilite.journal_recette') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ route('mairie.comptabilite.journal_recette') }}">
+                <li class="nav-item {{ request()->routeIs('mairie.recette.journal_recette') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('mairie.recette.index') }}">
                         <i class="typcn typcn-document-add menu-icon"></i>
                         <span class="menu-title">Journal de recette</span>
                     </a>
                 </li>
 
-                <li class="nav-item {{ request()->routeIs('mairie.comptabilite.journal_depense') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ route('mairie.comptabilite.journal_depense') }}">
+                <li class="nav-item {{ request()->routeIs('mairie.depense.index') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('mairie.depense.index') }}">
                         <i class="typcn typcn-document-delete menu-icon"></i>
                         <span class="menu-title">Journal de dépense</span>
                     </a>

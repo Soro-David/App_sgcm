@@ -1,8 +1,6 @@
-{{-- Fichier: resources/views/mairie/comptabilite/partials/resultats_recette.blade.php --}}
-
 @if($paiements->isEmpty())
-    <div class="alert alert-info text-center">
-        Veuillez sélectionner au moins un filtre pour lancer la recherche.
+    <div class="alert alert-warning text-center">
+        Aucun résultat trouvé pour les filtres sélectionnés.
     </div>
 @else
     {{-- Section des totaux et indicateurs --}}
@@ -58,16 +56,31 @@
     </div>
 
     {{-- Section de la liste détaillée des paiements --}}
-    <form action="{{ route('mairie.comptabilite.recette_effectuee') }}" method="POST">
+    <form action="{{ route('mairie.recette.store') }}" method="POST">
         @csrf
+        {{-- On passe les filtres actuels pour pouvoir revenir sur la même recherche après l'action --}}
+        <input type="hidden" name="taxe_id" value="{{ request('taxe_id') }}">
+        <input type="hidden" name="secteur_id" value="{{ request('secteur_id') }}">
+
         <div class="card shadow-sm">
-            <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
                 <h5 class="m-0 font-weight-bold text-primary">Détail des Paiements</h5>
-                <button type="submit" class="btn btn-success">✅ Marquer la sélection comme effectuée</button>
+                <div>
+                    <a href="{{ route('mairie.recette.export_excel') }}?{{ http_build_query(request()->query()) }}" class="btn btn-sm btn-outline-success">
+                        <i class="fas fa-file-excel"></i> Exporter en Excel
+                    </a>
+                    <a href="{{ route('mairie.recette.export_pdf') }}?{{ http_build_query(request()->query()) }}" class="btn btn-sm btn-outline-danger" target="_blank">
+                        <i class="fas fa-file-pdf"></i> Télécharger en PDF
+                    </a>
+                </div>
             </div>
             <div class="card-body">
+                 <div class="mb-3">
+                    <button type="submit" class="btn btn-success">✅ Marquer la sélection comme effectuée</button>
+                 </div>
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped">
+                    {{-- AJOUT DE L'ID POUR DATATABLE --}}
+                    <table class="table table-bordered table-striped" id="recettes_datatable">
                         <thead>
                             <tr>
                                 <th><input type="checkbox" id="select_all_paiements"></th>
@@ -85,7 +98,7 @@
                                 <td><input type="checkbox" name="paiement_ids[]" value="{{ $paiement->id }}" class="paiement-checkbox"></td>
                                 <td>{{ optional($paiement->commercant)->nom ?? 'N/A' }} ({{ optional($paiement->commercant)->num_commerce }})</td>
                                 <td>{{ $paiement->taxe->nom }}</td>
-                                <td>{{ $paiement->periode->format('d/m/Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($paiement->periode)->format('d/m/Y') }}</td>
                                 <td>{{ number_format($paiement->montant, 0, ',', ' ') }} FCFA</td>
                                 <td>
                                     @if($paiement->statut_encaissement == 'Encaissé')

@@ -16,8 +16,7 @@
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
 
-            {{-- Le name="search_form" est utilisé par le JS --}}
-            <form id="search_form" action="{{ route('mairie.comptabilite.journal_recette') }}" method="GET">
+            <form id="search_form" action="{{ route('mairie.recette.index') }}" method="GET">
                 <div class="row">
                     {{-- Taxe --}}
                     <div class="col-md-6 mb-3">
@@ -25,9 +24,7 @@
                         <select name="taxe_id" id="taxe_id" class="form-select select2">
                             <option value="">-- Toutes les taxes --</option>
                             @foreach ($taxes ?? [] as $taxe)
-                                <option value="{{ $taxe->id }}" {{ request('taxe_id') == $taxe->id ? 'selected' : '' }}>
-                                    {{ $taxe->nom }}
-                                </option>
+                                <option value="{{ $taxe->id }}">{{ $taxe->nom }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -38,9 +35,7 @@
                         <select name="secteur_id" id="secteur_id" class="form-select select2">
                             <option value="">-- Tous les secteurs --</option>
                             @foreach ($secteurs ?? [] as $secteur)
-                                <option value="{{ $secteur->id }}" {{ request('secteur_id') == $secteur->id ? 'selected' : '' }}>
-                                    {{ $secteur->nom }}
-                                </option>
+                                <option value="{{ $secteur->id }}">{{ $secteur->nom }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -58,15 +53,13 @@
 
     {{-- Section des résultats (sera remplie par AJAX) --}}
     <div id="results_container">
-        {{-- Si la page est chargée avec des résultats (sans AJAX), on les inclut ici --}}
-        @if(request()->has('taxe_id') || request()->has('secteur_id'))
-            @include('mairie.comptabilite.partials.resultats_recette')
-        @endif
+        <div class="alert alert-info text-center">
+            Veuillez sélectionner au moins un filtre pour lancer la recherche.
+        </div>
     </div>
 </div>
 @endsection
 
 @push('js')
-    {{-- Le nom du fichier JS a été mis à jour pour correspondre à la page --}}
     <script src="{{ asset('assets/js/mairie_journal_recette.js') }}"></script>
 @endpush
