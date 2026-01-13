@@ -14,7 +14,7 @@ class PaiementTaxe extends Model
     protected $fillable = [
         'secteur_id',
         'taxe_id',
-        'mairie_id',
+        'mairie_ref',
         'num_commerce',
         'montant',
         'statut',

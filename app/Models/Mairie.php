@@ -2,16 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable; 
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 // La classe doit étendre Authenticatable
 class Mairie extends Authenticatable
 {
     use HasFactory, Notifiable;
-   
+
     protected $guard = 'mairie';
 
     /**
@@ -38,6 +37,8 @@ class Mairie extends Authenticatable
         'otp_expires_at',
         'status',
         'last_activity',
+        'mairie_ref',
+
     ];
 
     /**
@@ -60,6 +61,7 @@ class Mairie extends Authenticatable
         'email_verified_at' => 'datetime',
         'date_naissance' => 'date',
         'otp_expires_at' => 'datetime',
+        'last_activity' => 'datetime',
         'password' => 'hashed',
     ];
 
@@ -113,6 +115,7 @@ class Mairie extends Authenticatable
         // De même, hasMany est plus probable
         return $this->hasMany(Encaissement::class);
     }
+
     public function logs()
     {
         return $this->morphMany(UserLog::class, 'user');
@@ -122,7 +125,4 @@ class Mairie extends Authenticatable
     {
         return $this->last_activity && $this->last_activity->gt(now()->subMinutes(5));
     }
-
-    
-    
 }

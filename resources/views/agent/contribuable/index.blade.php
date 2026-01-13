@@ -15,7 +15,7 @@
                     <table id="commercantsTable"
                         class="table table-bordered table-hover"
                         style="width:100%"
-                        data-ajax-url="{{ route('agent.commerce.list_commercant') }}"
+                        data-ajax-url="{{ route('agent.contribuable.list_commercant') }}"
                         data-lang-url="{{ asset('js/fr-FR.json') }}">
                         <thead class="table-light">
                             <tr>

@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('telephone')->nullable();
             $table->string('adresse')->nullable();
-            $table->string('num_commerce')->unique();
+            $table->string('num_commerce', 191)->unique();
             $table->string('password')->nullable();
 
             $table->string('type_piece');
@@ -29,9 +29,11 @@ return new class extends Migration
 
             // Relations
             $table->foreignId('agent_id')->constrained()->onDelete('cascade');
-            $table->foreignId('mairie_id')->constrained()->onDelete('cascade');
+            $table->string('mairie_ref')->nullable();
             $table->foreignId('secteur_id')->constrained()->onDelete('cascade');
-            $table->foreignId('type_contribuable_id')->nullable()->onDelete('set null');
+            //$table->foreignId('type_contribuable_id')->nullable()->onDelete('set null');
+            $table->foreignId('type_contribuable_id')->nullable()->constrained()->onDelete('set null');
+
 
             // Champs JSON
             // $table->json('taxe_id')->nullable();

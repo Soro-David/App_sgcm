@@ -14,7 +14,7 @@ class Encaissement extends Model
         'montant_verse',
         'reste',
         'agent_id',
-        'mairie_id',
+        'mairie_ref',
         'taxe_id',
         'num_commerce',
         'statut'
@@ -25,7 +25,7 @@ class Encaissement extends Model
      */
     public function mairie()
     {
-        return $this->belongsTo(Mairie::class);
+        return $this->belongsTo(Mairie::class, 'mairie_ref');
     }
 
     /**

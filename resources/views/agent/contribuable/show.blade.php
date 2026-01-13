@@ -32,6 +32,6 @@
         </div>
     </div>
 
-    <a href="{{ route('agent.commerce.index') }}" class="btn btn-secondary mt-3">Retour</a>
+    <a href="{{ route('agent.contribuable.index') }}" class="btn btn-secondary mt-3">Retour</a>
 </div>
 @endsection

@@ -32,10 +32,10 @@ class VersementController extends Controller
      */
     public function create()
     {
-        $mairieId = Auth::guard('mairie')->id();
+        $mairieRef = Auth::guard('mairie')->user()->mairie_ref;
 
         // Récupère les IDs des agents de la mairie
-        $agentIds = Agent::where('mairie_id', $mairieId)->pluck('id');
+        $agentIds = Agent::where('mairie_ref', $mairieRef)->pluck('id');
 
         // Récupère les IDs uniques des agents ayant au moins un encaissement
         $encaissementAgentIds = Encaissement::whereIn('agent_id', $agentIds)
@@ -61,14 +61,14 @@ public function store(Request $request)
         'reste' => 'nullable|numeric|min:0',
     ]);
 
-    $mairieId = Auth::guard('mairie')->id();
+    $mairieRef = Auth::guard('mairie')->user()->mairie_ref;
 
     $reste = $request->dette + ($request->montant_percu - $request->montant_verse);
 
     // Création du versement
     $versement = Versement::create([
         'agent_id' => $request->agent_id,
-        'mairie_id' => $mairieId,
+        'mairie_ref' => $mairieRef,
         'montant_percu' => $request->montant_percu,
         'montant_verse' => $request->montant_verse,
         'reste' => $reste,
@@ -128,9 +128,9 @@ public function store(Request $request)
             abort(403);
         }
 
-        $mairieId = Auth::guard('mairie')->id();
+        $mairieRef = Auth::guard('mairie')->user()->mairie_ref;
 
-        $query = Versement::where('mairie_id', $mairieId)
+        $query = Versement::where('mairie_ref', $mairieRef)
             ->with('agent:id,name')
             ->select('versements.*');
 

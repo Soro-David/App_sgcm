@@ -12,9 +12,9 @@ class SecteurSeeder extends Seeder
         foreach (Mairie::all() as $mairie) {
             for ($i = 1; $i <= 10; $i++) {
                 Secteur::create([
-                    'mairie_id' => $mairie->id,
-                    'code' => "S{$mairie->id}-$i",
-                    'nom' => "Secteur {$mairie->id}-$i"
+                    'mairie_ref' => $mairie->mairie_ref,
+                    'code' => "S{$mairie->mairie_ref}-$i",
+                    'nom' => "Secteur {$mairie->mairie_ref}-$i"
                 ]);
             }
         }

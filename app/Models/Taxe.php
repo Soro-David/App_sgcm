@@ -12,11 +12,11 @@ class Taxe extends Model
     use HasFactory, Notifiable;
 
    
-    protected $fillable = ['nom', 'description', 'montant','mairie_id','frequence'];
+    protected $fillable = ['nom', 'description', 'montant','mairie_ref','frequence'];
 
     public function mairie()
     {
-        return $this->belongsTo(Mairie::class);
+        return $this->belongsTo(Mairie::class, 'mairie_ref');
     }
 
     public function agents()

@@ -37,7 +37,7 @@ class DepenseController extends Controller
         try {
             $data = $request->except('piece_jointe');
             $data['agent_id'] = Auth::id();
-            $data['mairie_id'] = Auth::user()->mairie_id; 
+            $data['mairie_ref'] = Auth::user()->mairie_ref; 
 
             if ($request->hasFile('piece_jointe')) {
                 $filePath = $request->file('piece_jointe')->store('pieces_jointes/depenses', 'public');
@@ -55,7 +55,7 @@ class DepenseController extends Controller
 
         public function show(Depense $depense)
     {
-        if ($depense->mairie_id !== Auth::user()->mairie_id) {
+        if ($depense->mairie_ref !== Auth::user()->mairie_ref) {
             abort(403, 'Accès non autorisé.');
         }
         return view('mairie.comptabilite.depense.show', compact('depense'));
@@ -64,7 +64,7 @@ class DepenseController extends Controller
 
     public function edit(Depense $depense)
     {
-        if ($depense->mairie_id !== Auth::user()->mairie_id) {
+        if ($depense->mairie_ref !== Auth::user()->mairie_ref) {
             abort(403, 'Accès non autorisé.');
         }
         return view('mairie.comptabilite.depense.edit', compact('depense'));
@@ -72,7 +72,7 @@ class DepenseController extends Controller
 
     public function update(Request $request, Depense $depense)
     {
-        if ($depense->mairie_id !== Auth::user()->mairie_id) {
+        if ($depense->mairie_ref !== Auth::user()->mairie_ref) {
             abort(403, 'Accès non autorisé.');
         }
 
@@ -112,7 +112,7 @@ class DepenseController extends Controller
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            $data = Depense::where('mairie_id', Auth::user()->mairie_id)->latest();
+            $data = Depense::where('mairie_ref', Auth::user()->mairie_ref)->latest();
 
             return DataTables::of($data)
                 ->addIndexColumn()

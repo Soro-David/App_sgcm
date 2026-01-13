@@ -3,9 +3,9 @@
 namespace App\Services;
 
 use App\Models\Commercant;
-use Illuminate\Support\Facades\Storage;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Writer\PngWriter;
+use Illuminate\Support\Facades\Storage;
 
 class QrCodeService
 {
@@ -21,17 +21,17 @@ class QrCodeService
             $commercant->telephone ?? 'Non fourni',
             $secteurNom,
             $mairieNom,
-            route('agent.commerce.virtual_card', $commercant->id)
+            route('agent.contribuable.virtual_card', $commercant->id)
         );
 
         $result = Builder::create()
-            ->writer(new PngWriter())
+            ->writer(new PngWriter)
             ->data($qrData)
             ->size(250)
             ->margin(10)
             ->build();
 
-        $fileName = 'commercants/qrcodes/commercant_' . $commercant->id . '_' . time() . '.png';
+        $fileName = 'commercants/qrcodes/commercant_'.$commercant->id.'_'.time().'.png';
         Storage::disk('public')->put($fileName, $result->getString());
 
         return $fileName;

@@ -124,7 +124,7 @@ class EncaissementController extends Controller
                 PaiementTaxe::create([
                     'secteur_id' => $commercant->secteur_id,
                     'taxe_id' => $taxe->id,
-                    'mairie_id' => $agent->mairie_id,
+                    'mairie_ref' => $agent->mairie_ref,
                     'num_commerce' => $commercant->num_commerce,
                     'montant' => $taxe->montant, // Montant par période
                     'statut' => 'payé',
@@ -138,7 +138,7 @@ class EncaissementController extends Controller
                 Encaissement::create([
                     'montant_percu' => $montantTotalEncaisse,
                     'agent_id' => $agent->id,
-                    'mairie_id' => $agent->mairie_id,
+                    'mairie_ref' => $agent->mairie_ref,
                     'taxe_id' => $taxe->id,
                     'num_commerce' => $commercant->num_commerce,
                     'statut' => 'encaisse'

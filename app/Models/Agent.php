@@ -18,12 +18,13 @@ class Agent extends Authenticatable
         'email',
         'region',
         'commune',
+        'type',
         'status',
         'otp_code',
         'otp_expires_at',
         'password',
         'created_at',
-        'mairie_id',
+        'mairie_ref',
         'remember_token',
         'taxe_id',
         'secteur_id',
@@ -41,6 +42,7 @@ class Agent extends Authenticatable
         'email_verified_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'last_activity' => 'datetime',
         'taxe_id' => 'array',  
         'secteur_id' => 'array',
     ];
@@ -48,6 +50,12 @@ class Agent extends Authenticatable
     public function mairie()
     {
         return $this->belongsTo(Mairie::class);
+    }
+
+
+    public function commune()
+    {
+        return $this->belongsTo(Commune::class);
     }
 
     public function taxes()

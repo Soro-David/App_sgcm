@@ -12,19 +12,19 @@ use Illuminate\Support\Facades\Auth;
 
 class RecetteService
 {
-    private array $mairieIds;
+    private array $mairieRefs;
 
     public function __construct()
     {
         $mairieConnectee = Auth::guard('mairie')->user();
         // Gérer le cas où il n'y a pas d'utilisateur connecté si nécessaire
         if ($mairieConnectee) {
-            $this->mairieIds = Mairie::where('region', $mairieConnectee->region)
+            $this->mairieRefs = Mairie::where('region', $mairieConnectee->region)
                                      ->where('commune', $mairieConnectee->commune)
-                                     ->pluck('id')
+                                     ->pluck('mairie_ref')
                                      ->all();
         } else {
-            $this->mairieIds = [];
+            $this->mairieRefs = [];
         }
     }
 
@@ -71,7 +71,7 @@ class RecetteService
     public function buildRecetteQuery(Request $request)
     {
         $query = PaiementTaxe::query()
-            ->whereIn('mairie_id', $this->mairieIds)
+            ->whereIn('mairie_ref', $this->mairieIds)
             ->where('recette_effectuee', false)
             ->with(['commercant:id,nom,num_commerce', 'taxe:id,nom'])
             ->orderBy('created_at', 'desc');
@@ -90,7 +90,7 @@ class RecetteService
      */
     private function enrichPaiementsData(Collection $paiements, array $numCommerces, array $taxeIds): void
     {
-        $encaissements = Encaissement::whereIn('mairie_id', $this->mairieIds)
+        $encaissements = Encaissement::whereIn('mairie_ref', $this->mairieRefs)
             ->whereIn('num_commerce', $numCommerces)
             ->whereIn('taxe_id', $taxeIds)
             ->with('agent:id,name')
@@ -120,7 +120,7 @@ class RecetteService
             return collect();
         }
 
-        return Agent::whereIn('mairie_id', $this->mairieIds)
+        return Agent::whereIn('mairie_ref', $this->mairieRefs)
             ->whereHas('encaissements', fn($q) => $q->whereIn('num_commerce', $numCommerces)->whereIn('taxe_id', $taxeIds))
             ->with(['encaissements' => fn($q) => $q->whereIn('num_commerce', $numCommerces)->whereIn('taxe_id', $taxeIds), 'versement'])
             ->get()

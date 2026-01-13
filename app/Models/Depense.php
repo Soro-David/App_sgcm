@@ -19,7 +19,7 @@ class Depense extends Model
         'mode_paiement',
         'reference',
         'agent_id',
-        'mairie_id',
+        'mairie_ref',
         'piece_jointe',
     ];
 
@@ -41,6 +41,6 @@ class Depense extends Model
      */
     public function mairie()
     {
-        return $this->belongsTo(Mairie::class, 'mairie_id');
+        return $this->belongsTo(Mairie::class, 'mairie_ref');
     }
 }

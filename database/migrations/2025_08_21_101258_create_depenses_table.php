@@ -23,14 +23,14 @@ return new class extends Migration
             $table->string('reference')->nullable();
             
             $table->unsignedBigInteger('agent_id')->nullable(); 
-            $table->unsignedBigInteger('mairie_id')->nullable();
+            $table->string('mairie_ref')->nullable();
             
             $table->string('piece_jointe')->nullable();
             
             $table->timestamps();
 
             $table->foreign('agent_id')->references('id')->on('agents')->onDelete('set null');
-            $table->foreign('mairie_id')->references('id')->on('mairies')->onDelete('cascade');
+            $table->string('mairie_ref')->references('mairie_ref')->on('mairies')->onDelete('cascade');
         });
     }
 

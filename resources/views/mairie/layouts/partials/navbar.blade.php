@@ -1,147 +1,94 @@
 <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-      <div class="navbar-brand-wrapper d-flex justify-content-center">
+    <div class="navbar-brand-wrapper d-flex justify-content-center">
         <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">
-          <a class="navbar-brand brand-logo" href="../index.html"><img src="../../../assets/images/logo_sgcm.png" alt="logo"/></a>
-          <a class="navbar-brand brand-logo-mini" href="../index.html"><img src="../../../assets/images/logo-mini.svg" alt="logo"/></a>
-          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
-            <span class="typcn typcn-th-menu"></span>
-          </button>
+            <a class="navbar-brand brand-logo d-flex flex-column align-items-start"
+                href="{{ route('mairie.dashboard.index') }}" style="line-height: 1;">
+                <span class="fw-bold text-white text-uppercase"
+                    style="font-size: 2.5rem; letter-spacing: 5px;">ANATH</span>
+                <span class="text-white" style="font-size: 0.85rem; font-weight: 400;">Système Gestion des taxes</span>
+            </a>
+            <a class="navbar-brand brand-logo-mini d-none d-lg-block" href="">
+                <span class="fw-bold text-white text-uppercase" style="font-size: 1.5rem;"></span>
+            </a>
         </div>
-      </div>
-      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
-        <ul class="navbar-nav me-lg-2">
-          <li class="nav-item nav-profile dropdown">
-            <a class="nav-link" href="#" data-bs-toggle="dropdown" id="profileDropdown">
-              <img src="../../../assets/images/faces/face5.jpg" alt="profile"/>
-              <span class="nav-profile-name">
-                  {{ Auth::guard('mairie')->name ?? 'Mairie inconnue' }}
-              </span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-              <a class="dropdown-item">
-                <i class="typcn typcn-cog-outline text-primary"></i>
-                Settings
-              </a>
-              <form id="logout-form" action="{{ route('logout.mairie') }}" method="GET" style="display: none;">
-                  @csrf
-              </form>
-              <!-- Dans votre dropdown : -->
-              <a class="dropdown-item" href="#"
-                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                  <i class="typcn typcn-eject text-primary"></i>
-                  Déconnexion
-              </a>
-            </div>
-          </li>
-          {{-- <li class="nav-item nav-user-status dropdown">
-              <p class="mb-0">Last login was 23 hours ago.</p>
-          </li> --}}
-        </ul>
+    </div>
+    <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end" style="margin-left: 0px;">
+        <h4 class="fw-bold mb-0 me-auto ms-3" style="color: #ff7b0f;">Mairie D'Abobo</h4>
         <ul class="navbar-nav navbar-nav-right">
-          <li class="nav-item nav-date dropdown">
-            <a class="nav-link d-flex justify-content-center align-items-center" href="javascript:;">
-              <h6 class="date mb-0">
-                  {{ \Carbon\Carbon::now()->locale('fr')->isoFormat('dddd D MMMM YYYY, HH:mm') }}
-              </h6>
-              <i class="typcn typcn-calendar"></i>
-            </a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link count-indicator dropdown-toggle d-flex justify-content-center align-items-center" id="messageDropdown" href="#" data-bs-toggle="dropdown">
-              <i class="typcn typcn-mail mx-0"></i>
-              <span class="count"></span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
-              <p class="mb-0 fw-normal float-start dropdown-header">Messages</p>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                    <img src="../../../assets/images/faces/face4.jpg" alt="image" class="profile-pic">
+            <li class="nav-item dropdown me-0">
+                <a class="nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center"
+                    id="notificationDropdown" href="#" data-bs-toggle="dropdown">
+                    <i class="fas fa-bell" style="color: #ff7b0f; font-size: 1.5rem;"></i>
+                    <span class="count"></span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+                    aria-labelledby="notificationDropdown">
+                    <p class="mb-0 fw-normal float-start dropdown-header">Notifications</p>
+                    <a class="dropdown-item preview-item">
+                        <div class="preview-thumbnail">
+                            <div class="preview-icon bg-success">
+                                <i class="typcn typcn-info mx-0"></i>
+                            </div>
+                        </div>
+                        <div class="preview-item-content">
+                            <h6 class="preview-subject fw-normal">Application Error</h6>
+                            <p class="fw-light small-text mb-0 text-muted">
+                                Just now
+                            </p>
+                        </div>
+                    </a>
+                    <a class="dropdown-item preview-item">
+                        <div class="preview-thumbnail">
+                            <div class="preview-icon bg-warning">
+                                <i class="typcn typcn-cog-outline mx-0"></i>
+                            </div>
+                        </div>
+                        <div class="preview-item-content">
+                            <h6 class="preview-subject fw-normal">Settings</h6>
+                            <p class="fw-light small-text mb-0 text-muted">
+                                Private message
+                            </p>
+                        </div>
+                    </a>
+                    <a class="dropdown-item preview-item">
+                        <div class="preview-thumbnail">
+                            <div class="preview-icon bg-info">
+                                <i class="typcn typcn-user mx-0"></i>
+                            </div>
+                        </div>
+                        <div class="preview-item-content">
+                            <h6 class="preview-subject fw-normal">New user registration</h6>
+                            <p class="fw-light small-text mb-0 text-muted">
+                                2 days ago
+                            </p>
+                        </div>
+                    </a>
                 </div>
-                <div class="preview-item-content flex-grow">
-                  <h6 class="preview-subject ellipsis fw-normal">David Grey
-                  </h6>
-                  <p class="fw-light small-text text-muted mb-0">
-                    The meeting is cancelled
-                  </p>
+            </li>
+            <li class="nav-item nav-profile dropdown">
+                <a class="nav-link" href="#" data-bs-toggle="dropdown" id="profileDropdown">
+                    <img src="{{ Auth::user()->photo ?? asset('images/default_avatar.jpg') }}" alt="Profile"
+                        class="img-xs rounded-circle" style="margin-top: -11px;" />
+                </a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                    <a class="dropdown-item" href="#">
+                        <i class="typcn typcn-cog-outline text-primary"></i>
+                        Profil
+                    </a>
+                    <a class="dropdown-item" href="#"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <i class="typcn typcn-eject text-primary"></i>
+                        Déconnexion
+                    </a>
                 </div>
-              </a>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                    <img src="../../../assets/images/faces/face2.jpg" alt="image" class="profile-pic">
-                </div>
-                <div class="preview-item-content flex-grow">
-                  <h6 class="preview-subject ellipsis fw-normal">Tim Cook
-                  </h6>
-                  <p class="fw-light small-text text-muted mb-0">
-                    New product launch
-                  </p>
-                </div>
-              </a>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                    <img src="../../../assets/images/faces/face3.jpg" alt="image" class="profile-pic">
-                </div>
-                <div class="preview-item-content flex-grow">
-                  <h6 class="preview-subject ellipsis fw-normal"> Johnson
-                  </h6>
-                  <p class="fw-light small-text text-muted mb-0">
-                    Upcoming board meeting
-                  </p>
-                </div>
-              </a>
-            </div>
-          </li>
-          <li class="nav-item dropdown me-0">
-            <a class="nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center" id="notificationDropdown" href="#" data-bs-toggle="dropdown">
-              <i class="typcn typcn-bell mx-0"></i>
-              <span class="count"></span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
-              <p class="mb-0 fw-normal float-start dropdown-header">Notifications</p>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                  <div class="preview-icon bg-success">
-                    <i class="typcn typcn-info mx-0"></i>
-                  </div>
-                </div>
-                <div class="preview-item-content">
-                  <h6 class="preview-subject fw-normal">Application Error</h6>
-                  <p class="fw-light small-text mb-0 text-muted">
-                    Just now
-                  </p>
-                </div>
-              </a>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                  <div class="preview-icon bg-warning">
-                    <i class="typcn typcn-cog-outline mx-0"></i>
-                  </div>
-                </div>
-                <div class="preview-item-content">
-                  <h6 class="preview-subject fw-normal">Settings</h6>
-                  <p class="fw-light small-text mb-0 text-muted">
-                    Private message
-                  </p>
-                </div>
-              </a>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                  <div class="preview-icon bg-info">
-                    <i class="typcn typcn-user mx-0"></i>
-                  </div>
-                </div>
-                <div class="preview-item-content">
-                  <h6 class="preview-subject fw-normal">New user registration</h6>
-                  <p class="fw-light small-text mb-0 text-muted">
-                    2 days ago
-                  </p>
-                </div>
-              </a>
-            </div>
-          </li>
+            </li>
+            <form id="logout-form" action="{{ route('logout') }}" method="GET" style="display: none;">
+                @csrf
+            </form>
         </ul>
-        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
-          <span class="typcn typcn-th-menu"></span>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+            data-toggle="offcanvas">
+            <span class="typcn typcn-th-menu"></span>
         </button>
-      </div>
-    </nav>
+    </div>
+</nav>

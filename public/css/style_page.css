@@ -10,6 +10,11 @@ select.form-select {
     transition: all 0.3s ease-in-out;
 }
 
+@media (min-width: 992px) {
+  .main-panel {
+    margin-left: 300px;
+  }
+}
 /* Placeholder gris doux */
 input::placeholder {
     color: #999;

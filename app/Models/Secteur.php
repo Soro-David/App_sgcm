@@ -17,13 +17,12 @@ class Secteur extends Model
     protected $fillable = [
         'nom',
         'code',
-        'mairie_id',
-       
+        'mairie_ref',
     ];
 
     public function mairie()
     {
-        return $this->belongsTo(Mairie::class);
+        return $this->belongsTo(Mairie::class, 'mairie_ref', 'mairie_ref');
     }
  
     public function commercant(): BelongsToMany

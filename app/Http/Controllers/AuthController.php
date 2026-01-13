@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Commercant;
-use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -15,23 +14,42 @@ class AuthController extends Controller
      */
     protected function logoutAllGuards(Request $request): void
     {
-        foreach (['web','commercant', 'mairie', 'agent'] as $guard) {
+        foreach (['web', 'commercant', 'mairie', 'agent'] as $guard) {
             Auth::guard($guard)->logout();
         }
         $request->session()->invalidate();
         $request->session()->regenerateToken();
     }
 
-    public function showLogin()        { return view('auth.login'); }
-    public function showLoginMairie()  { return view('auth.login_mairie'); }
-    public function showLoginFinancier()  { return view('auth.login_commercant'); }
-    public function showLoginAgent()   { return view('auth.login_agent'); }
-    public function showRegister()     { return view('auth.register'); }
+    public function showLogin()
+    {
+        return view('auth.login');
+    }
+
+    public function showLoginMairie()
+    {
+        return view('auth.login_mairie');
+    }
+
+    public function showLoginFinancier()
+    {
+        return view('auth.login_commercant');
+    }
+
+    public function showLoginAgent()
+    {
+        return view('auth.login_agent');
+    }
+
+    public function showRegister()
+    {
+        return view('auth.register');
+    }
 
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email'    => 'required|email',
+            'email' => 'required|email',
             'password' => 'required',
         ]);
 
@@ -39,16 +57,21 @@ class AuthController extends Controller
 
         if (Auth::guard('web')->attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->route('superadmin.dashboard');
+
+            if (Auth::user()->role === 'superadmin') {
+                return redirect()->route('superadmin.dashboard');
+            }
+
+            return redirect()->route('user.dashboard');
         }
 
-        return back()->withErrors(['email' => 'Identifiants superadmin incorrects.']);
+        return back()->withErrors(['email' => 'Identifiants incorrects.']);
     }
 
     public function login_mairie(Request $request)
     {
         $credentials = $request->validate([
-            'email'    => 'required|email',
+            'email' => 'required|email',
             'password' => 'required',
         ]);
 
@@ -56,13 +79,12 @@ class AuthController extends Controller
 
         if (Auth::guard('mairie')->attempt($credentials)) {
             $request->session()->regenerate();
+
             return redirect()->route('mairie.dashboard.index');
         }
 
         return back()->withErrors(['email' => 'Identifiants mairie incorrects.']);
     }
-
-
 
     public function login_commercant(Request $request)
     {
@@ -73,7 +95,11 @@ class AuthController extends Controller
 
         if (Auth::guard('commercant')->attempt($credentials)) {
             $request->session()->regenerate();
-            
+
+            /** @var \App\Models\Commercant $user */
+            $user = Auth::guard('commercant')->user();
+            $user->update(['last_activity' => now()]);
+
             return redirect()->intended(route('commercant.dashboard'));
         }
 
@@ -81,7 +107,6 @@ class AuthController extends Controller
             'num_commerce' => 'Le numéro de commerce ou le mot de passe est incorrect.',
         ])->withInput($request->only('num_commerce'));
     }
-
 
     public function showDashboard()
     {
@@ -95,7 +120,7 @@ class AuthController extends Controller
     public function login_agent(Request $request)
     {
         $credentials = $request->validate([
-            'email'    => 'required|email',
+            'email' => 'required|email',
             'password' => 'required',
         ]);
 
@@ -103,6 +128,7 @@ class AuthController extends Controller
 
         if (Auth::guard('agent')->attempt($credentials)) {
             $request->session()->regenerate();
+
             return redirect()->route('agent.dashboard');
         }
 
@@ -112,16 +138,16 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $data = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|confirmed|min:6',
-            'role'     => 'required|in:superadmin',
+            'role' => 'required|in:superadmin',
         ]);
 
         $user = User::create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
-            'role'     => $data['role'],
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'role' => $data['role'],
             'password' => Hash::make($data['password']),
         ]);
 
@@ -136,11 +162,11 @@ class AuthController extends Controller
      */
     // app/Http/Controllers/AuthController.php
 
-    public function logout(Request $request, string $guard = null)
+    public function logout(Request $request, ?string $guard = null)
     {
         // Si aucun guard explicitement passé, on détecte celui en session
         if (! $guard) {
-            foreach (['web','mairie','commercant','agent'] as $g) {
+            foreach (['web', 'mairie', 'commercant', 'agent'] as $g) {
                 if (Auth::guard($g)->check()) {
                     $guard = $g;
                     break;
@@ -148,7 +174,7 @@ class AuthController extends Controller
             }
         }
 
-        if (! in_array($guard, ['web', 'mairie','commercant', 'agent'])) {
+        if (! in_array($guard, ['web', 'mairie', 'commercant', 'agent'])) {
             abort(403);
         }
 
@@ -157,14 +183,36 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         $redirectRoutes = [
-            'web'    => 'login',
+            'web' => 'login',
             'mairie' => 'login.mairie',
-            'agent'  => 'login.agent',
-            'commercant'  => 'login.commercant',
+            'agent' => 'login.agent',
+            'commercant' => 'login.commercant',
         ];
 
         return redirect()->route($redirectRoutes[$guard])
-                        ->with('success', 'Déconnexion réussie.');
+            ->with('success', 'Déconnexion réussie.');
     }
 
+    // Gestion du mot de passe Commerçant
+    public function showDefinePasswordCommercant(Request $request, \App\Models\Commercant $commercant)
+    {
+        return view('auth.define_password_commercant', compact('commercant'));
+    }
+
+    public function definePasswordCommercant(Request $request, \App\Models\Commercant $commercant)
+    {
+        $request->validate([
+            'password' => 'required|confirmed|min:6',
+        ]);
+
+        $commercant->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        // Connexion automatique après définition du mot de passe
+        Auth::guard('commercant')->login($commercant);
+        $commercant->update(['last_activity' => now()]);
+
+        return redirect()->route('commercant.dashboard')->with('success', 'Votre mot de passe a été défini avec succès.');
+    }
 }

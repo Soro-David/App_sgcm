@@ -50,7 +50,7 @@
 
         <!-- Pied de carte -->
         <div class="d-flex justify-content-end mt-4">
-            <a href="{{ route('agent.commerce.index') }}" class="btn btn-outline-secondary btn-sm me-2">Retour à la liste</a>
+            <a href="{{ route('agent.contribuable.index') }}" class="btn btn-outline-secondary btn-sm me-2">Retour à la liste</a>
             <a href="#" onclick="window.print();" class="btn btn-outline-primary btn-sm">Imprimer</a>
         </div>
     </div>

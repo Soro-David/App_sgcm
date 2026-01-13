@@ -2,7 +2,7 @@
 <div class="modal fade" id="addMairieModal" tabindex="-1" aria-labelledby="addMairieModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
-            
+
             <!-- En-tête du modal -->
             <div class="modal-header">
                 <h5 class="modal-title" id="addMairieModalLabel">Ajouter une taxe municipale</h5>
@@ -15,7 +15,8 @@
 
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="nom" class="form-label">Nom de la taxe <span class="text-danger">*</span></label>
+                        <label for="nom" class="form-label">Nom de la taxe <span
+                                class="text-danger">*</span></label>
                         <input type="text" class="form-control" name="nom" id="nom" required>
                     </div>
 
@@ -30,6 +31,8 @@
                     </div>
                 </div>
 
+                {{-- @dd(Auth::user()) --}}
+                <input type="hidden" name="mairie_ref" value="{{ Auth::user()->mairie_ref }}">
                 <!-- Pied du modal -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>

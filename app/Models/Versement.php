@@ -19,13 +19,13 @@ class Versement extends Model
         'montant_verse',
         'reste',
         'agent_id',
-        'mairie_id',
+        'mairie_ref',
        
     ];
 
     public function mairie()
     {
-        return $this->belongsTo(Mairie::class);
+        return $this->belongsTo(Mairie::class, 'mairie_ref');
     }
 
     public function agent()

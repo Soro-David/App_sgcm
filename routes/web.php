@@ -1,35 +1,31 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\SettingsController;
-use App\Http\Controllers\MailRegistrationController;
-use App\Http\Controllers\SuperAdmin\MairieController;
-use App\Http\Controllers\SuperAdmin\TaxeController as SuperAdminTaxe;
-use App\Http\Controllers\Mairie\TaxeController;
-use App\Http\Controllers\Mairie\AgentController;
-use App\Http\Controllers\Mairie\TacheController;
-use App\Http\Controllers\Mairie\SecteurController;
-use App\Http\Controllers\Mairie\CommerceController;
-use App\Http\Controllers\Agent\CommerceController as AgentCommerce;
-use App\Http\Controllers\Agent\AgentController as AgentCommercants;
+use App\Http\Controllers\Agent\AgentController as AgentContribuable;
 use App\Http\Controllers\Agent\EncaissementController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Commercant\PayementController;
+use App\Http\Controllers\MailRegistrationController;
+use App\Http\Controllers\Mairie\AgentController;
+use App\Http\Controllers\Mairie\CommerceController;
+use App\Http\Controllers\Mairie\DashboardController;
+use App\Http\Controllers\Mairie\DepenseController;
 use App\Http\Controllers\Mairie\EncaissementController as EncaissementMairie;
 use App\Http\Controllers\Mairie\PaiementController as PaiementMairie;
-use App\Http\Controllers\Mairie\VersementController;
-use App\Http\Controllers\Mairie\DashboardController;
 use App\Http\Controllers\Mairie\RecetteController;
-use App\Http\Controllers\Mairie\DepenseController;
-use App\Http\Controllers\Commercant\PayementController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Mairie\SecteurController;
+use App\Http\Controllers\Mairie\TacheController;
+use App\Http\Controllers\Mairie\TaxeController;
+use App\Http\Controllers\Mairie\VersementController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\RoleController; 
-
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SuperAdmin\MairieController;
+use App\Http\Controllers\SuperAdmin\TaxeController as SuperAdminTaxe;
+use App\Http\Controllers\UserController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,47 +36,47 @@ use App\Http\Controllers\RoleController;
 // Authentification
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
-Route::get('/logout', fn(Request $request) =>
-    app(AuthController::class)->logout($request, 'web')
+Route::match(['get', 'post'], '/logout', fn (Request $request) => app(AuthController::class)->logout($request, 'web')
 )->name('logout');
-
 
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 
-
 Route::get('/login-mairie', [AuthController::class, 'showLoginMairie'])->name('login.mairie');
 Route::post('/login-mairie', [AuthController::class, 'login_mairie'])->name('login.mairie');
-Route::get('/mairie-logout', fn(Request $request) => 
-    app(AuthController::class)->logout($request, 'mairie')
+Route::match(['get', 'post'], '/mairie-logout', fn (Request $request) => app(AuthController::class)->logout($request, 'mairie')
 )->name('logout.mairie');
 
 Route::get('/login-commercant', [AuthController::class, 'showLoginFinancier'])->name('login.commercant');
 Route::post('/login-commercant', [AuthController::class, 'login_commercant'])->name('login.commercant');
-Route::get('/commercant-logout', fn(Request $request) => 
-    app(AuthController::class)->logout($request, 'commercant')
+Route::match(['get', 'post'], '/commercant-logout', fn (Request $request) => app(AuthController::class)->logout($request, 'commercant')
 )->name('logout.commercant');
 
 Route::get('/login-agent', [AuthController::class, 'showLoginAgent'])->name('login.agent');
 Route::post('/login-agent', [AuthController::class, 'login_agent'])->name('login.agent');
-Route::get('/agent-logout', fn(Request $request) =>
-    app(AuthController::class)->logout($request, 'agent')
+Route::match(['get', 'post'], '/agent-logout', fn (Request $request) => app(AuthController::class)->logout($request, 'agent')
 )->name('logout.agent');
 
+// Routes Commerçant Auth (Password Definition)
+Route::middleware('signed')->group(function () {
+    Route::get('/commercant/define-password/{commercant}', [AuthController::class, 'showDefinePasswordCommercant'])->name('commercant.define_password');
+    Route::post('/commercant/define-password/{commercant}', [AuthController::class, 'definePasswordCommercant']);
+});
 
-
-
-// Finalisation inscription 
+// Finalisation inscription
 Route::get('/mairie/finaliser-inscription/{email}', [MailRegistrationController::class, 'showCompletionForm'])->name('mairie.complete-registration.show');
 Route::get('/agent/finaliser-inscription/{email}', [MailRegistrationController::class, 'showCompletionFormAgent'])->name('agent.complete-registration.show');
+Route::get('/commercant/finaliser-inscription/{email}', [MailRegistrationController::class, 'showCompletionFormCommercant'])->name('commercant.complete-registration.show');
 Route::post('/mairie/finaliser-inscription', [MailRegistrationController::class, 'completeRegistration'])->name('mairie.complete-registration.store');
 Route::post('/agent/finaliser-inscription', [MailRegistrationController::class, 'completeRegistrationAgent'])->name('agent.complete-registration.store');
+Route::post('/commercant/finaliser-inscription', [MailRegistrationController::class, 'completeRegistrationCommercant'])->name('commercant.complete-registration.store');
 
-// Test mail 
+// Test mail
 Route::get('/test-mail', function () {
     Mail::raw('Test Zoho Mail depuis Laravel', function ($message) {
         $message->to('sorodavi3@zohomail.com')->subject('Test SMTP Laravel');
     });
+
     return 'Test de mail envoyé.';
 });
 
@@ -89,18 +85,17 @@ Route::get('/dashboard', function () {
     if (Auth::guard('web')->check()) {
         return redirect()->route('superadmin.dashboard');
     } elseif (Auth::guard('mairie')->check()) {
-        return redirect()->route('mairie.dashboard');
+        return redirect()->route('mairie.dashboard.index');
     } elseif (Auth::guard('agent')->check()) {
         return redirect()->route('agent.dashboard');
     }
 
-    return redirect('/lfogin')->withErrors('Vous devez être connecté.');
+    return redirect('/login')->withErrors('Vous devez être connecté.');
 });
-
 
 // Utilisateur simple (guard: web)
 Route::middleware(['auth:web', 'role:user'])->prefix('user')->name('user.')->group(function () {
-    Route::get('/dashboard', fn() => view('user.dashboard'))->name('dashboard');
+    Route::get('/dashboard', fn () => view('user.dashboard'))->name('dashboard');
 
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'show'])->name('show');
@@ -112,7 +107,6 @@ Route::middleware(['auth:web', 'role:user'])->prefix('user')->name('user.')->gro
         Route::get('/{id}', [OrderController::class, 'show'])->name('show');
     });
 });
-
 
 // On garde le groupe principal qui vérifie que l'utilisateur est authentifié
 Route::middleware(['auth:mairie'])->prefix('mairie')->name('mairie.')->group(function () {
@@ -129,7 +123,15 @@ Route::middleware(['auth:mairie'])->prefix('mairie')->name('mairie.')->group(fun
 
     Route::prefix('commerce')->name('commerce.')->group(function () {
         Route::get('/', [CommerceController::class, 'index'])->name('index');
+        Route::get('/list', [CommerceController::class, 'get_list_commercants'])->name('list_commercant');
+        Route::get('/create', [CommerceController::class, 'create'])->name('create');
+        Route::post('/', [CommerceController::class, 'store'])->name('store');
+
+        Route::put('/{mairie}', [CommerceController::class, 'update'])->name('update');
+
         Route::get('{id}', [CommerceController::class, 'show'])->name('show');
+        Route::get('{id}/edit', [CommerceController::class, 'edit'])->name('edit');
+        Route::delete('{id}', [CommerceController::class, 'destroy'])->name('destroy');
     });
 
     /*
@@ -151,7 +153,7 @@ Route::middleware(['auth:mairie'])->prefix('mairie')->name('mairie.')->group(fun
             Route::delete('/{mairie}', [AgentController::class, 'destroy'])->name('destroy');
             Route::get('/liste/data', [AgentController::class, 'get_list_mairie'])->name('get_list_mairie');
         });
-        
+
         Route::prefix('users')->name('users.')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('index');
             Route::get('/create', [UserController::class, 'create'])->name('create');
@@ -164,13 +166,36 @@ Route::middleware(['auth:mairie'])->prefix('mairie')->name('mairie.')->group(fun
         });
     });
 
-
     /*
     |--------------------------------------------------------------------------
     | Routes réservées au rôle 'financié'
     |--------------------------------------------------------------------------
     | Note : Si un admin doit aussi y accéder, on utilisera ->middleware(['role:admin,financié'])
     */
+    Route::prefix('taches')->name('taches.')->group(function () {
+        Route::get('/', [TacheController::class, 'index'])->name('index');
+
+        Route::get('/list', [TacheController::class, 'list_tache'])->name('list_tache');
+        Route::get('/liste/data', [TacheController::class, 'get_list_taches'])->name('get_list_tache');
+        Route::get('/shwo', [TacheController::class, 'show'])->name('show');
+
+        Route::get('/secteurs', [TacheController::class, 'index'])->name('secteurs.index');
+
+        // Traite la soumission du formulaire pour créer un secteur
+        Route::post('/secteurs', [TacheController::class, 'store'])->name('secteurs.store');
+
+        // Route pour la récupération des données par DataTables
+        Route::get('/secteurs/liste', [TacheController::class, 'get_list_secteurs'])->name('secteurs.list');
+
+        // Route pour la génération du code via AJAX
+        Route::get('/secteurs/generer-code', [TacheController::class, 'genererCodeSecteurAjax'])->name('secteurs.genererCode');
+
+        Route::get('/list/secteurs', [TacheController::class, 'get_list_secteurs'])->name('get_list_secteurs');
+
+        Route::get('/create', [TacheController::class, 'create'])->name('create');
+        Route::post('/', [TacheController::class, 'store'])->name('store');
+        Route::post('/secteur-store', [TacheController::class, 'store_secteur'])->name('store_secteur');
+    });
     Route::middleware(['role:financié'])->group(function () {
         Route::prefix('secteurs')->name('secteurs.')->group(function () {
             Route::resource('/', SecteurController::class);
@@ -187,7 +212,7 @@ Route::middleware(['auth:mairie'])->prefix('mairie')->name('mairie.')->group(fun
             Route::get('/', [PaiementMairie::class, 'index'])->name('index');
             Route::get('/get-list', [PaiementMairie::class, 'get_list_paiement'])->name('get_list');
         });
-        
+
         Route::prefix('taxe')->name('taxe.')->group(function () {
             Route::resource('/', TaxeController::class);
         });
@@ -203,11 +228,11 @@ Route::middleware(['auth:mairie'])->prefix('mairie')->name('mairie.')->group(fun
         Route::prefix('recette')->name('recette.')->group(function () {
             Route::get('/', [RecetteController::class, 'index'])->name('index');
             Route::post('/store', [RecetteController::class, 'store'])->name('store');
-            
+
             // Route AJAX pour récupérer les montants d'un agent
             Route::get('/get-montant/agent/{agent}', [RecetteController::class, 'get_montant_non_verse'])->name('montant_nonverse');
             Route::get('/liste-ajax', [RecetteController::class, 'get_liste_versement'])->name('versements_liste');
-            //route de l'export PDF et excel
+            // route de l'export PDF et excel
             Route::get('/journal-recette/export-pdf', [RecetteController::class, 'exportPdf'])->name('export_pdf');
             Route::get('/journal-recette/export-excel', [RecetteController::class, 'exportExcel'])->name('export_excel');
         });
@@ -221,7 +246,7 @@ Route::middleware(['auth:mairie'])->prefix('mairie')->name('mairie.')->group(fun
             Route::get('/{depense}/edit', [DepenseController::class, 'edit'])->name('edit');
             Route::put('/{depense}', [DepenseController::class, 'update'])->name('update');
         });
-        
+
         // Routes pour la programmation des agents (rôle financé)
         Route::get('/agents/programmer-agent', [AgentController::class, 'programer_agent'])->name('agents.programme_agent');
         Route::post('/agents/programmer-agent/store', [AgentController::class, 'storeProgramme'])->name('agents.store_programme_agent');
@@ -234,17 +259,17 @@ Route::middleware(['auth:mairie'])->prefix('mairie')->name('mairie.')->group(fun
     |--------------------------------------------------------------------------
     */
     Route::middleware(['role:caisse'])->group(function () {
-        //ici les routes pour le rôle 'caisse'
-        
+        // ici les routes pour le rôle 'caisse'
+
     });
 
-
     // La route de déconnexion est accessible à tous les utilisateurs connectés
-    Route::post('/logout', function (Request $request) {
+    Route::match(['get', 'post'], '/logout', function (Request $request) {
         Auth::guard('mairie')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/')->with('success', 'Déconnecté.');
+
+        return redirect()->route('login.mairie')->with('success', 'Déconnecté.');
     })->name('logout');
 
     //  les routes qui ne sont pas spécifiques à un rôle mais qui nécessitent une logique particulière.
@@ -254,7 +279,7 @@ Route::middleware(['auth:mairie'])->prefix('mairie')->name('mairie.')->group(fun
 // financier
 Route::middleware(['auth:commercant'])->prefix('commercant')->name('commercant.')->group(function () {
     // Route::get('/dashboard', fn() => view('commercant.dashboard'))->name('dashboard');
-     Route::get('/dashboard', [AuthController::class, 'showDashboard'])->name('dashboard');
+    Route::get('/dashboard', [AuthController::class, 'showDashboard'])->name('dashboard');
 
     Route::prefix('agents')->name('agents.')->group(function () {
         Route::get('/', [AgentController::class, 'index'])->name('index');
@@ -263,7 +288,6 @@ Route::middleware(['auth:commercant'])->prefix('commercant')->name('commercant.'
         Route::get('/programmer-agent', [AgentController::class, 'programer_agent'])->name('programme_agent');
         Route::post('/programmer-agent/store', [AgentController::class, 'storeProgramme'])->name('store_programme_agent');
         Route::get('/programme-liste', [AgentController::class, 'get_list_programmes'])->name('list_programmes');
-
 
         Route::post('/', [AgentController::class, 'store'])->name('store');
         Route::get('/{mairie}/edit', [AgentController::class, 'edit'])->name('edit');
@@ -284,11 +308,11 @@ Route::middleware(['auth:commercant'])->prefix('commercant')->name('commercant.'
         Route::get('/periodes/{taxeId}', [PayementController::class, 'periodes_impayees'])->name('periodes_impayees');
     });
 
-     Route::prefix('commerce')->name('commerce.')->group(function () {
+    Route::prefix('commerce')->name('commerce.')->group(function () {
         Route::get('/', [CommerceController::class, 'index'])->name('index');
         Route::get('/create', [CommerceController::class, 'create'])->name('create');
         Route::post('/', [CommerceController::class, 'store'])->name('store');
-        
+
         Route::put('/{mairie}', [CommerceController::class, 'update'])->name('update');
 
         Route::get('{id}', [CommerceController::class, 'show'])->name('show');
@@ -304,7 +328,7 @@ Route::middleware(['auth:commercant'])->prefix('commercant')->name('commercant.'
         Route::post('/', [UserController::class, 'store'])->name('store');
     });
 
-     Route::prefix('taches')->name('taches.')->group(function () {
+    Route::prefix('taches')->name('taches.')->group(function () {
         Route::get('/', [TacheController::class, 'index'])->name('index');
 
         Route::get('/list', [TacheController::class, 'list_tache'])->name('list_tache');
@@ -341,40 +365,42 @@ Route::middleware(['auth:commercant'])->prefix('commercant')->name('commercant.'
 
     });
 
-
     Route::prefix('roles')->name('roles.')->group(function () {
         Route::get('/', [RoleController::class, 'index'])->name('index');
         Route::post('/assign', [RoleController::class, 'assign'])->name('assign');
     });
 
-    Route::post('/logout', function (Request $request) {
-        Auth::guard('mairie')->logout();
+    Route::match(['get', 'post'], '/logout', function (Request $request) {
+        Auth::guard('commercant')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/')->with('success', 'Déconnecté.');
+
+        return redirect()->route('login.commercant')->with('success', 'Déconnecté.');
     })->name('logout');
 });
 
-
 // Agent
 Route::middleware(['auth:agent'])->prefix('agent')->name('agent.')->group(function () {
-    Route::get('/dashboard', fn() => view('agent.dashboard'))->name('dashboard');
+    Route::get('/dashboard', fn () => view('agent.dashboard'))->name('dashboard');
 
-    Route::prefix('commerce')->name('commerce.')->group(function () {
-        Route::resource('/', AgentCommercants::class);
-        Route::get('carte-virtuelle/{commercant}', [AgentCommercants::class, 'show_virtual_card'])->name('virtual_card');
-        Route::get('/commerce/{commercant}/edit', [AgentCommercants::class, 'edit_commercant'])->name('commerce_edit');
-        Route::put('/commerce/{commercant}', [AgentCommercants::class, 'update_commercant'])->name('commerce_update');
+    Route::prefix('contribuable')->name('contribuable.')->group(function () {
+        Route::get('/', [AgentContribuable::class, 'index'])->name('index');
+        Route::get('/create', [AgentContribuable::class, 'create'])->name('create');
+        Route::get('/edit', [AgentContribuable::class, 'edit'])->name('edit');
+        Route::get('/show', [AgentContribuable::class, 'show'])->name('show');
+        Route::get('/destroy', [AgentContribuable::class, 'destroy'])->name('destroy');
+        Route::post('/store', [AgentContribuable::class, 'store'])->name('store');
+        Route::get('carte-virtuelle/{commercant}', [AgentContribuable::class, 'show_virtual_card'])->name('virtual_card');
+        Route::get('/commerce/{commercant}/edit', [AgentContribuable::class, 'edit_commercant'])->name('commerce_edit');
+        Route::put('/commerce/{commercant}', [AgentContribuable::class, 'update_commercant'])->name('commerce_update');
 
+        Route::get('carte-virtuelle/edit/{commercant}', [AgentContribuable::class, 'edit_virtual_card'])->name('virtual_card');
 
-        Route::get('carte-virtuelle/edit/{commercant}', [AgentCommercants::class, 'edit_virtual_card'])->name('virtual_card');
-        
+        Route::post('/type-contribuable/ajouter', [AgentContribuable::class, 'ajouter_contribuable'])->name('ajouter_contribuable');
 
-        Route::post('/type-contribuable/ajouter', [AgentCommercants::class, 'ajouter_contribuable'])->name('ajouter_contribuable');
-
-        Route::get('/commerce/list', [AgentCommercants::class, 'get_list_commercants'])->name('list_commercant');
-        Route::get('/get-communes-by-region/{region}', [AgentCommerce::class, 'get_communes'])->name('get_communes');
-        Route::get('/liste/data', [AgentCommerce::class, 'get_list_mairie'])->name('get_list_mairie');
+        Route::get('/commerce/list', [AgentContribuable::class, 'get_list_commercants'])->name('list_commercant');
+        Route::get('/get-communes-by-region/{region}', [AgentContribuable::class, 'get_communes'])->name('get_communes');
+        Route::get('/liste/data', [AgentContribuable::class, 'get_list_mairie'])->name('get_list_mairie');
     });
 
     Route::prefix('users')->name('users.')->group(function () {
@@ -388,24 +414,24 @@ Route::middleware(['auth:agent'])->prefix('agent')->name('agent.')->group(functi
         Route::post('/assign', [RoleController::class, 'assign'])->name('assign');
     });
 
-
     Route::prefix('encaissement')->name('encaissement.')->group(function () {
         Route::get('/liste-commercants', [EncaissementController::class, 'get_list_commercant'])->name('get_list_commercant');
         Route::get('/details-taxe/{commercantId}/{taxeId}', [EncaissementController::class, 'getTaxeDetails'])->name('get_taxe_details');
         Route::resource('/', EncaissementController::class)->parameters(['' => 'encaissement']);
     });
 
-    Route::post('/logout', function (Request $request) {
+    Route::match(['get', 'post'], '/logout', function (Request $request) {
         Auth::guard('agent')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/')->with('success', 'Déconnecté.');
+
+        return redirect()->route('login.agent')->with('success', 'Déconnecté.');
     })->name('logout');
 });
 
 // Super Admin (utilise par défaut auth:web, mais on peut créer un guard "superadmin" si tu veux)
 Route::middleware(['auth:web', 'role:superadmin'])->prefix('super/admin')->name('superadmin.')->group(function () {
-    Route::get('/dashboard', fn() => view('superAdmin.dashboard'))->name('dashboard');
+    Route::get('/dashboard', fn () => view('superAdmin.dashboard'))->name('dashboard');
 
     Route::prefix('mairies')->name('mairies.')->group(function () {
         Route::get('/', [MairieController::class, 'index'])->name('index');

@@ -56,12 +56,12 @@ class AgentMairieController extends Controller
     public function generate_num_commerce(Request $request)
     {
         $agent = $request->user();
-        $mairie = Mairie::findOrFail($agent->mairie_id);
+        $mairie = Mairie::findOrFail($agent->mairie_ref);
 
         // Générer le numéro de commerce 
         $prefix = strtoupper(substr(preg_replace('/\s+/', '', $mairie->name), 0, 4));
 
-        $lastCommerce = Commercant::where('mairie_id', $agent->mairie_id)
+        $lastCommerce = Commercant::where('mairie_ref', $agent->mairie_ref)
                                     ->orderByDesc('id')
                                     ->first();
 
@@ -114,7 +114,7 @@ class AgentMairieController extends Controller
             'num_commerce' => $data['num_commerce'],
             'mot_de_passe' => isset($data['mot_de_passe']) ? bcrypt($data['mot_de_passe']) : null,
             'agent_id' => $agent->id,
-            'mairie_id' => $agent->mairie_id,
+            'mairie_ref' => $agent->mairie_ref,
             'taxe_id' => $data['taxe_ids'],
             'secteur_id' => [$data['secteur_id']],
         ]);
@@ -138,7 +138,7 @@ class AgentMairieController extends Controller
         }
 
         // Vérification de sécurité : l'agent ne peut voir que les commerçants de sa mairie
-        if ($commercant->mairie_id !== $agent->mairie_id) {
+        if ($commercant->mairie_ref !== $agent->mairie_ref) {
             return response()->json(['message' => 'Accès non autorisé à ce commerçant.'], 403);
         }
 
@@ -161,7 +161,7 @@ class AgentMairieController extends Controller
         }
 
         // Vérification de sécurité
-        if ($commercant->mairie_id !== $agent->mairie_id) {
+        if ($commercant->mairie_ref !== $agent->mairie_ref) {
             return response()->json(['message' => 'Accès non autorisé à ce commerçant.'], 403);
         }
 
@@ -216,7 +216,7 @@ class AgentMairieController extends Controller
         }
 
         // Vérification de sécurité
-        if ($commercant->mairie_id !== $agent->mairie_id) {
+        if ($commercant->mairie_ref !== $agent->mairie_ref) {
             return response()->json(['message' => 'Accès non autorisé à ce commerçant.'], 403);
         }
 
@@ -232,7 +232,7 @@ class AgentMairieController extends Controller
     {
         $agent = $request->user();
         
-        $commercants = Commercant::where('mairie_id', $agent->mairie_id)
+        $commercants = Commercant::where('mairie_ref', $agent->mairie_ref)
                                  ->orderBy('nom', 'asc')
                                  ->paginate(15); // Utiliser la pagination est une bonne pratique pour les API
 

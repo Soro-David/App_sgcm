@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('role')->default('admin');
 
             // Authentification
-            $table->string('email')->unique();
+            $table->string('email', 191)->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->timestamp('last_activity')->nullable();

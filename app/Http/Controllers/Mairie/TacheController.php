@@ -23,11 +23,11 @@ class TacheController extends Controller
      */
     public function index()
     {
-        $mairieId = Auth::guard('mairie')->id();
+        $mairie_ref = Auth::guard('mairie')->user()->mairie_ref;
 
-        $agents = Agent::where('mairie_id', $mairieId)->get();
-        $secteurs = Secteur::where('mairie_id', $mairieId)->get();
-        $taxes = Taxe::where('mairie_id', $mairieId)->get();
+        $agents = Agent::where('mairie_ref', $mairie_ref)->get();
+        $secteurs = Secteur::where('mairie_ref', $mairie_ref)->get();
+        $taxes = Taxe::where('mairie_ref', $mairie_ref)->get();
 
         return view('mairie.tache.index',compact('agents','secteurs','taxes'));
     }
@@ -42,7 +42,7 @@ class TacheController extends Controller
 
     public function create()
     {
-        $mairieId = Auth::guard('mairie')->id();
+        $mairie_ref = Auth::guard('mairie')->user()->mairie_ref;
 
         return view('mairie.tache.create');
     }
@@ -89,10 +89,10 @@ class TacheController extends Controller
         }
 
         try {
-            $mairieId = Auth::guard('mairie')->id();
+            $mairie_ref = Auth::guard('mairie')->user()->mairie_ref;
 
             // Récupère uniquement les taxes liées à la mairie authentifiée
-            $taxes = Taxe::where('mairie_id', $mairieId)
+            $taxes = Taxe::where('mairie_ref', $mairie_ref)
                 ->orderBy('created_at', 'desc');
 
             return DataTables::of($taxes)

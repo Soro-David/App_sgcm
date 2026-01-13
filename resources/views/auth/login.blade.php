@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion</title>
-    
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
-    
+
     <!-- Notre CSS personnalisé (doit venir APRES Bootstrap) -->
     <link rel="stylesheet" href="{{ asset('css/style_auth.css') }}">
 
 
     <!-- Font Awesome pour les icônes (optionnel mais recommandé pour le bouton) -->
-       <link rel="stylesheet" href="{{ asset('fontawesome/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('fontawesome/css/all.min.css') }}">
 
 </head>
 
@@ -22,9 +23,11 @@
         font-size: 1.1rem;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
         background: url("{{ asset('assets/images/login/login4.jpg') }}") no-repeat center center fixed;
-        background-size: cover;  /* adapte l’image à toute la page */
+        background-size: cover;
+        /* adapte l’image à toute la page */
     }
 </style>
+
 <body>
 
     <div class="card shadow-sm auth-card">
@@ -42,7 +45,8 @@
 
                 <div class="mb-3">
                     <label for="email" class="form-label">Adresse e-mail</label>
-                    <input type="email" class="form-control form-control-lg" id="email" name="email" required value="{{ old('email') }}">
+                    <input type="email" class="form-control form-control-lg" id="email" name="email" required
+                        value="{{ old('email') }}">
                 </div>
 
                 <div class="mb-4">
@@ -56,14 +60,16 @@
                     </button>
                 </div>
                 <div class="text-center mt-4 fw-light">
-                    Vous n'avez pas de compte ? <a href="{{ route('register') }}" class="text-primary">Créer un compte</a>
+                    Vous n'avez pas de compte ? <a href="{{ route('register') }}" class="text-primary">Créer un
+                        compte</a>
                 </div>
 
             </form>
         </div>
     </div>
-    
+
     <!-- Bootstrap JS (Optionnel, mais bon à avoir) -->
     <script src="{{ asset('bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 </body>
+
 </html>

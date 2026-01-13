@@ -1,7 +1,7 @@
     <div class="modal fade" id="addMairieModal" tabindex="-1" aria-labelledby="addMairieModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
-                <form method="POST" action="{{ route('agent.commerce.store') }}">
+                <form method="POST" action="{{ route('agent.contribuable.store') }}">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="addCommerceModalLabel">Ajouter un commerçant</h5>

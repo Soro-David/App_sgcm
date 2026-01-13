@@ -17,7 +17,7 @@
                     </div>
                 @endif
                 
-            <form action="{{ route('agent.commerce.commerce_update', $commercant->id) }}" method="POST">
+            <form action="{{ route('agent.contribuable.commerce_update', $commercant->id) }}" method="POST">
                 @csrf
                 @method('PUT')
 
@@ -110,7 +110,7 @@
 
 
                 <button class="btn btn-primary" type="submit">Mettre à jour</button>
-                <a href="{{ route('agent.commerce.index') }}" class="btn btn-secondary">Annuler</a>
+                <a href="{{ route('agent.contribuable.index') }}" class="btn btn-secondary">Annuler</a>
             </form>
         </div>
     </div>

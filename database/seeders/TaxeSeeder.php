@@ -17,7 +17,7 @@ class TaxeSeeder extends Seeder
                 'nom' => "Taxe $i",
                 'description' => "Description pour taxe $i",
                 'montant' => rand(1000, 5000),
-                'mairie_id' => $mairieIds[array_rand($mairieIds)],
+                'mairie_ref' => $mairieIds[array_rand($mairieIds)],
             ]);
         }
     }

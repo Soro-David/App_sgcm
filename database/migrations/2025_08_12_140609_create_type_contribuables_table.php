@@ -13,11 +13,15 @@ return new class extends Migration
     {
         Schema::create('type_contribuables', function (Blueprint $table) {
             $table->id();
-            $table->string('libelle')->unique();
+
+            // Limite la taille pour éviter l'erreur d'index
+            $table->string('libelle', 191)->unique();
+
             $table->foreignId('agent_id')->constrained()->onDelete('cascade');
-            $table->foreignId('mairie_id')->constrained()->onDelete('cascade');
+            $table->string('mairie_ref')->nullable();
             $table->timestamps();
         });
+
     }
 
     /**

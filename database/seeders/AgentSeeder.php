@@ -19,7 +19,7 @@ class AgentSeeder extends Seeder
                 'name' => "Agent {$mairie->id}-$i",
                 'email' => "agent{$mairie->id}_$i@example.com",
                 'password' => Hash::make($plainPassword),
-                'mairie_id' => $mairie->id
+                'mairie_ref' => $mairie->mairie_ref
             ]);
 
             echo "Agent {$mairie->id}-$i : email = agent{$mairie->id}_$i@example.com, password = $plainPassword\n";

@@ -38,9 +38,9 @@ class EncaissementController extends Controller
         }
 
         try {
-            $mairieId = Auth::guard('mairie')->id();
+            $mairie_ref = Auth::guard('mairie')->user()->mairie_ref;
 
-            $query = Encaissement::where('mairie_id', $mairieId)
+            $query = Encaissement::where('mairie_ref', $mairie_ref)
                 ->with([
                     'agent:id,name',
                     'taxe:id,nom', 

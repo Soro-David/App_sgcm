@@ -26,9 +26,7 @@ return new class extends Migration
                 ->constrained('taxes')
                 ->onDelete('cascade');
 
-            $table->foreignId('mairie_id')
-                ->constrained('mairies')
-                ->onDelete('cascade');
+            $table->string('mairie_ref')->nullable();
 
             $table->string('num_commerce')->nullable();
             $table->string('montant')->nullable();

@@ -3,14 +3,10 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Carbon\Carbon;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Validator;
-use Yajra\DataTables\Facades\DataTables;
 use App\Models\Mairie;
 use App\Models\Taxe;
-
+use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class TaxeController extends Controller
 {
@@ -41,21 +37,20 @@ class TaxeController extends Controller
             'description' => 'nullable|string',
             'montant' => 'nullable|numeric',
         ]);
-        // dd($request);
 
+        $mairie_ref = $request->mairie_ref;
+        // dd($request->all(), $mairie_ref);
         try {
-            Taxe::create($request->only(['nom', 'description', 'montant']));
-
+            Taxe::create($request->only(['nom', 'description', 'montant', 'mairie_ref']));
 
             return redirect()->route('superadmin.taxes.index')
-                            ->with('success', 'Taxe ajoutée avec succès.');
+                ->with('success', 'Taxe ajoutée avec succès.');
         } catch (\Exception $e) {
             return redirect()->back()
-                            ->withInput()
-                            ->with('error', 'Une erreur est survenue lors de l\'ajout de la taxe : ' . $e->getMessage());
+                ->withInput()
+                ->with('error', 'Une erreur est survenue lors de l\'ajout de la taxe : '.$e->getMessage());
         }
     }
-
 
     /**
      * Display the specified resource.
@@ -69,11 +64,10 @@ class TaxeController extends Controller
     {
         $taxe = Taxe::with('mairie')->findOrFail($id);
         $mairies = Mairie::all();
-        $taxes = Taxe::with('mairie')->whereNotNull('mairie_id')->get();
+        $taxes = Taxe::with('mairie')->whereNotNull('mairie_ref')->get();
 
         return view('superAdmin.taxe.edit_taxe', compact('taxe', 'mairies', 'taxes'));
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -82,33 +76,30 @@ class TaxeController extends Controller
     {
         $request->validate([
             'nom' => 'required',
-            'mairie_id' => 'required|exists:mairies,id',
+            'mairie_ref' => 'required|exists:mairies,mairie_ref',
             'montant' => 'nullable|numeric',
             'description' => 'nullable|string',
         ]);
 
-        $taxe = new Taxe();
+        $taxe = new Taxe;
         $taxe->nom = $request->nom;
         $taxe->description = $request->description;
         $taxe->montant = $request->montant;
-        $taxe->mairie_id = $request->mairie_id;
+        $taxe->mairie_ref = $request->mairie_ref;
         $taxe->save();
 
         return redirect()->route('superadmin.taxes.index')->with('success', 'Taxe ajoutée avec succès.');
     }
-
 
     public function destroy(string $id)
     {
         //
     }
 
-
-
     public function get_list_taxes(Request $request)
     {
         try {
-            if (!$request->ajax()) {
+            if (! $request->ajax()) {
                 return response()->json(['error' => 'Requête non autorisée.'], 403);
             }
 
@@ -125,21 +116,21 @@ class TaxeController extends Controller
                     $editUrl = route('superadmin.taxes.edit', $taxe->id);
                     $deleteUrl = route('superadmin.taxes.destroy', $taxe->id);
 
-                    return '<a href="' . $editUrl . '" class="btn btn-warning btn-sm" title="Assigner cette taxe à une mairie"><i class="fa fa-eye"></i></a>
-                            <button class="btn btn-danger btn-sm btn-delete" data-url="' . $deleteUrl . '" title="Supprimer cette taxe"><i class="fa fa-trash"></i></button>';
+                    return '<a href="'.$editUrl.'" class="btn btn-warning btn-sm" title="Assigner cette taxe à une mairie"><i class="fa fa-eye"></i></a>
+                            <button class="btn btn-danger btn-sm btn-delete" data-url="'.$deleteUrl.'" title="Supprimer cette taxe"><i class="fa fa-trash"></i></button>';
                 })
                 ->rawColumns(['action'])
                 ->make(true);
 
         } catch (\Exception $e) {
-            \Log::error("Erreur DataTable taxe : " . $e->getMessage());
+            \Log::error('Erreur DataTable taxe : '.$e->getMessage());
+
             return response()->json([
                 'error' => 'Erreur serveur',
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
-
 
     public function get_infos_mairie($id)
     {
@@ -151,7 +142,7 @@ class TaxeController extends Controller
         ]);
     }
 
-// ...
+    // ...
 
     public function get_mairie_taxe_list(Request $request)
     {
@@ -162,15 +153,14 @@ class TaxeController extends Controller
                 ->addColumn('action', function ($mairie) {
                     // Adaptez les actions selon vos besoins
                     $detailsButton = '<a href="'.route('superadmin.mairies.show', $mairie->id).'" class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Voir</a>';
+
                     return $detailsButton;
                 })
                 ->rawColumns(['action'])
                 ->make(true);
         }
+
         // Si la requête n'est pas AJAX, vous pouvez retourner une erreur ou rediriger
         return abort(403, 'Accès non autorisé');
     }
-
-
-
 }

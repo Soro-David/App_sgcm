@@ -24,18 +24,18 @@ class RecetteController extends Controller
     public function index(Request $request)
     {
         $mairieConnectee = Auth::guard('mairie')->user();
-        $mairieIdsDeLaZone = Mairie::where('region', $mairieConnectee->region)
+        $mairieRefDeLaZone = Mairie::where('region', $mairieConnectee->region)
                                   ->where('commune', $mairieConnectee->commune)
-                                  ->pluck('id');
+                                  ->pluck('mairie_ref');
 
-        $taxes = Taxe::whereIn('mairie_id', $mairieIdsDeLaZone)->get(['id', 'nom']);
-        $secteurs = Secteur::whereIn('mairie_id', $mairieIdsDeLaZone)->get(['id', 'nom']);
+        $taxes = Taxe::whereIn('mairie_ref', $mairieRefDeLaZone)->get(['id', 'nom']);
+        $secteurs = Secteur::whereIn('mairie_ref', $mairieRefDeLaZone)->get(['id', 'nom']);
         
         // Si la requête est une requête AJAX (recherche)
         if ($request->ajax()) {
             // On ne récupère les données que si au moins un filtre est présent
             if ($request->has('taxe_id') || $request->has('secteur_id')) {
-                $data = $this->getRecetteData($request, $mairieIdsDeLaZone);
+                $data = $this->getRecetteData($request, $mairieRefDeLaZone);
                 return response()->json([
                     'html' => view('mairie.comptabilite.recette.partials.resultats_recette', $data)->render(),
                 ]);
@@ -52,9 +52,9 @@ class RecetteController extends Controller
      * NOUVELLE MÉTHODE PRIVÉE: Récupère et prépare les données de recette.
      * Centralise la logique pour la vue, le PDF et l'Excel.
      */
-    private function getRecetteData(Request $request, $mairieIdsDeLaZone)
+    private function getRecetteData(Request $request, $mairieRefDeLaZone)
     {
-        $baseQuery = $this->buildRecetteQuery($request, $mairieIdsDeLaZone);
+        $baseQuery = $this->buildRecetteQuery($request, $mairieRefDeLaZone);
 
         $totalTaxesCollectees = (clone $baseQuery)->sum('montant');
         
@@ -66,8 +66,8 @@ class RecetteController extends Controller
             $numCommerces = $paiements->pluck('commercant.num_commerce')->unique()->filter();
             $taxeIdsFiltres = $paiements->pluck('taxe_id')->unique()->filter();
 
-            $agentsData = $this->getAgentData($mairieIdsDeLaZone, $numCommerces, $taxeIdsFiltres);
-            $this->enrichPaiementsData($paiements, $mairieIdsDeLaZone, $numCommerces, $taxeIdsFiltres);
+            $agentsData = $this->getAgentData($mairieRefDeLaZone, $numCommerces, $taxeIdsFiltres);
+            $this->enrichPaiementsData($paiements, $mairieRefDeLaZone, $numCommerces, $taxeIdsFiltres);
         }
 
         return [
@@ -80,10 +80,10 @@ class RecetteController extends Controller
     /**
      * Construit la requête de base pour les recettes.
      */
-    private function buildRecetteQuery(Request $request, $mairieIdsDeLaZone)
+    private function buildRecetteQuery(Request $request, $mairieRefDeLaZone)
     {
         $query = PaiementTaxe::query()
-            ->whereIn('mairie_id', $mairieIdsDeLaZone)
+            ->whereIn('mairie_ref', $mairieRefDeLaZone)
             ->where('recette_effectuee', false)
             ->with(['commercant:id,nom,num_commerce', 'taxe:id,nom'])
             ->orderBy('created_at', 'desc');
@@ -100,10 +100,10 @@ class RecetteController extends Controller
     /**
      * Enrichit les paiements avec les données d'encaissement.
      */
-    private function enrichPaiementsData(&$paiements, $mairieIds, $numCommerces, $taxeIds) {
+    private function enrichPaiementsData(&$paiements, $mairieRefIds, $numCommerces, $taxeIds) {
         if ($numCommerces->isEmpty() || $taxeIds->isEmpty()) return;
 
-        $encaissements = Encaissement::whereIn('mairie_id', $mairieIds)
+        $encaissements = Encaissement::whereIn('mairie_ref', $mairieRefIds)
             ->whereIn('num_commerce', $numCommerces)
             ->whereIn('taxe_id', $taxeIds)
             ->with('agent:id,name')
@@ -126,11 +126,11 @@ class RecetteController extends Controller
     /**
      * Récupère les données synthétisées par agent.
      */
-    private function getAgentData($mairieIds, $numCommerces, $taxeIds) {
+    private function getAgentData($mairieRefIds, $numCommerces, $taxeIds) {
         if ($numCommerces->isEmpty() || $taxeIds->isEmpty()) {
             return collect();
         }
-        return Agent::whereIn('mairie_id', $mairieIds)
+        return Agent::whereIn('mairie_ref', $mairieRefIds)
             ->whereHas('encaissements', fn($q) => $q->whereIn('num_commerce', $numCommerces)->whereIn('taxe_id', $taxeIds))
             ->with(['encaissements' => fn($q) => $q->whereIn('num_commerce', $numCommerces)->whereIn('taxe_id', $taxeIds), 'versement'])
             ->get()->map(function ($agent) {
@@ -150,7 +150,7 @@ class RecetteController extends Controller
             'paiement_ids.*' => 'exists:paiement_taxes,id',
         ]);
 
-        PaiementTaxe::where('mairie_id', Auth::guard('mairie')->id()) 
+        PaiementTaxe::where('mairie_ref', Auth::guard('mairie')->user()->mairie_ref) 
             ->whereIn('id', $request->paiement_ids)
             ->update(['recette_effectuee' => true]);
 
@@ -164,11 +164,11 @@ class RecetteController extends Controller
 public function exportPdf(Request $request)
 {
     $mairieConnectee = Auth::guard('mairie')->user();
-    $mairieIdsDeLaZone = Mairie::where('region', $mairieConnectee->region)
+    $mairieRefDeLaZone = Mairie::where('region', $mairieConnectee->region)
                               ->where('commune', $mairieConnectee->commune)
-                              ->pluck('id');
+                              ->pluck('mairie_ref');
     
-    $data = $this->getRecetteData($request, $mairieIdsDeLaZone);
+    $data = $this->getRecetteData($request, $mairieRefDeLaZone);
 
     $pdf = Pdf::loadView('mairie.comptabilite.exports.recette_pdf', $data);
     return $pdf->download('journal-recettes-' . now()->format('Y-m-d') . '.pdf');
@@ -179,12 +179,12 @@ public function exportPdf(Request $request)
     public function exportExcel(Request $request)
     {
         $mairieConnectee = Auth::guard('mairie')->user();
-        $mairieIdsDeLaZone = Mairie::where('region', $mairieConnectee->region)
+        $mairieRefDeLaZone = Mairie::where('region', $mairieConnectee->region)
                                   ->where('commune', $mairieConnectee->commune)
-                                  ->pluck('id');
+                                  ->pluck('mairie_ref');
 
         // 1. On récupère les données exactement comme avant
-        $data = $this->getRecetteData($request, $mairieIdsDeLaZone);
+        $data = $this->getRecetteData($request, $mairieRefDeLaZone);
         $paiements = $data['paiements'];
         
         $filename = 'journal-recettes-' . now()->format('Y-m-d') . '.csv';

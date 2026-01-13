@@ -33,8 +33,8 @@ class CommerceController extends Controller
     {
         $commercant = Commercant::findOrFail($id);
 
-        $taxes = Taxe::where('mairie_id', $commercant->mairie_id)->get();
-        $secteurs = Secteur::where('mairie_id', $commercant->mairie_id)->get();
+        $taxes = Taxe::where('mairie_ref', $commercant->mairie_ref)->get();
+        $secteurs = Secteur::where('mairie_ref', $commercant->mairie_ref)->get();
 
         // Décoder taxe_id JSON en tableau pour pré-sélection dans le formulaire
         $selectedTaxes = [];
@@ -104,11 +104,11 @@ class CommerceController extends Controller
             return response()->json(['error' => 'Non autorisé'], 403);
         }
 
-        $mairieIds = Mairie::where('region', $mairieConnectee->region)
+        $mairie_ref = Mairie::where('region', $mairieConnectee->region)
                         ->where('commune', $mairieConnectee->commune)
-                        ->pluck('id');
+                        ->pluck('mairie_ref');
 
-        $commercants = Commercant::whereIn('mairie_id', $mairieIds)
+        $commercants = Commercant::whereIn('mairie_ref', $mairie_ref)
             ->select([
                 'id', 
                 'nom', 

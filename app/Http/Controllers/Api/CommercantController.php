@@ -29,6 +29,8 @@ class CommercantController extends Controller
         // Création du token avec la bonne "ability"
         $token = $commercant->createToken('commercant-token', ['commercant'])->plainTextToken;
 
+        $commercant->update(['last_activity' => now()]);
+
         return response()->json([
             'token' => $token,
             'commercant' => $commercant
@@ -87,7 +89,7 @@ class CommercantController extends Controller
         }
 
         $paiement = PaiementTaxe::create([
-            'mairie_id' => $commercant->mairie_id,
+            'mairie_ref' => $commercant->mairie_ref,
             'secteur_id' => $commercant->secteur_id,
             'taxe_id' => $validatedData['taxe_id'],
             'num_commerce' => $commercant->num_commerce,

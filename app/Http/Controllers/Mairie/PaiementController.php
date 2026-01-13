@@ -30,15 +30,15 @@ class PaiementController extends Controller
         }
 
         try {
-            $mairieId = Auth::guard('mairie')->id();
+            $mairie_ref = Auth::guard('mairie')->user()->mairie_ref;
 
             // Cette ligne fonctionnera maintenant car le modèle est importé
-            $query = PaiementTaxe::where('mairie_id', $mairieId)
+            $query = PaiementTaxe::where('mairie_ref', $mairie_ref)
                 ->with([
                     'taxe:id,nom', 
                     'commercant:id,nom,num_commerce'
                 ])
-                ->select('payement_taxes.*') 
+                ->select('paiement_taxes.*') 
                 ->orderBy('created_at', 'desc');
 
             return DataTables::of($query)

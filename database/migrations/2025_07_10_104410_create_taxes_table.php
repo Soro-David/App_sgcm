@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->decimal('montant', 10, 2)->nullable();
             $table->enum('frequence', ['jour', 'mois', 'an'])->default('mois');
-            $table->foreignId('mairie_id')->constrained()->onDelete('cascade')->nullable();
+            $table->string('mairie_ref')->nullable();
             $table->timestamps();
         });
     }

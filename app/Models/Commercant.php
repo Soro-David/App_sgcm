@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Sanctum\HasApiTokens;
 
 class Commercant extends Authenticatable
@@ -18,7 +18,7 @@ class Commercant extends Authenticatable
      *
      * @var array<int, string>
      */
-     protected $fillable = [
+    protected $fillable = [
         'nom',
         'email',
         'telephone',
@@ -33,15 +33,19 @@ class Commercant extends Authenticatable
         'photo_profil',
         'photo_recto',
         'photo_verso',
-        'mairie_id',
+        'mairie_ref',
         'agent_id',
         'qr_code_path',
         'autre_images',
+        'otp_code',
+        'otp_expires_at',
+        'last_activity',
     ];
 
     protected $casts = [
         // 'taxes_ids' => 'array',  // C'est correct de l'avoir retiré
-        // 'secteur_id' => 'array', // C'est correct de l'avoir retiré 
+        // 'secteur_id' => 'array', // C'est correct de l'avoir retiré
+        'last_activity' => 'datetime',
     ];
 
     public function agent()
@@ -49,19 +53,15 @@ class Commercant extends Authenticatable
         return $this->belongsTo(Agent::class);
     }
 
-
-    public function secteur(): BelongsTo {
+    public function secteur(): BelongsTo
+    {
         return $this->belongsTo(Secteur::class);
     }
-
-
 
     public function taxes(): BelongsToMany
     {
         return $this->belongsToMany(Taxe::class);
     }
-
-
 
     public function mairie()
     {
@@ -78,7 +78,7 @@ class Commercant extends Authenticatable
         return $this->belongsTo(TypeContribuable::class, 'type_contribuable_id');
     }
 
-        /**
+    /**
      * NOUVELLE MÉTHODE À AJOUTER
      * Un commerçant peut avoir effectué plusieurs paiements de taxes.
      * La liaison se fait via le champ 'num_commerce'.

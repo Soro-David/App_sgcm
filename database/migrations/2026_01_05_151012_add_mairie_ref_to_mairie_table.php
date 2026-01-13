@@ -9,14 +9,10 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::table('agents', function (Blueprint $table) {
-            $table->timestamp('last_activity')->nullable()->after('remember_token');
-        });
-
         Schema::table('mairies', function (Blueprint $table) {
-            $table->timestamp('last_activity')->nullable()->after('remember_token');
+            $table->string('mairie_ref')->nullable()->after('id');
         });
     }
 
@@ -25,13 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('agents', function (Blueprint $table) {
-            $table->dropColumn('last_activity');
-        });
-
         Schema::table('mairies', function (Blueprint $table) {
-            $table->dropColumn('last_activity');
+            $table->dropColumn('mairie_ref');
         });
     }
-
 };

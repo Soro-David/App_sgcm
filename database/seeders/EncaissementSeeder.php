@@ -18,7 +18,7 @@ class EncaissementSeeder extends Seeder
                             'statut' => 'payé',
                             'taxe_id' => 1, // Ou choisir un id existant
                             'agent_id' => $commercant->agent_id,
-                            'mairie_id' => $commercant->mairie_id,
+                            'mairie_ref' => $commercant->mairie_ref,
                             'num_commerce' => $commercant->num_commerce,
                             'created_at' => now()->subDays(rand(1, 30)),
                         ]);

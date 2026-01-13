@@ -130,7 +130,7 @@ class AgentRecouvrementController extends Controller
                 }
 
                 PaiementTaxe::create([
-                    'mairie_id'    => $commercant->mairie_id,
+                    'mairie_ref'    => $commercant->mairie_ref,
                     'secteur_id'   => $commercant->secteur_id,
                     'taxe_id'      => $taxe->id,
                     'num_commerce' => $commercant->num_commerce,
@@ -140,7 +140,7 @@ class AgentRecouvrementController extends Controller
                 ]);
 
                 Encaissement::create([
-                    'mairie_id'    => $commercant->mairie_id,
+                    'mairie_ref'    => $commercant->mairie_ref,
                     'agent_id'     => $agent->id,
                     'taxe_id'      => $taxe->id,
                     'num_commerce' => $commercant->num_commerce,

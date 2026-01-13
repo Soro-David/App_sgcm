@@ -25,12 +25,12 @@
                     </div>
 
                     <div class="mb-3 col-md-6">
-                        <label for="mairie_id">Sélectionner une mairie</label>
-                        <select name="mairie_id" class="form-select" id="mairieSelect"
+                        <label for="mairie_ref">Sélectionner une mairie</label>
+                        <select name="mairie_ref" class="form-select" id="mairieSelect"
                                 data-url="{{ route('mairie.taxes.infos.mairie', ['id' => 'ID_PLACEHOLDER']) }}">
                             <option value="">-- Choisissez une mairie --</option>
                             @foreach($mairies as $mairie)
-                                <option value="{{ $mairie->id }}" {{ old('mairie_id', $taxe->mairie_id) == $mairie->id ? 'selected' : '' }}>
+                                <option value="{{ $mairie->mairie_ref }}" {{ old('mairie_ref', $taxe->mairie_ref) == $mairie->mairie_ref ? 'selected' : '' }}>
                                     {{ $mairie->name }}
                                 </option>
                             @endforeach

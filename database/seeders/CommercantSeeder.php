@@ -19,11 +19,11 @@ class CommercantSeeder extends Seeder
             $mairie = Mairie::inRandomOrder()->first();
             if (!$mairie) continue;
 
-            $agent = Agent::where('mairie_id', $mairie->id)->inRandomOrder()->first();
+            $agent = Agent::where('mairie_ref', $mairie->mairie_ref)->inRandomOrder()->first();
             if (!$agent) continue;
 
             $taxes = Taxe::inRandomOrder()->limit(rand(1, 3))->pluck('id');
-            $secteurs = Secteur::where('mairie_id', $mairie->id)->inRandomOrder()->limit(rand(1, 2))->pluck('id');
+            $secteurs = Secteur::where('mairie_ref', $mairie->mairie_ref)->inRandomOrder()->limit(rand(1, 2))->pluck('id');
 
             Commercant::create([
                 'nom' => "Commercant $i",
@@ -43,7 +43,7 @@ class CommercantSeeder extends Seeder
                 'autre_images' => json_encode([]),
 
                 'agent_id' => $agent->id,
-                'mairie_id' => $mairie->id,
+                'mairie_ref' => $mairie->mairie_ref,
                 'taxe_id' => json_encode($taxes->toArray()),
                 'secteur_id' => json_encode($secteurs->toArray()),
             ]);

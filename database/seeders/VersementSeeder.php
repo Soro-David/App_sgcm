@@ -43,7 +43,7 @@ class VersementSeeder extends Seeder
                     'montant_verse' => $montantVerse,
                     'reste' => $reste,
                     'agent_id' => $commercant->agent_id,
-                    'mairie_id' => $commercant->mairie_id,
+                    'mairie_ref' => $commercant->mairie_ref,
                     'taxe_id' => $taxeId,
                     'created_at' => now()->subDays(rand(1, 30)),
                 ]);

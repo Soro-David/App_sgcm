@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('communes', function (Blueprint $table) {
             $table->id();
-            $table->string('nom')->unique();
+            $table->string('nom', 191)->unique();
             $table->string('region');
             $table->timestamps();
         });

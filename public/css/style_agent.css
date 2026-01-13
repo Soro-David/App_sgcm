@@ -5,26 +5,34 @@
 .sidebar .sub-menu a,
 .sidebar span,
 .sidebar li {
-    font-size: 1rem !important;
-    font-weight: 500; /* Légèrement en gras */
+  font-size: 1rem !important;
+  font-weight: 500;
+  /* Légèrement en gras */
+}
+
+@media (min-width: 992px) {
+  .main-panel {
+    margin-left: 300px;
+  }
 }
 
 /* Optionnel : agrandir encore plus les titres principaux */
 .sidebar .menu-title {
-    font-size: 2rem;
-    font-weight: 600;
+  font-size: 2rem;
+  font-weight: 600;
 }
 
 /* Optionnel : augmenter l'espacement vertical pour aérer */
 .sidebar .nav-item {
-    margin-bottom: 8px;
+  margin-bottom: 8px;
 }
 
 /* Optionnel : ajuster les icônes pour être proportionnels */
 .sidebar .menu-icon {
-    font-size: 2rem;
-    margin-right: 10px;
+  font-size: 2rem;
+  margin-right: 10px;
 }
+
 .rotate-icon {
   transition: transform 0.3s ease;
 }
@@ -42,6 +50,7 @@
   width: calc(236px + 0.5rem);
   height: 4.625rem;
 }
+
 .navbar {
   font-weight: 400;
   transition: background 0.25s ease;
@@ -52,14 +61,18 @@
   /* Navbar color variations */
 }
 
+
 .sidebar {
-  min-height: calc(100vh - 4.625rem);
+  position: fixed;
+  height: calc(100vh - 4.625rem);
+  overflow-y: auto;
+  overflow-x: hidden;
   background: #ffffff;
   font-family: "Poppins", sans-serif;
   font-weight: normal;
   padding: 0;
-  width: 300px;
-  z-index: 11;
+  width: 250px;
+  z-index: 99;
   transition: width 0.25s ease, background 0.25s ease;
   -webkit-transition: width 0.25s ease, background 0.25s ease;
   -moz-transition: width 0.25s ease, background 0.25s ease;
@@ -72,29 +85,33 @@
   margin-bottom: 2.062rem;
   border-radius: 6px;
   border: 3px solid #009E60;
+  padding-bottom: 60px;
+  /* Add padding at bottom for content */
 }
 
 .sidebar .nav .nav-category {
-  padding: 12px 25px 8px; 
-  margin-top: 15px; 
-  color: #a0a0a0;  
-  font-size: 0.75rem; 
-  font-weight: 700;   
-  text-transform: uppercase; 
-  letter-spacing: 1px; 
-  background: none;   
+  padding: 12px 25px 8px;
+  margin-top: 15px;
+  color: #a0a0a0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: none;
 }
 
 
 .sidebar .nav .nav-category:hover {
-  background: transparent; 
+  background: transparent;
 }
+
 .sidebar .nav {
-  overflow: hidden;
+  overflow: visible;
   flex-wrap: nowrap;
   flex-direction: column;
   margin-bottom: 60px;
 }
+
 .sidebar .nav .nav-item {
   -webkit-transition-duration: 0.25s;
   -moz-transition-duration: 0.25s;
@@ -103,9 +120,11 @@
   transition-property: background;
   -webkit-transition-property: background;
 }
+
 .sidebar .nav .nav-item .collapse {
   z-index: 999;
 }
+
 .sidebar .nav .nav-item .nav-link {
   display: -webkit-flex;
   display: flex;
@@ -121,9 +140,11 @@
   transition-property: color;
   -webkit-transition-property: color;
 }
+
 .sidebar .nav .nav-item .nav-link i {
   color: inherit;
 }
+
 .sidebar .nav .nav-item .nav-link i.menu-icon {
   font-size: 1.215rem;
   line-height: 1;
@@ -136,9 +157,11 @@
   margin-left: 2rem;
   margin-right: 0;
 }
+
 .sidebar .nav .nav-item .nav-link i.menu-icon:before {
   vertical-align: middle;
 }
+
 .sidebar .nav .nav-item .nav-link i.menu-arrow {
   display: inline-block;
   -webkit-font-smoothing: antialiased;
@@ -147,10 +170,12 @@
   margin-right: 0;
   color: #686868;
 }
+
 .rtl .sidebar .nav .nav-item .nav-link i.menu-arrow {
   margin-left: 0;
   margin-right: auto;
 }
+
 .sidebar .nav .nav-item .nav-link i.menu-arrow:before {
   content: "\e0cf";
   font-family: "typicons";
@@ -164,6 +189,7 @@
   -o-transition: all 0.2s ease-in;
   transition: all 0.2s ease-in;
 }
+
 .sidebar .nav .nav-item .nav-link .menu-title {
   color: inherit;
   display: inline-block;
@@ -171,50 +197,62 @@
   line-height: 1;
   vertical-align: middle;
 }
+
 .sidebar .nav .nav-item .nav-link .badge {
   margin-left: auto;
 }
+
 .rtl .sidebar .nav .nav-item .nav-link .badge {
   margin-left: 0;
   margin-right: auto;
 }
+
 .sidebar .nav .nav-item .nav-link[aria-expanded=true] i.menu-arrow:before {
   content: "\e0bd";
 }
-.sidebar .nav .nav-item.active > .nav-link {
+
+.sidebar .nav .nav-item.active>.nav-link {
   background: #f7f8fc;
   position: relative;
 }
-.sidebar .nav .nav-item.active > .nav-link i,
-.sidebar .nav .nav-item.active > .nav-link .menu-title,
-.sidebar .nav .nav-item.active > .nav-link .menu-arrow {
+
+.sidebar .nav .nav-item.active>.nav-link i,
+.sidebar .nav .nav-item.active>.nav-link .menu-title,
+.sidebar .nav .nav-item.active>.nav-link .menu-arrow {
   color: #12253f;
 }
+
 .sidebar .nav:not(.sub-menu) {
   margin-top: 1rem;
   margin-left: 1.3rem;
   margin-right: 1.25rem;
 }
-.sidebar .nav:not(.sub-menu) > .nav-item {
+
+.sidebar .nav:not(.sub-menu)>.nav-item {
   margin-top: 0;
 }
-.sidebar .nav:not(.sub-menu) > .nav-item > .nav-link {
+
+.sidebar .nav:not(.sub-menu)>.nav-item>.nav-link {
   margin: 0;
 }
-.sidebar .nav:not(.sub-menu) > .nav-item:hover > .nav-link {
+
+.sidebar .nav:not(.sub-menu)>.nav-item:hover>.nav-link {
   background: #f7f8fc;
   color: #56595a;
 }
+
 .sidebar .nav.sub-menu {
   margin-bottom: 0;
   margin-top: 0;
   list-style: none;
   padding: 0.25rem 0 0 1.1rem;
 }
+
 .sidebar .nav.sub-menu .nav-item {
   padding: 0;
   position: relative;
 }
+
 .sidebar .nav.sub-menu .nav-item::before {
   content: "";
   width: 5px;
@@ -224,6 +262,7 @@
   border-radius: 50%;
   background: #8e95aa;
 }
+
 .sidebar .nav.sub-menu .nav-item .nav-link {
   color: #001737;
   padding: 0.7rem 1rem;
@@ -233,13 +272,16 @@
   height: auto;
   border-top: 0;
 }
+
 .sidebar .nav.sub-menu .nav-item .nav-link:hover {
   color: #844fc1;
 }
+
 .sidebar .nav.sub-menu .nav-item .nav-link.active {
   color: #844fc1;
   background: transparent;
 }
+
 .sidebar .nav.sub-menu .nav-item:hover {
   background: transparent;
 }
@@ -247,104 +289,122 @@
 .sidebar-dark .sidebar {
   background: #282f3a;
 }
+
 .sidebar-dark .sidebar .nav .nav-item .nav-link {
   color: #d0cfcf;
 }
+
 .sidebar-dark .sidebar .nav .nav-item .nav-link i {
   color: inherit;
 }
+
 .sidebar-dark .sidebar .nav .nav-item .nav-link i.menu-icon {
   color: #d0cfcf;
 }
+
 .sidebar-dark .sidebar .nav .nav-item .nav-link .menu-title {
   color: inherit;
 }
-.sidebar-dark .sidebar .nav .nav-item.active > .nav-link {
+
+.sidebar-dark .sidebar .nav .nav-item.active>.nav-link {
   background: initial;
 }
-.sidebar-dark .sidebar .nav .nav-item.active > .nav-link .menu-title,
-.sidebar-dark .sidebar .nav .nav-item.active > .nav-link i {
+
+.sidebar-dark .sidebar .nav .nav-item.active>.nav-link .menu-title,
+.sidebar-dark .sidebar .nav .nav-item.active>.nav-link i {
   color: #c0bbbb;
 }
-.sidebar-dark .sidebar .nav:not(.sub-menu) > .nav-item:hover > .nav-link {
+
+.sidebar-dark .sidebar .nav:not(.sub-menu)>.nav-item:hover>.nav-link {
   background: #3b424c;
   color: #d0cfcf;
 }
-.sidebar-dark .sidebar .nav:not(.sub-menu) > .nav-item.active {
+
+.sidebar-dark .sidebar .nav:not(.sub-menu)>.nav-item.active {
   background: #3b424c;
   color: #d0cfcf;
 }
+
 .sidebar-dark .sidebar .nav.sub-menu .nav-item .nav-link {
   color: #d0cfcf;
 }
 
 /* Agrandir la hauteur de la boîte Select2 */
 .select2-container .select2-selection--single {
-    height: 50px !important;
-    padding: 10px 14px;
-    font-size: 16px;
+  height: 50px !important;
+  padding: 10px 14px;
+  font-size: 16px;
 }
 
 /* Centrer verticalement le texte */
 .select2-container--default .select2-selection--single .select2-selection__rendered {
-    line-height: 30px !important;
-    font-size: 16px;
+  line-height: 30px !important;
+  font-size: 16px;
 }
 
 /* Agrandir la flèche (dropdown icon) */
 .select2-container--default .select2-selection--single .select2-selection__arrow {
-    height: 50px !important;
+  height: 50px !important;
 }
 
 /* Pour les champs multiples */
 .select2-container--default .select2-selection--multiple {
-    min-height: 50px;
-    font-size: 16px;
-    padding: 8px;
+  min-height: 50px;
+  font-size: 16px;
+  padding: 8px;
 }
 
 /* Agrandit la hauteur et la police du Select2 avec la classe select2-lg */
-.select2-lg + .select2-container .select2-selection {
-    min-height: 60px !important;   /* Hauteur plus grande */
-    padding: 10px;
-    font-size: 18px;
+.select2-lg+.select2-container .select2-selection {
+  min-height: 60px !important;
+  /* Hauteur plus grande */
+  padding: 10px;
+  font-size: 18px;
 }
 
 /* Texte rendu */
-.select2-lg + .select2-container .select2-selection__rendered {
-    line-height: 38px !important;
+.select2-lg+.select2-container .select2-selection__rendered {
+  line-height: 38px !important;
 }
 
 /* Flèche dropdown */
-.select2-lg + .select2-container .select2-selection__arrow {
-    height: 60px !important;
+.select2-lg+.select2-container .select2-selection__arrow {
+  height: 60px !important;
 }
 
 .btn-success {
-    padding: 15px 50px;      /* Plus de hauteur et largeur */
-    font-size: 1.5rem;       /* Texte plus grand */
-    font-weight: 600;        /* Texte un peu plus épais */
-    border-radius: 8px;      /* Coins légèrement arrondis */
+  padding: 15px 50px;
+  /* Plus de hauteur et largeur */
+  font-size: 1.5rem;
+  /* Texte plus grand */
+  font-weight: 600;
+  /* Texte un peu plus épais */
+  border-radius: 8px;
+  /* Coins légèrement arrondis */
 }
+
 .btn-primary {
-    padding: 15px 50px;      /* Plus de hauteur et largeur */
-    font-size: 1.5rem;       /* Texte plus grand */
-    font-weight: 600;        /* Texte un peu plus épais */
-    border-radius: 8px;      /* Coins légèrement arrondis */
+  padding: 15px 50px;
+  /* Plus de hauteur et largeur */
+  font-size: 1.5rem;
+  /* Texte plus grand */
+  font-weight: 600;
+  /* Texte un peu plus épais */
+  border-radius: 8px;
+  /* Coins légèrement arrondis */
 }
 
-    /* Appliquer un hover visuel + curseur sauf sur la colonne "Action" */
-    #commercantsTable tbody tr:hover {
-        background-color: #881313;
-        cursor: pointer;
-    }
-
-    /* Désactiver le pointeur sur les boutons dans la colonne Action */
-    #commercantsTable tbody td:last-child {
-        cursor: default;
-    }
-
-    .camera-modal {
-    backdrop-filter: blur(4px);
+/* Appliquer un hover visuel + curseur sauf sur la colonne "Action" */
+#commercantsTable tbody tr:hover {
+  background-color: #881313;
+  cursor: pointer;
 }
 
+/* Désactiver le pointeur sur les boutons dans la colonne Action */
+#commercantsTable tbody td:last-child {
+  cursor: default;
+}
+
+.camera-modal {
+  backdrop-filter: blur(4px);
+}
