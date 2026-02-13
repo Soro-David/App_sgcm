@@ -1,4 +1,3 @@
-{{-- resources/views/commercant/layouts/app.blade.php --}}
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -15,7 +14,6 @@
 
             <div class="main-panel">
                 <div class="content-wrapper">
-                    {{-- Le contenu de la page sera injecté ici --}}
                     @yield('content')
                 </div>
 

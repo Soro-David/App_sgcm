@@ -20,12 +20,16 @@ class Versement extends Model
         'reste',
         'agent_id',
         'mairie_ref',
-       
+        'recorded_by',
+        'appreciation',
+        'nom_versement',
+        'total_due',
+        'previous_debt',
     ];
 
     public function mairie()
     {
-        return $this->belongsTo(Mairie::class, 'mairie_ref');
+        return $this->belongsTo(Mairie::class, 'mairie_ref', 'mairie_ref');
     }
 
     public function agent()

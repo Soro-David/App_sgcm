@@ -1,0 +1,396 @@
+/**
+ * Styles personnalisés pour DataTables
+ * Amélioration de l'apparence et de l'expérience utilisateur
+ * Auteur: KKS Technologies
+ * Date: 2026-02-11
+ */
+
+/* ========================================
+   CONTENEUR PRINCIPAL
+   ======================================== */
+
+.dataTables_wrapper {
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ========================================
+   CONTRÔLES (Recherche et Longueur)
+   ======================================== */
+
+/* Conteneur des contrôles supérieurs */
+.dataTables_wrapper .row:first-child {
+    margin-bottom: 1rem;
+    align-items: center;
+}
+
+/* Sélecteur de longueur */
+.dataTables_length {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dataTables_length label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0;
+    font-weight: 500;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+.dataTables_length select {
+    min-width: 70px;
+    padding: 0.375rem 2rem 0.375rem 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.dataTables_length select:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Champ de recherche */
+.dataTables_filter {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.dataTables_filter label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0;
+    font-weight: 500;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+.dataTables_filter input {
+    min-width: 250px;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.dataTables_filter input:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Icône de recherche (optionnelle) */
+.dataTables_filter label::before {
+    content: "🔍";
+    font-size: 1rem;
+}
+
+/* ========================================
+   TABLE
+   ======================================== */
+
+.dataTables_wrapper table.dataTable {
+    border-collapse: separate !important;
+    border-spacing: 0;
+    width: 100% !important;
+}
+
+/* En-tête de table */
+.dataTables_wrapper table.dataTable thead th {
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: #495057;
+    padding: 0.75rem;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+/* Indicateurs de tri */
+.dataTables_wrapper table.dataTable thead .sorting,
+.dataTables_wrapper table.dataTable thead .sorting_asc,
+.dataTables_wrapper table.dataTable thead .sorting_desc {
+    cursor: pointer;
+    position: relative;
+    padding-right: 2rem;
+}
+
+.dataTables_wrapper table.dataTable thead .sorting::before,
+.dataTables_wrapper table.dataTable thead .sorting::after,
+.dataTables_wrapper table.dataTable thead .sorting_asc::before,
+.dataTables_wrapper table.dataTable thead .sorting_asc::after,
+.dataTables_wrapper table.dataTable thead .sorting_desc::before,
+.dataTables_wrapper table.dataTable thead .sorting_desc::after {
+    position: absolute;
+    right: 0.75rem;
+    opacity: 0.3;
+    font-size: 0.8rem;
+}
+
+.dataTables_wrapper table.dataTable thead .sorting_asc::before,
+.dataTables_wrapper table.dataTable thead .sorting_desc::after {
+    opacity: 1;
+    color: #0d6efd;
+}
+
+/* Corps de table */
+.dataTables_wrapper table.dataTable tbody td {
+    padding: 0.75rem;
+    vertical-align: middle;
+    border-top: 1px solid #dee2e6;
+}
+
+.dataTables_wrapper table.dataTable tbody tr {
+    transition: background-color 0.15s ease-in-out;
+}
+
+.dataTables_wrapper table.dataTable tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.dataTables_wrapper table.dataTable tbody tr.odd {
+    background-color: #ffffff;
+}
+
+.dataTables_wrapper table.dataTable tbody tr.even {
+    background-color: #f9fafb;
+}
+
+.dataTables_wrapper table.dataTable tbody tr.odd:hover,
+.dataTables_wrapper table.dataTable tbody tr.even:hover {
+    background-color: #e9ecef;
+}
+
+/* ========================================
+   INFORMATIONS ET PAGINATION
+   ======================================== */
+
+/* Conteneur des contrôles inférieurs */
+.dataTables_wrapper .row:last-child {
+    margin-top: 1rem;
+    align-items: center;
+}
+
+/* Informations de pagination */
+.dataTables_info {
+    padding-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Pagination */
+.dataTables_paginate {
+    padding-top: 0.5rem;
+}
+
+.dataTables_paginate .pagination {
+    margin-bottom: 0;
+    gap: 0.25rem;
+}
+
+.dataTables_paginate .pagination .page-link {
+    border-radius: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    color: #0d6efd;
+    border: 1px solid #dee2e6;
+    transition: all 0.15s ease-in-out;
+}
+
+.dataTables_paginate .pagination .page-link:hover {
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+    color: #0a58ca;
+}
+
+.dataTables_paginate .pagination .page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: #fff;
+    font-weight: 600;
+}
+
+.dataTables_paginate .pagination .page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #fff;
+    border-color: #dee2e6;
+}
+
+/* ========================================
+   INDICATEUR DE CHARGEMENT
+   ======================================== */
+
+.dataTables_processing {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    text-align: center;
+    font-weight: 600;
+    color: #495057;
+    z-index: 1000;
+}
+
+.dataTables_processing::before {
+    content: "";
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+    border: 2px solid #0d6efd;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-border 0.75s linear infinite;
+}
+
+@keyframes spinner-border {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ========================================
+   MESSAGE "AUCUNE DONNÉE"
+   ======================================== */
+
+.dataTables_empty {
+    padding: 2rem !important;
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+    .dataTables_filter input {
+        min-width: 150px;
+    }
+    
+    .dataTables_wrapper .row:first-child {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .dataTables_length,
+    .dataTables_filter {
+        justify-content: flex-start;
+        width: 100%;
+    }
+    
+    .dataTables_wrapper .row:last-child {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .dataTables_info,
+    .dataTables_paginate {
+        text-align: center;
+        width: 100%;
+    }
+}
+
+/* ========================================
+   COLONNES SPÉCIALES
+   ======================================== */
+
+/* Colonne de checkbox */
+.dataTables_wrapper table.dataTable tbody td input[type="checkbox"] {
+    cursor: pointer;
+    width: 1.2rem;
+    height: 1.2rem;
+}
+
+/* Colonne d'actions */
+.dataTables_wrapper table.dataTable tbody td .btn-group {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.dataTables_wrapper table.dataTable tbody td .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* ========================================
+   BADGES ET STATUTS
+   ======================================== */
+
+.dataTables_wrapper table.dataTable tbody td .badge {
+    font-size: 0.75rem;
+    padding: 0.35em 0.65em;
+    font-weight: 600;
+}
+
+/* ========================================
+   AMÉLIORATION VISUELLE
+   ======================================== */
+
+/* Ombre légère sur le conteneur de la table */
+.dataTables_wrapper {
+    background: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+/* Bordure arrondie pour la table */
+.dataTables_wrapper table.dataTable {
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+/* Première et dernière cellule d'en-tête */
+.dataTables_wrapper table.dataTable thead th:first-child {
+    border-top-left-radius: 0.5rem;
+}
+
+.dataTables_wrapper table.dataTable thead th:last-child {
+    border-top-right-radius: 0.5rem;
+}
+
+/* ========================================
+   SCROLLING
+   ======================================== */
+
+.dataTables_scrollBody {
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* ========================================
+   PRINT STYLES
+   ======================================== */
+
+@media print {
+    .dataTables_length,
+    .dataTables_filter,
+    .dataTables_info,
+    .dataTables_paginate {
+        display: none !important;
+    }
+    
+    .dataTables_wrapper table.dataTable tbody tr:hover {
+        background-color: transparent !important;
+    }
+}

@@ -16,14 +16,24 @@ class Financier extends Authenticatable
     protected $guard = 'financier';
 
     protected $fillable = [
+        'mairie_ref',
         'name',
-        'email',
+        'genre',
+        'date_naissance',
+        'type_piece',
+        'numero_piece',
+        'adresse',
+        'telephone1',
+        'telephone2',
         'region',
         'commune',
-        'status',
+        'role',
+        'email',
+        'password',
         'otp_code',
         'otp_expires_at',
-        'password',
+        'status',
+        'added_by',
         "created_at"
     ];
 
@@ -54,9 +64,9 @@ class Financier extends Authenticatable
         return $this->hasMany(Taxe::class);
     }
 
-     public function versement()
+     public function versements()
     {
-        return $this->belongsToMany(Versement::class);
+        return $this->hasMany(Versement::class, 'recorded_by', 'name');
     }
 
     public function encaissement()

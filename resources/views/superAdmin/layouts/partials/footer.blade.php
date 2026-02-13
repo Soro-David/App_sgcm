@@ -1,10 +1,14 @@
-<footer class="footer">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-sm-flex justify-content-center justify-content-sm-between">
-                        <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2024 <a href="https://www.bootstrapdash.com/" class="text-muted" target="_blank">Bootstrapdash</a>. All rights reserved.</span>
-                        <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center text-muted">Hand-crafted & made with <i class="typcn typcn-heart-full-outline text-danger"></i></span>
-                    </div>
-                </div>    
-            </div>        
-        </footer>
+<footer class="footer mt-auto py-3">
+    <div class="card mb-0 border-0 shadow-none">
+        <div class="card-body py-2">
+            <div class="d-sm-flex justify-content-between align-items-center text-center text-sm-start">
+                <span class="text-muted d-block mb-1 mb-sm-0">
+                    Développé par <strong>KKS-Technologie</strong> © {{ date('Y') }} – Tous droits réservés.
+                </span>
+                <span class="text-muted d-block">
+                    SGCM à votre service
+                </span>
+            </div>
+        </div>
+    </div>
+</footer>

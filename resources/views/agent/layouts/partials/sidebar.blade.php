@@ -15,48 +15,51 @@
             {{-- Pour les agents de type "agent de mairie" --}}
             @if ($agent && $agent->type === 'recensement')
                 {{-- <li class="nav-item">
-            <a class="nav-link" href="{{ route('agent.commerce.index') }}">
+            <a class="nav-link" href="{{ route('agent.contribuable.index') }}">
               <i class="fa-solid fa-users"></i>
-              <span class="menu-title">Ajouter un commerçant</span>
+              <span class="menu-title">Liste des commerçants</span>
             </a>
           </li> --}}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('agent.contribuable.create') }}">
-                        <i class="typcn typcn-document-text menu-icon"></i>
-                        <span class="menu-title">Ajouter un contribuable</span>
+                        <i class="fa-solid fa-id-badge menu-icon"></i>
+                        <span class="menu-title">Ajouter contribuable</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('agent.contribuable.index') }}">
-                        <i class="typcn typcn-document-text menu-icon"></i>
-                        <span class="menu-title">Liste des contribuable</span>
+                        <i class="fa-solid fa-list menu-icon"></i>
+                        <span class="menu-title">Liste contribuable</span>
                     </a>
                 </li>
             @endif
 
             {{-- Pour les agents de type "recouvrement" --}}
             @if ($agent && $agent->type === 'recouvrement')
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('agent.encaissement.index') }}">
+                {{-- <li class="nav-item">
+                    <a class="nav-link" href="{{ route('agent.encaissement.create') }}">
                         <i class="typcn typcn-group-outline menu-icon"></i>
-                        <span class="menu-title">Liste des commerçants</span>
+                        <span class="menu-title">Encaissement</span>
+                    </a>
+                </li> --}}
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center gap-2" href="{{ route('agent.encaissement.index') }}">
+                        <i class="fa-solid fa-list menu-icon"></i>
+                        <span class="menu-title"> Liste contribuable</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center gap-2"
+                        href="{{ route('agent.encaissement.history') }}">
+                        <i class="fa-solid fa-list-check menu-icon"></i>
+                        <span class="menu-title">Mes encaissements</span>
                     </a>
                 </li>
 
-                {{-- <li class="nav-item">
-              <a class="nav-link" href="{{ route('agent.encaissement.create') }}">
-                <i class="typcn typcn-group-outline menu-icon"></i>
-                <span class="menu-title">Encaissement</span>
-              </a>
-            </li> --}}
-            @endif
-
-            {{-- Pour les agents de type "admin" --}}
-            @if ($agent && $agent->type === 'admin')
                 <li class="nav-item">
-                    <a class="nav-link" href="">
-                        <i class="typcn typcn-group-outline menu-icon"></i>
-                        <span class="menu-title">Gestion des agents</span>
+                    <a class="nav-link d-flex align-items-center gap-2" href="{{ route('agent.profile') }}">
+                        <i class="fa-solid fa-business-time menu-icon"></i>
+                        <span class="menu-title">Mon compte</span>
                     </a>
                 </li>
             @endif

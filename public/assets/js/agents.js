@@ -23,9 +23,10 @@ $(document).ready(function () {
         ajax: ajaxUrl,
         columns: [
             { data: 'created_at', name: 'created_at' },
+            { data: 'added_by', name: 'added_by' },
             { data: 'name', name: 'name' },
-            { data: 'email', name: 'email' },
             { data: 'role', name: 'role' },
+            { data: 'email', name: 'email' },
             {
                 data: 'action',
                 name: 'action',

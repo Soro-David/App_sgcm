@@ -16,10 +16,20 @@ document.addEventListener('DOMContentLoaded', function () {
     
     let montantUnitaire = 0;
     let html5QrcodeScanner;
-
+    console.log(numCommerceAttendu);
     // Fonction de succès du scan QR
     const onScanSuccess = (decodedText) => {
-        if (decodedText.trim() === numCommerceAttendu) {
+
+        console.log("Texte brut scanné : ", decodedText);
+
+        const match = decodedText.match(/Numéro commerce:\s*([^\n\r]*)/);
+        const numeroScanne = match ? match[1].trim() : decodedText.trim();
+
+        console.log("Numéro extrait :", numeroScanne);
+        console.log("Numéro attendu :", numCommerceAttendu);
+
+        // 2. Comparaison
+        if (numeroScanne === numCommerceAttendu) {
             Swal.fire({
                 icon: 'success',
                 title: 'Commerçant Vérifié !',
@@ -35,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
             Swal.fire({
                 icon: 'error',
                 title: 'Erreur',
-                text: 'Le QR Code ne correspond pas à ce commerçant.'
+                text: 'Le QR Code ne correspond pas à ce commerçant.\nScanné : ' + numeroScanne + '\nAttendu : ' + numCommerceAttendu
             });
         }
     };
@@ -82,15 +92,15 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                if (data.success && data.unpaid_count > 0) {
+                if (data.success) {
                     montantUnitaire = parseFloat(data.montant);
                     montantParPeriodeInput.value = montantUnitaire.toLocaleString('fr-FR');
                     nombrePeriodesInput.value = 1;
-                    nombrePeriodesInput.max = data.unpaid_count;
-                    unpaidInfo.textContent = `${data.unpaid_count} période(s) impayée(s) trouvée(s).`;
+                    // On retire la limite .max car le client peut payer d'avance
+                    unpaidInfo.innerHTML = `<span class="text-info fw-bold">${data.unpaid_count} période(s) impayée(s)</span>. Vous pouvez encaisser pour cette durée ou plus.`;
                     updateTotalAmount();
                 } else {
-                    Swal.fire('Information', data.success ? 'Ce commerçant est à jour pour cette taxe.' : 'Impossible de récupérer les détails de la taxe.', 'info');
+                    Swal.fire('Erreur', 'Impossible de récupérer les détails de la taxe.', 'error');
                     paymentDetailsDiv.style.display = 'none';
                 }
             })

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Mairie;
 use App\Http\Controllers\Controller;
 use App\Models\Agent;
 use App\Models\Commune;
+use App\Models\Finance;
+use App\Models\Financier;
 use App\Models\Mairie;
 use App\Models\Secteur;
 use App\Models\Taxe;
@@ -36,19 +38,24 @@ class AgentController extends Controller
             ->where('mairies.commune', $admin->commune)
             ->where('mairies.region', $admin->region)
             ->select('agents.*')
+            ->distinct()
             ->get();
 
         $taxes = Taxe::join('mairies', 'taxes.mairie_ref', '=', 'mairies.mairie_ref')
             ->where('mairies.commune', $admin->commune)
             ->where('mairies.region', $admin->region)
             ->select('taxes.*')
+            ->distinct()
             ->get();
 
         $secteurs = Secteur::join('mairies', 'secteurs.mairie_ref', '=', 'mairies.mairie_ref')
             ->where('mairies.commune', $admin->commune)
             ->where('mairies.region', $admin->region)
             ->select('secteurs.*')
+            ->distinct()
             ->get();
+
+        // dd($agents, $taxes, $secteurs);
 
         return view('mairie.agents.programme_agent', compact('agents', 'taxes', 'secteurs'));
     }
@@ -107,10 +114,13 @@ class AgentController extends Controller
                     return 'Aucune';
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" class="edit btn btn-primary btn-sm">Modifier</a>';
-                    $btn .= ' <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Supprimer</a>';
+                    $editUrl = route('mairie.agents.edit_programme', $row->id);
+                    $deleteUrl = route('mairie.agents.destroy_programme', $row->id);
 
-                    return $btn;
+                    return '<div class="action-buttons">
+                                <button class="btn-table-action delete delete-programme" data-url="'.$deleteUrl.'" title="Supprimer"><i class="fa-solid fa-trash"></i></button>
+                                <a href="'.$editUrl.'" class="btn-table-action edit" title="Modifier"><i class="fa-regular fa-pen-to-square"></i></a>
+                            </div>';
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -130,44 +140,106 @@ class AgentController extends Controller
             'adresse' => 'required|string|max:255',
             'telephone1' => 'required|string|max:20',
             'telephone2' => 'nullable|string|max:20',
-            'email' => 'required|email|max:255|unique:agents,email',
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                function ($attribute, $value, $fail) {
+                    $exists = Mairie::where('email', $value)->exists() || Finance::where('email', $value)->exists() || Financier::where('email', $value)->exists();
+                    if ($exists) {
+                        $fail('Cette adresse e-mail est déjà utilisée.');
+                    }
+                },
+            ],
             'mairie_ref' => 'required|exists:mairies,mairie_ref',
             'region' => 'required|string',
-            'commune' => 'required|',
+            'commune' => 'required|string',
         ]);
 
         if ($validator->fails()) {
+            dd($validator->errors());
+
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
+        // dd($request->all());
         $otp = random_int(100000, 999999);
 
         try {
-            $agent = Mairie::create([
-                'name' => $request->name,
-                'genre' => $request->genre,
-                'date_naissance' => $request->date_naissance,
-                'type_piece' => $request->type_piece,
-                'numero_piece' => $request->numero_piece,
-                'role' => $request->type_agent,
-                'adresse' => $request->adresse,
-                'telephone1' => $request->telephone1,
-                'telephone2' => $request->telephone2,
-                'email' => $request->email,
-                'remember_token' => $request->_token,
-                'otp_code' => $otp,
-                'otp_expires_at' => now()->addMinutes(30),
-                'mairie_ref' => $request->mairie_ref,
-                'region' => $request->region,
-                'commune' => $request->commune,
-            ]);
+            $currentUser = Auth::guard('mairie')->user() ?: Auth::guard('finance')->user();
+            $added_by = $currentUser->name.' ('.($currentUser->role ?? 'admin').')';
+
+            // dd($added_by, $request->all());
+            if ($request->type_agent === 'responsable_financier') {
+                $agent = Financier::create([
+                    'name' => $request->name,
+                    'genre' => $request->genre,
+                    'date_naissance' => $request->date_naissance,
+                    'type_piece' => $request->type_piece,
+                    'numero_piece' => $request->numero_piece,
+                    'role' => 'financié',
+                    'adresse' => $request->adresse,
+                    'telephone1' => $request->telephone1,
+                    'telephone2' => $request->telephone2,
+                    'email' => $request->email,
+                    'otp_code' => $otp,
+                    'otp_expires_at' => now()->addMinutes(30),
+                    'mairie_ref' => $request->mairie_ref,
+                    'region' => $request->region,
+                    'commune' => $request->commune,
+                    'status' => 'pending',
+                    'added_by' => $added_by,
+                ]);
+            } elseif (in_array($request->type_agent, ['caissier', 'finance'])) {
+                $agent = Finance::create([
+                    'name' => $request->name,
+                    'genre' => $request->genre,
+                    'date_naissance' => $request->date_naissance,
+                    'type_piece' => $request->type_piece,
+                    'numero_piece' => $request->numero_piece,
+                    'role' => $request->type_agent,
+                    'adresse' => $request->adresse,
+                    'telephone1' => $request->telephone1,
+                    'telephone2' => $request->telephone2,
+                    'email' => $request->email,
+                    'otp_code' => $otp,
+                    'otp_expires_at' => now()->addMinutes(30),
+                    'mairie_ref' => $request->mairie_ref,
+                    'region' => $request->region,
+                    'commune' => $request->commune,
+                    'status' => 'pending',
+                    'added_by' => $added_by,
+                ]);
+            } else {
+                $agent = Mairie::create([
+                    'name' => $request->name,
+                    'genre' => $request->genre,
+                    'date_naissance' => $request->date_naissance,
+                    'type_piece' => $request->type_piece,
+                    'numero_piece' => $request->numero_piece,
+                    'role' => $request->type_agent,
+                    'adresse' => $request->adresse,
+                    'telephone1' => $request->telephone1,
+                    'telephone2' => $request->telephone2,
+                    'email' => $request->email,
+                    'remember_token' => $request->_token,
+                    'otp_code' => $otp,
+                    'otp_expires_at' => now()->addMinutes(30),
+                    'mairie_ref' => $request->mairie_ref,
+                    'region' => $request->region,
+                    'commune' => $request->commune,
+                    'added_by' => $added_by,
+                ]);
+            }
 
             $agent->notify(new MairieAgentInvitationNotification($otp));
 
             return redirect()->route('mairie.agents.index')
-                ->with('success', "L'agent a été ajouté. Un e-mail d'invitation a été envoyé.");
+                ->with('success', 'Le personnel a été ajouté avec succès. Un e-mail d’invitation a été envoyé.');
         } catch (\Exception $e) {
-            return redirect()->back()->withInput()->with('error', 'Erreur lors de l’enregistrement : '.$e->getMessage());
+            return redirect()->back()
+                ->withInput()
+                ->with('error', "Erreur lors de l’enregistrement : {$e->getMessage()}");
         }
     }
 
@@ -209,7 +281,12 @@ class AgentController extends Controller
             'adresse' => 'required|string|max:255',
             'telephone1' => 'required|string|max:20',
             'telephone2' => 'nullable|string|max:20',
-            'email' => 'required|email|max:255|unique:agents,email',
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+
+            ],
             'mairie_ref' => 'required|exists:mairies,mairie_ref',
 
         ]);
@@ -221,6 +298,9 @@ class AgentController extends Controller
         $otp = random_int(100000, 999999);
 
         try {
+            $currentUser = Auth::guard('mairie')->user() ?? Auth::guard('finance')->user();
+            $added_by = $currentUser->name.' ('.($currentUser->role ?? 'admin').')';
+
             $agent = Agent::create([
                 'name' => $request->name,
                 'genre' => $request->genre,
@@ -236,13 +316,13 @@ class AgentController extends Controller
                 'otp_code' => $otp,
                 'otp_expires_at' => now()->addMinutes(30),
                 'mairie_ref' => $request->mairie_ref,
-
+                'added_by' => $added_by,
             ]);
 
             $agent->notify(new AgentInvitationNotification($otp));
 
             return redirect()->route('mairie.agents.list_agent')
-                ->with('success', "L'agent a été ajouté. Un e-mail d'invitation a été envoyé.");
+                ->with('success', "L'agent a été ajouté avec succès. Un e-mail d'invitation a été envoyé.");
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->with('error', 'Erreur lors de l’enregistrement : '.$e->getMessage());
         }
@@ -310,6 +390,82 @@ class AgentController extends Controller
         return redirect()->route('superadmin.mairies.index')->with('success', 'Mairie mise à jour avec succès.');
     }
 
+    public function editProgramme(string $id)
+    {
+        $admin = Auth::guard('mairie')->user();
+
+        // Récupérer l'agent avec ses données
+        $agent = Agent::findOrFail($id);
+
+        // Récupérer les listes pour les selects
+        $agents = Agent::join('mairies', 'agents.mairie_ref', '=', 'mairies.mairie_ref')
+            ->where('mairies.commune', $admin->commune)
+            ->where('mairies.region', $admin->region)
+            ->select('agents.*')
+            ->distinct()
+            ->get();
+
+        $taxes = Taxe::join('mairies', 'taxes.mairie_ref', '=', 'mairies.mairie_ref')
+            ->where('mairies.commune', $admin->commune)
+            ->where('mairies.region', $admin->region)
+            ->select('taxes.*')
+            ->distinct()
+            ->get();
+
+        $secteurs = Secteur::join('mairies', 'secteurs.mairie_ref', '=', 'mairies.mairie_ref')
+            ->where('mairies.commune', $admin->commune)
+            ->where('mairies.region', $admin->region)
+            ->select('secteurs.*')
+            ->distinct()
+            ->get();
+
+        return view('mairie.agents.edit_programme_agent', compact('agent', 'agents', 'taxes', 'secteurs'));
+    }
+
+    public function updateProgramme(Request $request, string $id)
+    {
+        $request->validate([
+            'agent_id' => 'required|exists:agents,id',
+            'taxe_ids' => 'required|array',
+            'taxe_ids.*' => 'exists:taxes,id',
+            'secteur_id' => 'required|exists:secteurs,id',
+        ]);
+
+        $agent = Agent::findOrFail($id);
+
+        // On stocke taxe_ids comme tableau JSON (champ taxe_id)
+        $agent->taxe_id = $request->taxe_ids;
+
+        // secteur_id est stocké en tableau avec 1 seul élément
+        $agent->secteur_id = [$request->secteur_id];
+
+        $agent->save();
+
+        return redirect()->route('mairie.agents.programme_agent')->with('success', 'Programme de l\'agent mis à jour avec succès.');
+    }
+
+    public function destroyProgramme(string $id)
+    {
+        try {
+            $agent = Agent::findOrFail($id);
+
+            // On vide les taxes et secteur assignés à l'agent
+            $agent->taxe_id = null;
+            $agent->secteur_id = null;
+            $agent->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Programme supprimé avec succès.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la suppression : '.$e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function destroy(string $id)
     {
         //
@@ -323,27 +479,45 @@ class AgentController extends Controller
             }
 
             // Récupérer la mairie connectée
-            $mairie_ref = Auth::guard('mairie')->user()->mairie_ref;
-
-            if (! $mairie_ref) {
+            $user = Auth::guard('mairie')->user() ?: Auth::guard('finance')->user();
+            if (! $user || ! $user->mairie_ref) {
                 return response()->json(['error' => 'Mairie non authentifiée.'], 401);
             }
+            $mairie_ref = $user->mairie_ref;
 
-            // dd($mairie_ref);
-            // Requête filtrée par mairie_ref
-            $query = Mairie::where('mairie_ref', $mairie_ref)
-                ->select(['id', 'name', 'email', 'role',  'created_at']);
+            $mairieQuery = Mairie::where('mairie_ref', $mairie_ref)
+                ->select(['id', 'name', 'email', 'role', 'added_by', 'created_at', \DB::raw("'mairies' as source")]);
+
+            $financesQuery = Finance::where('mairie_ref', $mairie_ref)
+                ->select(['id', 'name', 'email', 'role', 'added_by', 'created_at', \DB::raw("'finances' as source")]);
+
+            $financiersQuery = Financier::where('mairie_ref', $mairie_ref)
+                ->select(['id', 'name', 'email', 'role', 'added_by', 'created_at', \DB::raw("'financiers' as source")]);
+
+            $query = $mairieQuery->union($financesQuery)->union($financiersQuery);
 
             return DataTables::of($query)
+                ->editColumn('role', function ($agent) {
+                    if ($agent->source === 'financiers') {
+                        return 'Responsable financier';
+                    }
+                    if ($agent->source === 'finances') {
+                        return $agent->role === 'caissier' ? 'Caissier' : 'Agent financier';
+                    }
+
+                    return ucwords($agent->role);
+                })
                 ->editColumn('created_at', function ($agent) {
-                    return $agent->created_at ? $agent->created_at->format('d/m/Y H:i') : 'N/A';
+                    return $agent->created_at ? \Carbon\Carbon::parse($agent->created_at)->format('d/m/Y H:i') : 'N/A';
                 })
                 ->addColumn('action', function ($agent) {
                     $editUrl = route('mairie.agents.edit', $agent->id);
                     $deleteUrl = route('mairie.agents.destroy', $agent->id);
 
-                    return '<a href="'.$editUrl.'" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></a>
-                            <button class="btn btn-danger btn-sm btn-delete" data-url="'.$deleteUrl.'"><i class="fa fa-trash"></i></button>';
+                    return '<div class="action-buttons">
+                                <button class="btn-table-action delete btn-delete" data-url="'.$deleteUrl.'"><i class="fa fa-trash"></i></button>
+                                <a href="'.$editUrl.'" class="btn-table-action edit"><i class="fa fa-edit"></i></a>
+                            </div>';
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -365,24 +539,30 @@ class AgentController extends Controller
                 return response()->json(['error' => 'Requête non autorisée.'], 403);
             }
 
-            $mairie_ref = Auth::guard('mairie')->user()->mairie_ref;
-            if (! $mairie_ref) {
+            $user = Auth::guard('mairie')->user() ?: Auth::guard('finance')->user();
+            if (! $user || ! $user->mairie_ref) {
                 return response()->json(['error' => 'Mairie non authentifiée.'], 401);
             }
+            $mairie_ref = $user->mairie_ref;
 
             $query = Agent::where('mairie_ref', $mairie_ref)
-                ->select(['id', 'name', 'email', 'type', 'created_at']);
+                ->select(['id', 'name', 'email', 'type', 'added_by', 'created_at']);
 
             return DataTables::of($query)
+                ->editColumn('type', function ($agent) {
+                    return ucwords($agent->type);
+                })
                 ->editColumn('created_at', function ($agent) {
-                    return $agent->created_at->format('d/m/Y H:i');
+                    return $agent->created_at ? $agent->created_at->format('d/m/Y H:i') : 'N/A';
                 })
                 ->addColumn('action', function ($agent) {
                     $editUrl = route('mairie.agents.edit', $agent->id);
                     $deleteUrl = route('mairie.agents.destroy', $agent->id);
 
-                    return '<a href="'.$editUrl.'" class="btn btn-warning btn-sm" title="Modifier"><i class="fa fa-edit"></i></a> '.
-                           '<button class="btn btn-danger btn-sm btn-delete" data-url="'.$deleteUrl.'" title="Supprimer"><i class="fa fa-trash"></i></button>';
+                    return '<div class="action-buttons">
+                                <button class="btn-table-action delete btn-delete" data-url="'.$deleteUrl.'" title="Supprimer"><i class="fa fa-trash"></i></button>
+                                <a href="'.$editUrl.'" class="btn-table-action edit" title="Modifier"><i class="fa fa-edit"></i></a>
+                            </div>';
                 })
                 ->rawColumns(['action'])
                 ->make(true);

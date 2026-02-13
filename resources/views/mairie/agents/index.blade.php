@@ -23,6 +23,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Date de Création</th>
+                                <th>Ajouter Par</th>
                                 <th>Nom</th>
                                 <th>Rôle</th>
                                 <th>Email</th>

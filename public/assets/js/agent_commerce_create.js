@@ -4,17 +4,47 @@ $(document).ready(function () {
     $('.select2-com').select2({ width: '100%', placeholder: '-- Sélectionnez type de contribuables --', allowClear: true });
 
     /**
-     * Configure le bouton d'upload (icône de dossier) pour ouvrir le sélecteur de fichiers.
+     * Configure le bouton d'upload pour ouvrir le sélecteur de fichiers ou la caméra.
      * @param {string} uploadBtnId - L'ID du bouton d'upload.
      * @param {string} fileInputId - L'ID de l'input de type 'file' associé.
+     * @param {string} previewImgId - L'ID de l'élément 'img' pour l'aperçu.
      */
-    function setupFileUpload(uploadBtnId, fileInputId) {
+    function setupFileUpload(uploadBtnId, fileInputId, previewImgId) {
         const uploadButton = document.getElementById(uploadBtnId);
         const fileInput = document.getElementById(fileInputId);
 
         if (uploadButton) {
-            uploadButton.addEventListener('click', () => {
-                fileInput.click();
+            uploadButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Utiliser SweetAlert2 pour demander à l'utilisateur
+                Swal.fire({
+                    title: 'Choisir une photo',
+                    text: 'Comment souhaitez-vous ajouter la photo ?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    showDenyButton: true,
+                    confirmButtonText: '<i class="fa fa-camera"></i> Utiliser la caméra',
+                    denyButtonText: '<i class="fa fa-folder-open"></i> Choisir un fichier',
+                    cancelButtonText: 'Annuler',
+                    confirmButtonColor: '#009E60',
+                    denyButtonColor: '#6c757d',
+                    cancelButtonColor: '#dc3545',
+                    customClass: {
+                        confirmButton: 'btn btn-success mx-1',
+                        denyButton: 'btn btn-secondary mx-1',
+                        cancelButton: 'btn btn-danger mx-1'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // L'utilisateur a choisi la caméra
+                        initCameraCapture(previewImgId, fileInputId);
+                    } else if (result.isDenied) {
+                        // L'utilisateur a choisi de sélectionner un fichier
+                        fileInput.click();
+                    }
+                    // Si result.isDismissed, l'utilisateur a annulé - ne rien faire
+                });
             });
         }
     }
@@ -42,19 +72,16 @@ $(document).ready(function () {
     }
 
     // Configuration pour la photo de profil
-    setupFileUpload('upload_profil', 'photo_profil');
+    setupFileUpload('upload_profil', 'photo_profil', 'preview_profil');
     setupImagePreview('photo_profil', 'preview_profil');
-    document.getElementById('camera_profil').addEventListener('click', () => initCameraCapture('preview_profil', 'photo_profil'));
 
     // Configuration pour la photo pièce Recto
-    setupFileUpload('upload_recto', 'photo_recto');
+    setupFileUpload('upload_recto', 'photo_recto', 'preview_recto');
     setupImagePreview('photo_recto', 'preview_recto');
-    document.getElementById('camera_recto').addEventListener('click', () => initCameraCapture('preview_recto', 'photo_recto'));
 
     // Configuration pour la photo pièce Verso
-    setupFileUpload('upload_verso', 'photo_verso');
+    setupFileUpload('upload_verso', 'photo_verso', 'preview_verso');
     setupImagePreview('photo_verso', 'preview_verso');
-    document.getElementById('camera_verso').addEventListener('click', () => initCameraCapture('preview_verso', 'photo_verso'));
 
 
     // Logique pour afficher/masquer le champ "autre type de pièce"
@@ -86,24 +113,46 @@ $(document).ready(function () {
 
             success: function (response) {
                 if (response.success && response.redirect_url) {
-                    alert(response.message);
-                    window.location.href = response.redirect_url;
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Succès !',
+                        text: response.message,
+                        confirmButtonColor: '#009E60',
+                        timer: 2000
+                    }).then(() => {
+                        window.location.href = response.redirect_url;
+                    });
                 } else {
-                    alert('Une erreur est survenue: ' + (response.message || 'Veuillez vérifier les champs.'));
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erreur',
+                        text: response.message || 'Veuillez vérifier les champs.',
+                        confirmButtonColor: '#009E60'
+                    });
                 }
             },
             error: function (xhr) {
                 let errorMsg = "Une erreur serveur est survenue. Veuillez réessayer.";
+                let errorList = '';
+                
                 if (xhr.status === 422) {
                     const errors = xhr.responseJSON.errors;
-                    errorMsg = "Erreurs de validation:\n";
+                    errorMsg = "Erreurs de validation :";
+                    errorList = '<ul style="text-align: left;">';
                     $.each(errors, function (key, value) {
-                        errorMsg += `- ${value[0]}\n`;
+                        errorList += `<li>${value[0]}</li>`;
                     });
+                    errorList += '</ul>';
                 } else if (xhr.responseJSON && xhr.responseJSON.message) {
                     errorMsg = xhr.responseJSON.message;
                 }
-                alert(errorMsg);
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur',
+                    html: errorMsg + (errorList || ''),
+                    confirmButtonColor: '#009E60'
+                });
             },
             complete: function () {
                 submitButton.prop('disabled', false).html(originalButtonText);
@@ -117,7 +166,12 @@ function initCameraCapture(targetPreviewId, targetInputId) {
     console.log("Tentative d'initialisation de la caméra pour l'input:", targetInputId);
 
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert("Votre navigateur ne supporte pas l'API de la caméra. Essayez avec un navigateur moderne comme Chrome ou Firefox.");
+        Swal.fire({
+            icon: 'warning',
+            title: 'Caméra non supportée',
+            text: "Votre navigateur ne supporte pas l'API de la caméra. Essayez avec un navigateur moderne comme Chrome ou Firefox.",
+            confirmButtonColor: '#009E60'
+        });
         return;
     }
 
@@ -203,13 +257,23 @@ function initCameraCapture(targetPreviewId, targetInputId) {
     .catch(err => {
         // Si les deux tentatives échouent
         console.error("Erreur finale d'accès à la caméra : ", err.name, err.message);
-        alert(`Erreur d'accès à la caméra : ${err.name}. Assurez-vous d'être sur une page HTTPS et d'avoir autorisé l'accès.`);
+        Swal.fire({
+            icon: 'error',
+            title: 'Erreur d\'accès à la caméra',
+            text: `${err.name}. Assurez-vous d'être sur une page HTTPS et d'avoir autorisé l'accès à la caméra.`,
+            confirmButtonColor: '#009E60'
+        });
         stopCamera();
     });
 
     captureButton.onclick = () => {
         if (!video.srcObject) {
-            alert("Le flux de la caméra n'est pas actif.");
+            Swal.fire({
+                icon: 'warning',
+                title: 'Caméra inactive',
+                text: "Le flux de la caméra n'est pas actif.",
+                confirmButtonColor: '#009E60'
+            });
             return;
         }
         const canvas = document.createElement('canvas');

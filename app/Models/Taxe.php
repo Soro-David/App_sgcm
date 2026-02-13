@@ -16,7 +16,7 @@ class Taxe extends Model
 
     public function mairie()
     {
-        return $this->belongsTo(Mairie::class, 'mairie_ref');
+        return $this->belongsTo(Mairie::class, 'mairie_ref', 'mairie_ref');
     }
 
     public function agents()

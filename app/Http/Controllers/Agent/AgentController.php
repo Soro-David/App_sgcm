@@ -7,10 +7,12 @@ use App\Http\Requests\StoreCommercantRequest;
 use App\Models\Agent;
 use App\Models\Commercant;
 use App\Models\Commune;
+use App\Models\Encaissement;
 use App\Models\Mairie;
 use App\Models\Secteur;
 use App\Models\Taxe;
 use App\Models\TypeContribuable;
+use App\Models\Versement;
 use App\Services\QrCodeService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -23,15 +25,118 @@ use Yajra\DataTables\Facades\DataTables;
 
 class AgentController extends Controller
 {
+    public function dashboard(Request $request)
+    {
+        $agent = Auth::guard('agent')->user();
+        if (! $agent) {
+            return redirect()->route('login.agent');
+        }
+
+        $mairieRef = $agent->mairie_ref;
+        $filter = $request->get('filter', 'tout');
+
+        // Initialisation des requêtes
+        $queryCommercantAgent = Commercant::where('agent_id', $agent->id);
+        $queryEncaissementAgent = Encaissement::where('agent_id', $agent->id);
+        $queryVersementAgent = Versement::where('agent_id', $agent->id);
+
+        // Application des filtres
+        if ($filter === 'jour') {
+            $queryCommercantAgent->whereDate('created_at', today());
+            $queryEncaissementAgent->whereDate('created_at', today());
+            $queryVersementAgent->whereDate('created_at', today());
+        } elseif ($filter === 'mois') {
+            $queryCommercantAgent->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year);
+            $queryEncaissementAgent->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year);
+            $queryVersementAgent->whereMonth('created_at', now()->month)->whereYear('created_at', now()->year);
+        } elseif ($filter === 'annee') {
+            $queryCommercantAgent->whereYear('created_at', now()->year);
+            $queryEncaissementAgent->whereYear('created_at', now()->year);
+            $queryVersementAgent->whereYear('created_at', now()->year);
+        }
+
+        // Statistiques de base
+        $stats = [
+            'totalEncaisse' => 0,
+            'countContribuablesRecenses' => $queryCommercantAgent->count(),
+            'totalContribuablesMairie' => Commercant::where('mairie_ref', $mairieRef)->count(),
+            'dernieresActivites' => collect([]),
+            'montantNonVerse' => 0,
+            'countAgentsRecouvrement' => Agent::where('mairie_ref', $mairieRef)->where('type', 'recouvrement')->count(),
+            'countAgentsRecensement' => Agent::where('mairie_ref', $mairieRef)->where('type', 'recensement')->count(),
+            'currentFilter' => $filter,
+        ];
+
+        // Seul l'agent de recouvrement voit les stats financières
+        if ($agent->type !== 'recensement') {
+            $stats['totalEncaisse'] = $queryEncaissementAgent->sum('montant_percu');
+            $stats['dernieresActivites'] = (clone $queryEncaissementAgent)->latest()->take(4)->get();
+
+            $totalVerse = $queryVersementAgent->sum('montant_verse');
+            $stats['montantNonVerse'] = max(0, $stats['totalEncaisse'] - $totalVerse);
+        } else {
+            // Pour l'agent de recensement, on affiche ses derniers contribuables ajoutés
+            $stats['dernieresActivites'] = (clone $queryCommercantAgent)->latest()->take(4)->get();
+        }
+
+        return view('agent.dashboard', compact('stats'));
+    }
+
+    public function profile()
+    {
+        $agent = Auth::guard('agent')->user();
+        if (! $agent) {
+            return redirect()->route('login.agent');
+        }
+
+        // Seul l'agent de recouvrement peut voir son profil financier
+        if ($agent->type === 'recensement') {
+            return redirect()->route('agent.dashboard')->with('error', 'Accès non autorisé.');
+        }
+
+        // Total encaissé par l'agent
+        $totalEncaisse = Encaissement::where('agent_id', $agent->id)->sum('montant_percu');
+
+        // Total versé par l'agent à la mairie
+        $totalVerse = Versement::where('agent_id', $agent->id)->sum('montant_verse');
+
+        // Calcul plus précis de la dette actuelle :
+        $dernierVersement = Versement::where('agent_id', $agent->id)->orderBy('created_at', 'desc')->first();
+        $montantNonVerse = Encaissement::where('agent_id', $agent->id)
+            ->where('statut', '!=', 'versé')
+            ->sum('montant_percu');
+
+        $detteActuelle = ($dernierVersement ? $dernierVersement->reste : 0) + $montantNonVerse;
+
+        // Les 10 derniers versements
+        $lastVersements = Versement::where('agent_id', $agent->id)
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+
+        return view('agent.profile', compact(
+            'totalEncaisse',
+            'totalVerse',
+            'detteActuelle',
+            'lastVersements'
+        ));
+    }
+
     public function index(Request $request)
     {
         // dd($request);
-        $regions = Commune::select('region')->distinct()->orderBy('region', 'asc')->get();
         $agent = Auth::guard('agent')->user();
 
         if (! $agent || ! $agent->mairie_ref) {
             abort(403, 'Agent ou mairie non trouvée');
         }
+
+        // Seul l'agent de recensement peut voir la liste de recensement
+        if ($agent->type === 'recouvrement') {
+            return redirect()->route('agent.dashboard')->with('error', 'Accès non autorisé.');
+        }
+
+        $regions = Commune::select('region')->distinct()->orderBy('region', 'asc')->get();
 
         $mairie_ref = $agent->mairie_ref;
 
@@ -87,14 +192,20 @@ class AgentController extends Controller
             ->orderBy('created_at', 'desc');
 
         return datatables()->of($commercants)
-
+            ->addColumn('checkbox', function ($row) {
+                return '<input type="checkbox" class="contribuable-checkbox form-check-input" value="'.$row->id.'">';
+            })
             ->addColumn('action', function ($row) {
-                $editCardUrl = route('agent.contribuable.edit', $row->id);
+                $editUrl = route('agent.contribuable.edit', $row->id);
+                $cardUrl = route('agent.contribuable.virtual_card', $row->id);
                 $deleteUrl = route('agent.contribuable.destroy', $row->id);
 
                 return '
-                    <a href="'.$editCardUrl.'" class="btn btn-sm btn-primary me-1" title="Voir carte virtuelle">
+                    <a href="'.$cardUrl.'" class="btn btn-sm btn-info me-1" title="Voir carte virtuelle">
                         <i class="fas fa-id-card"></i>
+                    </a>
+                    <a href="'.$editUrl.'" class="btn btn-sm btn-warning me-1" title="Modifier">
+                        <i class="fas fa-edit"></i>
                     </a>
                     <button class="btn btn-sm btn-danger" onclick="deleteCommercant('.$row->id.')" title="Supprimer">
                         <i class="fas fa-trash-alt"></i>
@@ -105,8 +216,33 @@ class AgentController extends Controller
             ->editColumn('created_at', function ($row) {
                 return $row->created_at->format('d/m/Y H:i');
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['action', 'checkbox'])
             ->make(true);
+    }
+
+    public function print_bulk_cards(Request $request)
+    {
+        $ids = $request->query('ids');
+        $mairie = Auth::guard('agent')->user();
+
+        if (! $mairie) {
+            abort(403);
+        }
+
+        $query = Commercant::where('mairie_ref', $mairie->mairie_ref);
+
+        if ($ids === 'all') {
+            $commercants = $query->with('mairie', 'secteur', 'taxes')->get();
+        } else {
+            $idArray = explode(',', $ids);
+            $commercants = $query->whereIn('id', $idArray)->with('mairie', 'secteur', 'taxes')->get();
+        }
+
+        if ($commercants->isEmpty()) {
+            return redirect()->back()->with('error', 'Aucun contribuable sélectionné.');
+        }
+
+        return view('agent.contribuable.export_multiple_virtual_cartes', compact('commercants'));
     }
 
     public function get_list_programmes(Request $request)
@@ -156,6 +292,11 @@ class AgentController extends Controller
 
         if (! $agent) {
             return redirect()->route('login.agent');
+        }
+
+        // Seul l'agent de recensement peut créer un contribuable
+        if ($agent->type === 'recouvrement') {
+            return redirect()->route('agent.dashboard')->with('error', 'Accès non autorisé.');
         }
 
         $mairie_ref = $agent->mairie_ref;
@@ -300,11 +441,25 @@ class AgentController extends Controller
         }
     }
 
+    public function edit(Commercant $commercant)
+    {
+        $commercant->load('mairie', 'secteur', 'taxes');
+
+        return view('agent.contribuable.edit', compact('commercant'));
+    }
+
     public function show_virtual_card(Commercant $commercant)
     {
         $commercant->load('mairie', 'secteur', 'taxes');
 
         return view('agent.contribuable.virtual_carte', compact('commercant'));
+    }
+
+    public function export_virtual_card(Commercant $commercant)
+    {
+        $commercant->load('mairie', 'secteur', 'taxes');
+
+        return view('agent.contribuable.export_virtual_carte', compact('commercant'));
     }
 
     public function edit_virtual_card(Commercant $commercant)
@@ -406,9 +561,15 @@ class AgentController extends Controller
         return redirect()->route('superadmin.mairies.index')->with('success', 'Mairie mise à jour avec succès.');
     }
 
-    public function destroy(string $id)
+    public function destroy(Commercant $commercant)
     {
-        //
+        try {
+            $commercant->delete();
+
+            return response()->json(['success' => true, 'message' => 'Commerçant supprimé avec succès.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Erreur lors de la suppression.'], 500);
+        }
     }
 
     public function get_list_mairie(Request $request)

@@ -21,7 +21,7 @@ class RoleMiddleware
     {
         $user = null;
         
-        foreach (['web', 'mairie','commercant', 'agent'] as $guard) {
+        foreach (['web', 'mairie', 'finance', 'commercant', 'agent'] as $guard) {
             if (Auth::guard($guard)->check()) {
                 $user = Auth::guard($guard)->user();
                 if ($user && in_array($user->role, $roles)) {

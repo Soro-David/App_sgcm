@@ -408,3 +408,459 @@
 .camera-modal {
   backdrop-filter: blur(4px);
 }
+
+/* ========================================
+   STYLES POUR LE TABLEAU DES CONTRIBUABLES
+   ======================================== */
+
+/* En-tête du tableau */
+.table thead th {
+  background-color: #009E60 !important;
+  color: white !important;
+  font-weight: 600;
+  padding: 15px 12px;
+  border: none;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+/* Corps du tableau - Alternance de couleurs */
+.table tbody tr:nth-child(odd) {
+  background-color: #D4F1E3 !important; /* Vert clair */
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: #FFF4E6 !important; /* Beige clair */
+}
+
+/* Cellules du tableau */
+.table tbody td {
+  padding: 12px;
+  vertical-align: middle;
+  border: none;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+/* Hover sur les lignes */
+.table tbody tr:hover {
+  opacity: 0.9;
+  cursor: default;
+}
+
+/* Colonne Actions */
+.table tbody td:last-child {
+  text-align: center;
+}
+
+/* ========================================
+   BOUTONS D'ACTION
+   ======================================== */
+
+/* Bouton Voir/Détails (Jaune) */
+.btn-view,
+.btn-warning {
+  background-color: #FFD700 !important;
+  border: none !important;
+  color: #333 !important;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin-right: 5px;
+}
+
+.btn-view:hover,
+.btn-warning:hover {
+  background-color: #FFC700 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
+}
+
+/* Bouton Supprimer/Modifier (Rouge) */
+.btn-delete,
+.btn-danger {
+  background-color: #DC3545 !important;
+  border: none !important;
+  color: white !important;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-delete:hover,
+.btn-danger:hover {
+  background-color: #C82333 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+/* Icônes dans les boutons */
+.btn-view i,
+.btn-delete i,
+.btn-warning i,
+.btn-danger i {
+  font-size: 1rem;
+}
+
+/* ========================================
+   AMÉLIORATION DU SIDEBAR
+   ======================================== */
+
+/* Éléments du menu actifs */
+.sidebar .nav .nav-item.active > .nav-link {
+  background: #E8F5F0 !important;
+  /* border-left: 4px solid #009E60; */
+  color: #009E60 !important;
+}
+
+.sidebar .nav .nav-item.active > .nav-link i,
+.sidebar .nav .nav-item.active > .nav-link .menu-title {
+  color: #009E60 !important;
+}
+
+/* Hover sur les éléments du menu */
+.sidebar .nav:not(.sub-menu) > .nav-item:hover > .nav-link {
+  background: #E8F5F0 !important;
+  color: #009E60 !important;
+}
+
+/* Icônes du menu */
+.sidebar .nav .nav-item .nav-link i.menu-icon {
+  color: #009E60 !important;
+  font-size: 1.5rem;
+}
+
+/* Titres du menu */
+.sidebar .nav .nav-item .nav-link .menu-title {
+  color: #333;
+  font-weight: 500;
+}
+
+/* Bouton de déconnexion */
+.sidebar .nav .nav-item .nav-link.logout-link {
+  color: #009E60;
+  font-weight: 500;
+}
+
+.sidebar .nav .nav-item .nav-link.logout-link:hover {
+  background: #E8F5F0 !important;
+}
+
+/* ========================================
+   PAGINATION ET FILTRES
+   ======================================== */
+
+/* Pagination DataTables */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  padding: 5px 12px;
+  margin: 0 2px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  background: white;
+  color: #333 !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+  background: #009E60 !important;
+  color: white !important;
+  border-color: #009E60;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  background: #E8F5F0 !important;
+  color: #009E60 !important;
+  border-color: #009E60;
+}
+
+/* Bouton de filtre */
+.btn-filter {
+  background-color: white;
+  border: 1px solid #ddd;
+  color: #333;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.btn-filter:hover {
+  background-color: #f8f9fa;
+  border-color: #009E60;
+}
+
+/* Champ de recherche */
+.dataTables_wrapper .dataTables_filter input {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 6px 12px;
+  margin-left: 8px;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+  border-color: #009E60;
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(0, 158, 96, 0.25);
+}
+
+/* ========================================
+   STYLES POUR LES PHOTOS (PROFIL ET PIÈCES)
+   ======================================== */
+
+/* Container de la photo de profil */
+.photo-profil-container {
+  display: inline-block;
+}
+
+/* Cercle de la photo de profil */
+.photo-profil-circle {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 4px solid #009E60;
+  overflow: hidden;
+  position: relative;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+/* Image de profil */
+.img-profil {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Bouton caméra sur la photo de profil */
+.btn-camera-profil {
+  position: absolute;
+  bottom: 25px;
+  right: 8px;
+  width: 35px;
+  height: 40px;
+  border-radius: 60%;
+  background-color: #009E60;
+  border: 2px solid white;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+  z-index: 10;
+  
+}
+
+.btn-camera-profil:hover {
+  background-color: #007d4d;
+  transform: scale(1.1);
+}
+
+.btn-camera-profil i {
+  font-size: 16px;
+}
+
+/* Label de la photo de profil */
+.photo-label {
+  color: #009E60;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: block;
+}
+
+/* Container des photos de pièces */
+.photo-piece-container {
+  width: 100%;
+}
+
+/* Boîte de la photo de pièce */
+.photo-piece-box {
+  width: 100%;
+  height: 200px;
+  border: 3px solid #009E60;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  background-color: #f9f9f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Image de pièce */
+.img-piece {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Overlay pour le bouton d'upload */
+.photo-piece-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 158, 96, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.photo-piece-box:hover .photo-piece-overlay {
+  opacity: 1;
+}
+
+/* Bouton d'upload de pièce */
+.btn-upload-piece {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #009E60;
+  border: 3px solid white;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-upload-piece:hover {
+  background-color: #007d4d;
+  transform: scale(1.1);
+}
+
+.btn-upload-piece i {
+  font-size: 24px;
+}
+
+/* Label des photos de pièces */
+.photo-label-piece {
+  color: #009E60;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: block;
+  width: 100%;
+}
+
+/* ========================================
+   STYLES PERSONNALISÉS POUR SWEETALERT2
+   ======================================== */
+
+/* Personnalisation du popup SweetAlert2 */
+.swal2-popup {
+  border-radius: 12px;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Titre du popup */
+.swal2-title {
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+/* Texte du popup */
+.swal2-html-container {
+  color: #666;
+  font-size: 1rem;
+}
+
+/* Icône de succès */
+.swal2-icon.swal2-success {
+  border-color: #009E60;
+}
+
+.swal2-icon.swal2-success [class^='swal2-success-line'] {
+  background-color: #009E60;
+}
+
+.swal2-icon.swal2-success .swal2-success-ring {
+  border-color: rgba(0, 158, 96, 0.3);
+}
+
+/* Icône de question */
+.swal2-icon.swal2-question {
+  border-color: #009E60;
+  color: #009E60;
+}
+
+/* Boutons personnalisés */
+.swal2-styled.swal2-confirm {
+  background-color: #009E60 !important;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 24px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.swal2-styled.swal2-confirm:hover {
+  background-color: #007d4d !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 158, 96, 0.3);
+}
+
+.swal2-styled.swal2-deny {
+  background-color: #6c757d !important;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 24px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.swal2-styled.swal2-deny:hover {
+  background-color: #5a6268 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+}
+
+.swal2-styled.swal2-cancel {
+  background-color: #dc3545 !important;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 24px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.swal2-styled.swal2-cancel:hover {
+  background-color: #c82333 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+/* Animation d'apparition */
+.swal2-show {
+  animation: swal2-show 0.3s;
+}
+
+@keyframes swal2-show {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  45% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  80% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

@@ -10,31 +10,6 @@
                 </a>
             </li>
 
-            {{-- Gestion des Mairies --}}
-            {{-- <li class="nav-item">
-            <a class="nav-link d-flex justify-content-between align-items-center" 
-               data-bs-toggle="collapse" 
-               href="#menu-mairies" 
-               aria-expanded="false" 
-               aria-controls="menu-mairies">
-                <div>
-                    <i class="typcn typcn-group menu-icon"></i>
-                    <span class="menu-title">Gestion des Mairies</span>
-                </div>
-                <i class="menu-arrow fas fa-angle-down rotate-icon"></i>
-            </a>
-            <div class="collapse" id="menu-mairies">
-                <ul class="nav flex-column sub-menu">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('superadmin.mairies.index') }}">Liste des mairies</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="">Ajouter un personnel</a>
-                    </li>
-                </ul>
-            </div>
-        </li> --}}
-
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('superadmin.mairies.index') }}">
                     <i class="typcn typcn-group menu-icon"></i>
@@ -42,8 +17,15 @@
                 </a>
             </li>
 
-            {{-- Gestion des Taxes --}}
             <li class="nav-item">
+                <a class="nav-link" href="{{ route('superadmin.bilan') }}">
+                    <i class="typcn typcn-chart-line menu-icon"></i>
+                    <span class="menu-title">Bilan</span>
+                </a>
+            </li>
+
+            {{-- Gestion des Taxes --}}
+            {{-- <li class="nav-item">
                 <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
                     href="#menu-taxes" aria-expanded="false" aria-controls="menu-taxes">
                     <div>
@@ -59,7 +41,7 @@
                         </li>
                     </ul>
                 </div>
-            </li>
+            </li> --}}
 
         </ul>
 

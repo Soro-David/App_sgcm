@@ -28,7 +28,7 @@ class CommerceController extends Controller
 
     //     // dd($$agent->taxe_id);
 
-    //     return view('agent.commerce.index', compact('secteurs','agents'));
+    //     return view('agent.contribuable.index', compact('secteurs','agents'));
     // }
 
     public function index(Request $request)
@@ -90,7 +90,8 @@ class CommerceController extends Controller
         if (! $agent) {
             return redirect()->route('login.agent')->with('error', 'Connexion requise.');
         }
-
+        
+        // dd($request->all());
         $data = $request->validate([
             'nom' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
@@ -205,7 +206,7 @@ class CommerceController extends Controller
         $mairie_ref = $agent->mairie_ref;
 
         $commercants = Commercant::where('mairie_ref', $mairie_ref)
-            ->select(['id', 'nom', 'email', 'telephone', 'created_at'])
+            ->select(['id', 'num_commerce', 'nom', 'email', 'telephone', 'created_at'])
             ->orderBy('created_at', 'desc');
 
         return datatables()->of($commercants)
@@ -218,10 +219,10 @@ class CommerceController extends Controller
                 //     <i class="fas fa-trash-alt"></i>
                 // </button>
                 return '
-                    <a href="'.$detailUrl.'" class="btn btn-sm btn-info me-1" title="Détails">
+                    <a href="'.$detailUrl.'" class="btn btn-sm btn-view me-1" title="Détails">
                         <i class="fas fa-eye"></i>
                     </a>
-                    <a href="'.$editUrl.'" class="btn btn-sm btn-warning me-1" title="Modifier">
+                    <a href="'.$editUrl.'" class="btn btn-sm btn-delete me-1" title="Modifier">
                         <i class="fas fa-edit"></i>
                     </a>
                 ';

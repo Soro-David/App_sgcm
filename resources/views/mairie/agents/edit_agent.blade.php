@@ -110,7 +110,7 @@
                     <div class="d-flex justify-content-end mt-5">
                         <a href="{{ route('mairie.agents.list_agent') }}"
                             class="btn btn-secondary px-4 py-2 me-2">Annuler</a>
-                        <button type="submit" class="btn btn-primary px-4 py-2">Mettre à jour</button>
+                        <button type="submit" class="btn btn-primar px-4 py-2"><i class="fa fa-save"></i> Mettre à jour</button>
                     </div>
                 </form>
             </div>

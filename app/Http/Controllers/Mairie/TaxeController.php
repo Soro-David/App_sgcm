@@ -25,7 +25,8 @@ class TaxeController extends Controller
      */
     public function create()
     {
-        $mairie_ref = Auth::guard('mairie')->user()->mairie_ref;
+        $user = Auth::guard('mairie')->user() ?: Auth::guard('finance')->user();
+        $mairie_ref = $user ? $user->mairie_ref : null;
 
         return view('mairie.taxe.create');
     }
@@ -59,40 +60,92 @@ class TaxeController extends Controller
         //
     }
 
-    public function edit_taxe($id)
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
     {
-        $taxe = Taxe::with('mairie')->findOrFail($id);
-        $mairies = Mairie::all();
-        $taxes = Taxe::with('mairie')->whereNotNull('mairie_ref')->get();
+        try {
+            $user = Auth::guard('mairie')->user() ?: Auth::guard('finance')->user();
+            $mairie_ref = $user ? $user->mairie_ref : null;
 
-        return view('superAdmin.taxe.edit_taxe', compact('taxe', 'mairies', 'taxes'));
+            $taxe = Taxe::where('id', $id)
+                ->where('mairie_ref', $mairie_ref)
+                ->firstOrFail();
+
+            return response()->json([
+                'success' => true,
+                'taxe' => $taxe,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Taxe non trouvée.',
+            ], 404);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(Request $request, string $id)
     {
-        $request->validate([
-            'nom' => 'required',
-            'mairie_ref' => 'required|exists:mairies,mairie_ref',
-            'montant' => 'nullable|numeric',
-            'description' => 'nullable|string',
-        ]);
+        try {
+            $user = Auth::guard('mairie')->user() ?: Auth::guard('finance')->user();
+            $mairie_ref = $user ? $user->mairie_ref : null;
 
-        $taxe = new Taxe;
-        $taxe->nom = $request->nom;
-        $taxe->description = $request->description;
-        $taxe->montant = $request->montant;
-        $taxe->mairie_ref = $request->mairie_ref;
-        $taxe->save();
+            $request->validate([
+                'nom' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'montant' => 'nullable|numeric|min:0',
+                'frequence' => 'required|in:jour,mois,an',
+            ]);
 
-        return redirect()->route('superadmin.taxes.index')->with('success', 'Taxe ajoutée avec succès.');
+            $taxe = Taxe::where('id', $id)
+                ->where('mairie_ref', $mairie_ref)
+                ->firstOrFail();
+
+            $taxe->update([
+                'nom' => $request->nom,
+                'description' => $request->description,
+                'montant' => $request->montant,
+                'frequence' => $request->frequence,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'La taxe a été modifiée avec succès.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la modification: '.$e->getMessage(),
+            ], 500);
+        }
     }
 
     public function destroy(string $id)
     {
-        //
+        try {
+            $user = Auth::guard('mairie')->user() ?: Auth::guard('finance')->user();
+            $mairie_ref = $user ? $user->mairie_ref : null;
+
+            $taxe = Taxe::where('id', $id)
+                ->where('mairie_ref', $mairie_ref)
+                ->firstOrFail();
+
+            $taxe->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'La taxe a été supprimée avec succès.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la suppression: '.$e->getMessage(),
+            ], 500);
+        }
     }
 
     public function get_list_taxes(Request $request)
@@ -102,21 +155,38 @@ class TaxeController extends Controller
                 return response()->json(['error' => 'Requête non autorisée.'], 403);
             }
 
-            // Récupère les noms uniques avec le plus ancien ID et la date de création correspondante
-            $query = Taxe::selectRaw('MIN(id) as id, nom, MIN(created_at) as created_at')
-                ->groupBy('nom')
-                ->orderBy('nom');
+            // Récupérer la mairie connectée
+            $user = Auth::guard('mairie')->user() ?: Auth::guard('finance')->user();
+            $mairie_ref = $user ? $user->mairie_ref : null;
+
+            if (! $mairie_ref) {
+                return response()->json(['error' => 'Mairie non trouvée.'], 404);
+            }
+
+            // Récupère les taxes de la mairie connectée
+            $query = Taxe::where('mairie_ref', $mairie_ref)
+                ->select('id', 'nom', 'created_at', 'frequence', 'montant')
+                ->orderBy('created_at', 'desc');
 
             return DataTables::of($query)
                 ->editColumn('created_at', function ($taxe) {
                     return $taxe->created_at ? date('d/m/Y H:i', strtotime($taxe->created_at)) : 'N/A';
                 })
+                ->editColumn('montant', function ($taxe) {
+                    return $taxe->montant ? number_format($taxe->montant, 0, ',', ' ').' FCFA' : 'N/A';
+                })
+                ->editColumn('frequence', function ($taxe) {
+                    return ucfirst($taxe->frequence ?: 'N/A');
+                })
                 ->addColumn('action', function ($taxe) {
-                    $editUrl = route('superadmin.taxes.edit', $taxe->id);
-                    $deleteUrl = route('superadmin.taxes.destroy', $taxe->id);
-
-                    return '<a href="'.$editUrl.'" class="btn btn-warning btn-sm" title="Assigner cette taxe à une mairie"><i class="fa fa-eye"></i></a>
-                            <button class="btn btn-danger btn-sm btn-delete" data-url="'.$deleteUrl.'" title="Supprimer cette taxe"><i class="fa fa-trash"></i></button>';
+                    return '
+                        <button class="btn btn-sm btn-warning btn-edit" data-id="'.$taxe->id.'" title="Modifier">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger btn-delete" data-id="'.$taxe->id.'" title="Supprimer">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    ';
                 })
                 ->rawColumns(['action'])
                 ->make(true);

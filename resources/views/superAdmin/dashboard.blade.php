@@ -1,249 +1,251 @@
 @extends('superAdmin.layouts.app')
 
-@section('title', 'Tableau de Bord')
+@section('title', 'Tableau de Bord - Super Admin')
+
+@push('css')
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #2af598 0%, #009efd 100%);
+            --warning-gradient: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            --danger-gradient: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
+            --info-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .stat-card {
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            color: white;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card .card-body {
+            padding: 1.5rem;
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            opacity: 0.3;
+            position: absolute;
+            right: 15px;
+            bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        .bg-primary-grad {
+            background: var(--primary-gradient);
+        }
+
+        .bg-secondary-grad {
+            background: var(--secondary-gradient);
+        }
+
+        .bg-warning-grad {
+            background: var(--warning-gradient);
+        }
+
+        .bg-danger-grad {
+            background: var(--danger-gradient);
+        }
+
+        .bg-info-grad {
+            background: var(--info-gradient);
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            height: 100%;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .table thead th {
+            background-color: #f8f9fa;
+            border-top: none;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #6c757d;
+        }
+
+        .badge-soft-success {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+    </style>
+@endpush
 
 @section('content')
+    <div class="container-fluid">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h3 class="fw-bold text-dark">Tableau de Bord Global</h3>
+                <p class="text-muted">Vue d'overview de toutes les mairies et transactions.</p>
+            </div>
+        </div>
 
-  <div class="row">
-    <div class="col-xl-6 grid-margin stretch-card flex-column">
-        <h5 class="mb-2 text-titlecase mb-4">Status statistics</h5>
-      <div class="row">
-        <div class="col-md-6 grid-margin stretch-card">
-          <div class="card">
-            <div class="card-body d-flex flex-column justify-content-between">
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <p class="mb-0 text-muted">Transactions</p>
-                <p class="mb-0 text-muted">+1.37%</p>
-              </div>
-              <h4>1352</h4>
-              <canvas id="transactions-chart" class="mt-auto" height="65"></canvas>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 grid-margin stretch-card">
-          <div class="card">
-            <div class="card-body d-flex flex-column justify-content-between">
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <div>
-                  <p class="mb-2 text-muted">Sales</p>
-                  <h6 class="mb-0">563</h6>
-                </div>
-                <div>
-                  <p class="mb-2 text-muted">Orders</p>
-                  <h6 class="mb-0">720</h6>
-                </div>
-                <div>
-                  <p class="mb-2 text-muted">Revenue</p>
-                  <h6 class="mb-0">5900</h6>
-                </div>
-              </div>
-              <canvas id="sales-chart-a" class="mt-auto" height="65"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row h-100">
-        <div class="col-md-6 stretch-card grid-margin grid-margin-md-0">
-          <div class="card">
-            <div class="card-body d-flex flex-column justify-content-between">
-              <p class="text-muted">Sales Analytics</p>
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <h3 class="mb-">27632</h3>
-                <h3 class="mb-">78%</h3>
-              </div>
-              <canvas id="sales-chart-b" class="mt-auto" height="38"></canvas>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 stretch-card">
-          <div class="card">
-            <div class="card-body">
-              <div class="row h-100">
-                <div class="col-6 d-flex flex-column justify-content-between">
-                  <p class="text-muted">CPU</p>
-                  <h4>55%</h4>
-                  <canvas id="cpu-chart" class="mt-auto"></canvas>
-                </div>
-                <div class="col-6 d-flex flex-column justify-content-between">
-                  <p class="text-muted">Memory</p>
-                  <h4>123,65</h4>
-                  <canvas id="memory-chart" class="mt-auto"></canvas>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-xl-6 grid-margin stretch-card flex-column">
-      <h5 class="mb-2 text-titlecase mb-4">Income statistics</h5>
-      <div class="row h-100">
-        <div class="col-md-12 stretch-card">
-          <div class="card">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start flex-wrap">
-                <div>
-                  <p class="mb-3">Monthly Increase</p>
-                  <h3>67842</h3>
-                </div>
-                <div id="income-chart-legend" class="d-flex flex-wrap mt-1 mt-md-0"></div>
-              </div>
-              <canvas id="income-chart"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-xl-4 grid-margin stretch-card">
-      <div class="card">
-        <div class="card-body border-bottom">
-          <div class="d-flex justify-content-between align-items-center flex-wrap">
-            <h6 class="mb-2 mb-md-0 text-uppercase fw-medium">Overall sales</h6>
-            <div class="dropdown">
-              <button class="btn bg-white p-0 pb-1 text-muted btn-sm dropdown-toggle" type="button" id="dropdownMenuSizeButton3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Last 30 days
-              </button>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuSizeButton3">
-                <h6 class="dropdown-header">Settings</h6>
-                <a class="dropdown-item" href="javascript:;">Action</a>
-                <a class="dropdown-item" href="javascript:;">Another action</a>
-                <a class="dropdown-item" href="javascript:;">Something else here</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="javascript:;">Separated link</a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="daoughnut-chart-sm">
-            <canvas id="sales-chart-c" class="mt-2"></canvas>
-          </div>
-          <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-3 mt-4">
-            <div class="d-flex flex-column justify-content-center align-items-center">
-              <p class="text-muted">Gross Sales</p>
-              <h5>492</h5>
-              <div class="d-flex align-items-baseline">
-                <p class="text-success mb-0">0.5%</p>
-                <i class="typcn typcn-arrow-up-thick text-success"></i>
-              </div>
-            </div>
-            <div class="d-flex flex-column justify-content-center align-items-center">
-              <p class="text-muted">Purchases</p>
-              <h5>87k</h5>
-              <div class="d-flex align-items-baseline">
-                <p class="text-success mb-0">0.8%</p>
-                <i class="typcn typcn-arrow-up-thick text-success"></i>
-              </div>
-            </div>
-            <div class="d-flex flex-column justify-content-center align-items-center">
-              <p class="text-muted">Tax Return</p>
-              <h5>882</h5>
-              <div class="d-flex align-items-baseline">
-                <p class="text-danger mb-0">-04%</p>
-                <i class="typcn typcn-arrow-down-thick text-danger"></i>
-              </div>
-            </div>
-          </div>
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="dropdown">
-              <button class="btn bg-white p-0 pb-1 pt-1 text-muted btn-sm dropdown-toggle" type="button" id="dropdownMenuSizeButton3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Last 7 days
-              </button>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuSizeButton3">
-                <h6 class="dropdown-header">Settings</h6>
-                <a class="dropdown-item" href="javascript:;">Action</a>
-                <a class="dropdown-item" href="javascript:;">Another action</a>
-                <a class="dropdown-item" href="javascript:;">Something else here</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="javascript:;">Separated link</a>
-              </div>
-            </div>
-            <p class="mb-0">overview</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6 col-xl-4 grid-margin stretch-card">
-      <div class="row">
-        <div class="col-md-12 grid-margin stretch-card">
-          <div class="card newsletter-card bg-gradient-warning">
-            <div class="card-body">
-              <div class="d-flex flex-column align-items-center justify-content-center h-100">
-                <h5 class="mb-3 text-white">Newsletter</h5>
-                <form class="form d-flex flex-column align-items-center justify-content-between w-100">
-                  <div class="form-group mb-2 w-100">
-                    <input type="text" class="form-control" placeholder="email address">
-                  </div>
-                  <button class="btn btn-danger btn-rounded mt-1" type="submit">Subscribe</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-12 stretch-card">
-          <div class="card profile-card bg-gradient-primary">
-            <div class="card-body">
-              <div class="row align-items-center h-100">
-                <div class="col-md-4">
-                  <figure class="avatar mx-auto mb-4 mb-md-0">
-                    <img src="assets/images/faces/face20.jpg" alt="avatar">
-                  </figure>
-                </div>
-                <div class="col-md-8">
-                  <h5 class="text-white text-center text-md-left">Phoebe Kennedy</h5>
-                  <p class="text-white text-center text-md-left">kennedy@gmail.com</p>
-                  <div class="d-flex align-items-center justify-content-between info pt-2">
-                    <div>
-                      <p class="text-white fw-bold">Birth date</p>
-                      <p class="text-white fw-bold">Birth city</p>
+        <!-- Stat Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card stat-card bg-primary-grad">
+                    <div class="card-body position-relative">
+                        <div class="stat-label">Mairies Actives</div>
+                        <div class="stat-value">{{ number_format($stats['total_mairies']) }}</div>
+                        <i class="fas fa-city stat-icon"></i>
                     </div>
-                    <div>
-                      <p class="text-white">16 Sep 2019</p>
-                      <p class="text-white">Netherlands</p>
-                    </div>
-                  </div>
                 </div>
-              </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6 col-xl-4 grid-margin stretch-card">
-      <div class="card">
-        <div class="card-body border-bottom">
-          <div class="d-flex justify-content-between align-items-center flex-wrap">
-            <h6 class="mb-2 mb-md-0 text-uppercase fw-medium">Sales statistics</h6>
-            <div class="dropdown">
-              <button class="btn bg-white p-0 pb-1 text-muted btn-sm dropdown-toggle" type="button" id="dropdownMenuSizeButton4" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Last 7 days
-              </button>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuSizeButton4">
-                <h6 class="dropdown-header">Settings</h6>
-                <a class="dropdown-item" href="javascript:;">Action</a>
-                <a class="dropdown-item" href="javascript:;">Another action</a>
-                <a class="dropdown-item" href="javascript:;">Something else here</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="javascript:;">Separated link</a>
-              </div>
+            <div class="col-md-4">
+                <div class="card stat-card bg-secondary-grad">
+                    <div class="card-body position-relative">
+                        <div class="stat-label">Contribuables</div>
+                        <div class="stat-value">{{ number_format($stats['total_commercants']) }}</div>
+                        <i class="fas fa-users stat-icon"></i>
+                    </div>
+                </div>
             </div>
-          </div>
+            <div class="col-md-4">
+                <div class="card stat-card bg-info-grad">
+                    <div class="card-body position-relative">
+                        <div class="stat-label">Agents Terrain</div>
+                        <div class="stat-value">{{ number_format($stats['total_agents']) }}</div>
+                        <i class="fas fa-user-tie stat-icon"></i>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-          <canvas id="sales-chart-d" height="320"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
 
+        <div class="row g-4 mb-5">
+            <!-- Mairies by Region -->
+            <div class="col-lg-12">
+                <div class="chart-container">
+                    <h5 class="card-title fw-bold mb-4">Mairies par Région</h5>
+                    <div style="height: 300px;">
+                        <canvas id="regionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Recent Mairies Table -->
+            <div class="col-lg-12">
+                <div class="table-container">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="card-title fw-bold mb-0">Mairies Récemment Inscrites</h5>
+                        <a href="{{ route('superadmin.mairies.index') }}" class="btn btn-sm btn-outline-primary">Voir
+                            tout</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Logo</th>
+                                    <th>Nom de la Mairie</th>
+                                    <th>Région</th>
+                                    <th>Contact</th>
+                                    <th>Date d'inscription</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($recentMairies as $mairie)
+                                    <tr>
+                                        <td>
+                                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center"
+                                                style="width: 40px; height: 40px;">
+                                                <i class="fas fa-building text-muted"></i>
+                                            </div>
+                                        </td>
+                                        <td class="fw-bold">{{ $mairie->name }}</td>
+                                        <td>{{ $mairie->region }}</td>
+                                        <td>
+                                            <small class="d-block">{{ $mairie->email }}</small>
+                                            <small class="text-muted">{{ $mairie->telephone1 }}</small>
+                                        </td>
+                                        <td>{{ $mairie->created_at->format('d/m/Y') }}</td>
+                                        <td>
+                                            <span
+                                                class="badge badge-soft-{{ $mairie->status == 'active' ? 'success' : 'warning' }}">
+                                                {{ ucfirst($mairie->status) }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4 text-muted">Aucune mairie enregistrée.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
-
 @push('js')
-    <script src="{{ asset('assets/vendors/chart.js/chart.umd.js') }}"></script>
-    <script src="{{ asset('assets/js/jquery.cookie.js') }}"></script>
-    <script src="{{ asset('assets/js/dashboard.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Configuration de Region Chart
+        const regionCtx = document.getElementById('regionChart').getContext('2d');
+        const regionData = @json($mairiesByRegion);
+
+        new Chart(regionCtx, {
+            type: 'doughnut',
+            data: {
+                labels: regionData.map(d => d.region),
+                datasets: [{
+                    data: regionData.map(d => d.total),
+                    backgroundColor: [
+                        '#667eea', '#764ba2', '#2af598', '#009efd', '#f6d365', '#fda085', '#ff0844'
+                    ],
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20
+                        }
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+    </script>
 @endpush

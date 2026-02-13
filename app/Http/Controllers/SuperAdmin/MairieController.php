@@ -152,8 +152,17 @@ class MairieController extends Controller
                     $editUrl = route('superadmin.mairies.edit', $mairie->id);
                     $deleteUrl = route('superadmin.mairies.destroy', $mairie->id);
 
-                    return '<a href="'.$editUrl.'" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></a>
-                            <button class="btn btn-danger btn-sm btn-delete" data-url="'.$deleteUrl.'"><i class="fa fa-trash"></i></button>';
+                    return '<div class="action-buttons">
+                                <a href="'.$editUrl.'" class="btn-table-action view" title="Voir les détails">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                <a href="'.$editUrl.'" class="btn-table-action edit" title="Modifier la mairie">
+                                    <i class="fa fa-pencil-alt"></i>
+                                </a>
+                                <button class="btn-table-action delete btn-delete" data-url="'.$deleteUrl.'" title="Supprimer la mairie">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>';
                 })
                 ->rawColumns(['action'])
                 ->make(true);

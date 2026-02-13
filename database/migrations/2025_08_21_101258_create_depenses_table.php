@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('reference')->nullable();
             
             $table->unsignedBigInteger('agent_id')->nullable(); 
-            $table->string('mairie_ref')->nullable();
+            // $table->string('mairie_ref')->nullable();
             
             $table->string('piece_jointe')->nullable();
             

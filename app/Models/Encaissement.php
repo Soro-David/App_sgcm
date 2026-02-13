@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Encaissement extends Model
 {
     use HasFactory;
-   
+
     protected $fillable = [
         'montant_percu',
         'montant_verse',
@@ -17,7 +17,8 @@ class Encaissement extends Model
         'mairie_ref',
         'taxe_id',
         'num_commerce',
-        'statut'
+        'recorded_by',
+        'statut',
     ];
 
     /**
@@ -25,15 +26,23 @@ class Encaissement extends Model
      */
     public function mairie()
     {
-        return $this->belongsTo(Mairie::class, 'mairie_ref');
+        return $this->belongsTo(Mairie::class, 'mairie_ref', 'mairie_ref');
     }
 
     /**
-     * L'encaissement a été réalisé par un Agent.
+     * L'encaissement a été réalisé par un Agent (collecteur terrain).
      */
     public function agent()
     {
         return $this->belongsTo(Agent::class);
+    }
+
+    /**
+     * L'encaissement a été enregistré par un utilisateur Mairie (caisse).
+     */
+    public function recorder()
+    {
+        return $this->belongsTo(Mairie::class, 'recorded_by');
     }
 
     /**

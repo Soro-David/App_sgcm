@@ -10,10 +10,8 @@ $(document).ready(function () {
                 alert('Erreur lors du chargement des données.');
             }
         },
-        language: {
-            url: $('#commercantsTable').data('lang-url')
-        },
         columns: [
+            { data: 'checkbox', name: 'checkbox', orderable: false, searchable: false },
             { data: 'created_at', name: 'created_at' },
             { data: 'num_commerce', name: 'num_commerce' },
             { data: 'nom', name: 'nom' },
@@ -23,17 +21,45 @@ $(document).ready(function () {
         ],
     });
 
-    // ✅ Redirection au clic sur une ligne, sauf colonne Action
-    $('#commercantsTable tbody').on('click', 'tr', function (e) {
-        // Empêche la redirection si le clic vient de la dernière colonne (action)
-        const columnIndex = $(e.target).closest('td').index();
-        const totalColumns = $('#commercantsTable thead th').length;
-        if (columnIndex === totalColumns - 1) return;
+    // Gestion de la sélection globale
+    $('#selectAll').on('click', function () {
+        $('.contribuable-checkbox').prop('checked', this.checked);
+        updatePrintButtonVisibility();
+    });
 
-        const data = table.row(this).data();
-        if (data && data.id) {
-            const url = `/agent/commerce/carte-virtuelle/edit/${data.id}`;
-            window.location.href = url;
+    // Gestion de la sélection individuelle (délégation d'événement car le contenu est dynamique)
+    $('#commercantsTable').on('change', '.contribuable-checkbox', function () {
+        updatePrintButtonVisibility();
+        
+        // Décocher "Tout sélectionner" si une case est décochée
+        if (!this.checked) {
+            $('#selectAll').prop('checked', false);
+        } else {
+            // Recocher "Tout sélectionner" si toutes les cases sont cochées
+            if ($('.contribuable-checkbox:checked').length === $('.contribuable-checkbox').length) {
+                $('#selectAll').prop('checked', true);
+            }
+        }
+    });
+
+    function updatePrintButtonVisibility() {
+        const selectedCount = $('.contribuable-checkbox:checked').length;
+        if (selectedCount > 0) {
+            $('#printSelectedBtn').removeClass('d-none');
+        } else {
+            $('#printSelectedBtn').addClass('d-none');
+        }
+    }
+
+    // Action d'impression de la sélection
+    $('#printSelectedBtn').on('click', function () {
+        const selectedIds = $('.contribuable-checkbox:checked').map(function () {
+            return $(this).val();
+        }).get().join(',');
+
+        if (selectedIds) {
+            const printUrl = $('#commercantsTable').data('print-url') + '?ids=' + selectedIds;
+            window.open(printUrl, '_blank');
         }
     });
 });

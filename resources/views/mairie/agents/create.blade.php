@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container py-5">
-        <h3 class="fw-bold mb-4">Ajout d'un personnel</h3>
+        <h4 class="fw-bold mb-4">Ajout d'un personnel</h4>
         <div class="card shadow-sm w-100 border-0">
             <div class="card-body">
                 {{-- Messages de session --}}
@@ -65,10 +65,13 @@
                             <label for="type_agent" class="form-label">Type d'agent *</label>
                             <select name="type_agent" id="type_agent" class="form-select" required>
                                 <option value="" disabled selected>-- Sélectionnez un type d'agent --</option>
-                                <option value="financié" {{ old('type_agent') == 'financié' ? 'selected' : '' }}>Financier
-                                </option>
-                                <option value="caisié" {{ old('type_agent') == 'caisié' ? 'selected' : '' }}>Caissier(ère)
-                                </option>
+                                <option value="responsable_financier"
+                                    {{ old('type_agent') == 'responsable_financier' ? 'selected' : '' }}>
+                                    Responsable financier</option>
+                                <option value="caissier" {{ old('type_agent') == 'caissier' ? 'selected' : '' }}>
+                                    Caissier</option>
+                                <option value="finance" {{ old('type_agent') == 'finance' ? 'selected' : '' }}>
+                                    Agent financier</option>
                             </select>
                         </div>
                         {{-- Lieu d'habitation --}}
@@ -105,7 +108,8 @@
 
                     {{-- Boutons --}}
                     <div class="d-flex justify-content-end mt-5">
-                        <button type="submit" class="btn btn-primary px-4 py-2">Enregistrer</button>
+                        <button type="submit" class="btn btn-primar px-4 py-2"><i class="fa fa-save"></i>
+                            Enregistrer</button>
                     </div>
                 </form>
             </div>

@@ -1,249 +1,333 @@
 @extends('agent.layouts.app')
 
-@section('title', 'Tableau de Bord')
+@section('title', 'Tableau de Bord - Agent')
+
+@push('css')
+    <link rel="stylesheet" href="{{ asset('css/premium_dashboard.css') }}">
+@endpush
 
 @section('content')
+    {{-- Initialisation des variables pour alléger le code --}}
+    @php
+        $agent = Auth::guard('agent')->user();
+        $isRecouvrement = $agent->type === 'recouvrement';
+        $isRecensement = $agent->type === 'recensement';
+    @endphp
 
-  <div class="row">
-    <div class="col-xl-6 grid-margin stretch-card flex-column">
-        <h5 class="mb-2 text-titlecase mb-4">Status statistics</h5>
-      <div class="row">
-        <div class="col-md-6 grid-margin stretch-card">
-          <div class="card">
-            <div class="card-body d-flex flex-column justify-content-between">
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <p class="mb-0 text-muted">Transactions</p>
-                <p class="mb-0 text-muted">+1.37%</p>
-              </div>
-              <h4>1352</h4>
-              <canvas id="transactions-chart" class="mt-auto" height="65"></canvas>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 grid-margin stretch-card">
-          <div class="card">
-            <div class="card-body d-flex flex-column justify-content-between">
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <div>
-                  <p class="mb-2 text-muted">Sales</p>
-                  <h6 class="mb-0">563</h6>
-                </div>
-                <div>
-                  <p class="mb-2 text-muted">Orders</p>
-                  <h6 class="mb-0">720</h6>
-                </div>
-                <div>
-                  <p class="mb-2 text-muted">Revenue</p>
-                  <h6 class="mb-0">5900</h6>
-                </div>
-              </div>
-              <canvas id="sales-chart-a" class="mt-auto" height="65"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row h-100">
-        <div class="col-md-6 stretch-card grid-margin grid-margin-md-0">
-          <div class="card">
-            <div class="card-body d-flex flex-column justify-content-between">
-              <p class="text-muted">Sales Analytics</p>
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <h3 class="mb-">27632</h3>
-                <h3 class="mb-">78%</h3>
-              </div>
-              <canvas id="sales-chart-b" class="mt-auto" height="38"></canvas>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 stretch-card">
-          <div class="card">
-            <div class="card-body">
-              <div class="row h-100">
-                <div class="col-6 d-flex flex-column justify-content-between">
-                  <p class="text-muted">CPU</p>
-                  <h4>55%</h4>
-                  <canvas id="cpu-chart" class="mt-auto"></canvas>
-                </div>
-                <div class="col-6 d-flex flex-column justify-content-between">
-                  <p class="text-muted">Memory</p>
-                  <h4>123,65</h4>
-                  <canvas id="memory-chart" class="mt-auto"></canvas>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-xl-6 grid-margin stretch-card flex-column">
-      <h5 class="mb-2 text-titlecase mb-4">Income statistics</h5>
-      <div class="row h-100">
-        <div class="col-md-12 stretch-card">
-          <div class="card">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start flex-wrap">
-                <div>
-                  <p class="mb-3">Monthly Increase</p>
-                  <h3>67842</h3>
-                </div>
-                <div id="income-chart-legend" class="d-flex flex-wrap mt-1 mt-md-0"></div>
-              </div>
-              <canvas id="income-chart"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+    <div class="container-fluid py-2">
 
-  <div class="row">
-    <div class="col-xl-4 grid-margin stretch-card">
-      <div class="card">
-        <div class="card-body border-bottom">
-          <div class="d-flex justify-content-between align-items-center flex-wrap">
-            <h6 class="mb-2 mb-md-0 text-uppercase fw-medium">Overall sales</h6>
-            <div class="dropdown">
-              <button class="btn bg-white p-0 pb-1 text-muted btn-sm dropdown-toggle" type="button" id="dropdownMenuSizeButton3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Last 30 days
-              </button>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuSizeButton3">
-                <h6 class="dropdown-header">Settings</h6>
-                <a class="dropdown-item" href="javascript:;">Action</a>
-                <a class="dropdown-item" href="javascript:;">Another action</a>
-                <a class="dropdown-item" href="javascript:;">Something else here</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="javascript:;">Separated link</a>
-              </div>
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold text-dark mb-1">Espace Agent Terrain</h2>
+                <p class="text-muted">
+                    Tableau de bord de vos activités de {{ $agent->type }}.
+                </p>
             </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="daoughnut-chart-sm">
-            <canvas id="sales-chart-c" class="mt-2"></canvas>
-          </div>
-          <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-3 mt-4">
-            <div class="d-flex flex-column justify-content-center align-items-center">
-              <p class="text-muted">Gross Sales</p>
-              <h5>492</h5>
-              <div class="d-flex align-items-baseline">
-                <p class="text-success mb-0">0.5%</p>
-                <i class="typcn typcn-arrow-up-thick text-success"></i>
-              </div>
-            </div>
-            <div class="d-flex flex-column justify-content-center align-items-center">
-              <p class="text-muted">Purchases</p>
-              <h5>87k</h5>
-              <div class="d-flex align-items-baseline">
-                <p class="text-success mb-0">0.8%</p>
-                <i class="typcn typcn-arrow-up-thick text-success"></i>
-              </div>
-            </div>
-            <div class="d-flex flex-column justify-content-center align-items-center">
-              <p class="text-muted">Tax Return</p>
-              <h5>882</h5>
-              <div class="d-flex align-items-baseline">
-                <p class="text-danger mb-0">-04%</p>
-                <i class="typcn typcn-arrow-down-thick text-danger"></i>
-              </div>
-            </div>
-          </div>
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="dropdown">
-              <button class="btn bg-white p-0 pb-1 pt-1 text-muted btn-sm dropdown-toggle" type="button" id="dropdownMenuSizeButton3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Last 7 days
-              </button>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuSizeButton3">
-                <h6 class="dropdown-header">Settings</h6>
-                <a class="dropdown-item" href="javascript:;">Action</a>
-                <a class="dropdown-item" href="javascript:;">Another action</a>
-                <a class="dropdown-item" href="javascript:;">Something else here</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="javascript:;">Separated link</a>
-              </div>
-            </div>
-            <p class="mb-0">overview</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6 col-xl-4 grid-margin stretch-card">
-      <div class="row">
-        <div class="col-md-12 grid-margin stretch-card">
-          <div class="card newsletter-card bg-gradient-warning">
-            <div class="card-body">
-              <div class="d-flex flex-column align-items-center justify-content-center h-100">
-                <h5 class="mb-3 text-white">Newsletter</h5>
-                <form class="form d-flex flex-column align-items-center justify-content-between w-100">
-                  <div class="form-group mb-2 w-100">
-                    <input type="text" class="form-control" placeholder="email address">
-                  </div>
-                  <button class="btn btn-danger btn-rounded mt-1" type="submit">Subscribe</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-12 stretch-card">
-          <div class="card profile-card bg-gradient-primary">
-            <div class="card-body">
-              <div class="row align-items-center h-100">
-                <div class="col-md-4">
-                  <figure class="avatar mx-auto mb-4 mb-md-0">
-                    <img src="assets/images/faces/face20.jpg" alt="avatar">
-                  </figure>
+            <div class="text-end">
+                <div class="badge bg-primary-soft text-primary px-3 py-2 rounded-pill">
+                    <i class="fas fa-calendar-alt me-1"></i>
+                    Filtre : {{ $stats['currentFilter'] === 'tout' ? 'Tout le temps' : ucfirst($stats['currentFilter']) }}
                 </div>
-                <div class="col-md-8">
-                  <h5 class="text-white text-center text-md-left">Phoebe Kennedy</h5>
-                  <p class="text-white text-center text-md-left">kennedy@gmail.com</p>
-                  <div class="d-flex align-items-center justify-content-between info pt-2">
-                    <div>
-                      <p class="text-white fw-bold">Birth date</p>
-                      <p class="text-white fw-bold">Birth city</p>
+            </div>
+        </div>
+
+        <!-- FILTRES -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="premium-card p-3 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="icon-box bg-light shadow-none" style="width: 40px; height: 40px;">
+                            <i class="fas fa-filter text-muted fs-6"></i>
+                        </div>
+                        <h5 class="fw-bold mb-0">Filtrer par période</h5>
                     </div>
-                    <div>
-                      <p class="text-white">16 Sep 2019</p>
-                      <p class="text-white">Netherlands</p>
+                    <div class="btn-group bg-light p-1 rounded-pill shadow-sm">
+                        <a href="{{ route('agent.dashboard', ['filter' => 'jour']) }}"
+                            class="btn btn-sm {{ $stats['currentFilter'] === 'jour' ? 'btn-primary rounded-pill px-4' : 'btn-light border-0 rounded-pill px-3 text-muted' }}">Jour</a>
+                        <a href="{{ route('agent.dashboard', ['filter' => 'mois']) }}"
+                            class="btn btn-sm {{ $stats['currentFilter'] === 'mois' ? 'btn-primary rounded-pill px-4' : 'btn-light border-0 rounded-pill px-3 text-muted' }}">Mois</a>
+                        <a href="{{ route('agent.dashboard', ['filter' => 'annee']) }}"
+                            class="btn btn-sm {{ $stats['currentFilter'] === 'annee' ? 'btn-primary rounded-pill px-4' : 'btn-light border-0 rounded-pill px-3 text-muted' }}">Année</a>
+                        <a href="{{ route('agent.dashboard', ['filter' => 'tout']) }}"
+                            class="btn btn-sm {{ $stats['currentFilter'] === 'tout' ? 'btn-primary rounded-pill px-4' : 'btn-light border-0 rounded-pill px-3 text-muted' }}">Tout</a>
                     </div>
-                  </div>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-    <div class="col-md-6 col-xl-4 grid-margin stretch-card">
-      <div class="card">
-        <div class="card-body border-bottom">
-          <div class="d-flex justify-content-between align-items-center flex-wrap">
-            <h6 class="mb-2 mb-md-0 text-uppercase fw-medium">Sales statistics</h6>
-            <div class="dropdown">
-              <button class="btn bg-white p-0 pb-1 text-muted btn-sm dropdown-toggle" type="button" id="dropdownMenuSizeButton4" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Last 7 days
-              </button>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuSizeButton4">
-                <h6 class="dropdown-header">Settings</h6>
-                <a class="dropdown-item" href="javascript:;">Action</a>
-                <a class="dropdown-item" href="javascript:;">Another action</a>
-                <a class="dropdown-item" href="javascript:;">Something else here</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="javascript:;">Separated link</a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <canvas id="sales-chart-d" height="320"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
 
+        <!-- STATISTIQUES -->
+        <div class="row g-4 mb-4">
+            @if ($isRecouvrement)
+                <!-- Stat: Total Encaissé -->
+                <div class="col-md-4 col-xl-4">
+                    <div class="premium-card p-4 h-100">
+                        <div class="icon-box bg-success-soft">
+                            <i class="fas fa-sack-dollar"></i>
+                        </div>
+                        <div class="stat-label">
+                            Total Encaissé
+                            <small class="text-muted d-block">
+                                @if ($stats['currentFilter'] === 'jour')
+                                    (Aujourd'hui)
+                                @elseif($stats['currentFilter'] === 'mois')
+                                    (Ce mois)
+                                @elseif($stats['currentFilter'] === 'annee')
+                                    (Cette année)
+                                @else
+                                    (Tout)
+                                @endif
+                            </small>
+                        </div>
+                        <div class="stat-value text-success">
+                            {{ number_format($stats['totalEncaisse'], 0, ',', ' ') }}
+                            <small class="fs-6">FCFA</small>
+                        </div>
+                        <div class="mt-2 text-muted small">Vos encaissements cumulés</div>
+                    </div>
+                </div>
+
+                <!-- Stat: Reste à Verser -->
+                <div class="col-md-4 col-xl-4">
+                    <div class="premium-card p-4 h-100">
+                        <div class="icon-box bg-danger-soft">
+                            <i class="fas fa-hand-holding-dollar"></i>
+                        </div>
+                        <div class="stat-label">
+                            Reste à Verser
+                            <small class="text-muted d-block">
+                                @if ($stats['currentFilter'] === 'jour')
+                                    (Aujourd'hui)
+                                @elseif($stats['currentFilter'] === 'mois')
+                                    (Ce mois)
+                                @elseif($stats['currentFilter'] === 'annee')
+                                    (Cette année)
+                                @else
+                                    (Tout)
+                                @endif
+                            </small>
+                        </div>
+                        <div class="stat-value text-danger">
+                            {{ number_format($stats['montantNonVerse'], 0, ',', ' ') }}
+                            <small class="fs-6">FCFA</small>
+                        </div>
+                        <div class="mt-2 text-muted small">Fonds à remettre à la mairie</div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-xl-4">
+                    <div class="premium-card p-4 h-100">
+                        <div class="icon-box bg-info-soft">
+                            <i class="fas fa-users-viewfinder"></i>
+                        </div>
+                        <div class="stat-label">Nombre de contribuables</div>
+                        <div class="stat-value">{{ $stats['countContribuablesRecenses'] }}</div>
+
+                        {{-- Logique PHP sécurisée pour le secteur --}}
+                        @php
+                            $secteurNom = 'Aucun secteur';
+                            if (!empty($agent->secteur_id) && isset($agent->secteur_id[0])) {
+                                $secteur = \App\Models\Secteur::find((int) $agent->secteur_id[0]);
+                                if ($secteur) {
+                                    $secteurNom = $secteur->nom;
+                                }
+                            }
+                        @endphp
+
+                        <div class="mt-2">
+                            <span class="text-muted small">Mon secteur :</span>
+                            <span class="trend-badge trend-up">
+                                {{ $secteurNom }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            @else
+                <!-- Stat: Total Mairie -->
+                <div class="col-md-6 col-xl-6">
+                    <div class="premium-card p-4 h-100">
+                        <div class="icon-box bg-primary-soft">
+                            <i class="fas fa-city text-primary"></i>
+                        </div>
+                        <div class="stat-label">Total Contribuables (Mairie)</div>
+                        <div class="stat-value text-primary">{{ $stats['totalContribuablesMairie'] }}</div>
+
+                        <div class="mt-2">
+                            <span class="text-muted small">Ensemble de la mairie</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stat: Mes Recensements -->
+                <div class="col-md-6 col-xl-6">
+                    <div class="premium-card p-4 h-100">
+                        <div class="icon-box bg-success-soft">
+                            <i class="fas fa-user-check text-success"></i>
+                        </div>
+                        <div class="stat-label">
+                            Mes Recensements
+                            <small class="text-muted d-block">
+                                @if ($stats['currentFilter'] === 'jour')
+                                    (Aujourd'hui)
+                                @elseif($stats['currentFilter'] === 'mois')
+                                    (Ce mois)
+                                @elseif($stats['currentFilter'] === 'annee')
+                                    (Cette année)
+                                @else
+                                    (Tout)
+                                @endif
+                            </small>
+                        </div>
+                        <div class="stat-value text-success">{{ $stats['countContribuablesRecenses'] }}</div>
+
+                        {{-- Logique PHP sécurisée pour le secteur --}}
+                        @php
+                            $secteurNom = 'Aucun secteur';
+                            if (!empty($agent->secteur_id) && isset($agent->secteur_id[0])) {
+                                $secteur = \App\Models\Secteur::find((int) $agent->secteur_id[0]);
+                                if ($secteur) {
+                                    $secteurNom = $secteur->nom;
+                                }
+                            }
+                        @endphp
+
+                        <div class="mt-2">
+                            <span class="text-muted small">Mon secteur :</span>
+                            <span class="trend-badge trend-up">
+                                {{ $secteurNom }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+
+        <!-- ACTIONS RAPIDES -->
+        <div class="row g-3 mb-4">
+            <div class="col-lg-12">
+                <div class="premium-card p-4">
+                    <h5 class="fw-bold mb-4">Actions Rapides</h5>
+                    <div class="row g-3">
+
+                        @if ($isRecensement)
+                            <div class="col-md-4">
+                                <a href="{{ route('agent.contribuable.create') }}"
+                                    class="btn btn-primary w-100 py-3 rounded-pill shadow-sm">
+                                    <i class="fas fa-user-plus me-2"></i> Recenser Contribuable
+                                </a>
+                            </div>
+                            <div class="col-md-8">
+                                {{-- liste des quatre derniers contribuables ajouter par l'agent récemment --}}
+                                <h6 class="fw-bold text-muted mb-3">
+                                    Derniers recensements
+                                    {{ $stats['currentFilter'] === 'tout' ? '' : ' (Période sélectionnée)' }}
+                                </h6>
+                                <div class="table-responsive">
+                                    <table class="innovative-table w-100">
+                                        <thead>
+                                            <tr>
+                                                <th>N° Contribuable</th>
+                                                <th>Nom</th>
+                                                <th>Date / Heure</th>
+                                                <th>E-mail</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($stats['dernieresActivites'] as $contribuable)
+                                                <tr>
+                                                    <td class="fw-bold">{{ $contribuable->num_commerce }}</td>
+                                                    <td>{{ $contribuable->nom }}</td>
+                                                    <td>{{ $contribuable->created_at->format('d/m/Y H:i') }}</td>
+                                                    <td>{{ $contribuable->email ?? 'N/A' }}</td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="4" class="text-center py-3 text-muted">Aucun
+                                                        contribuable recensé récemment</td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        @endif
+
+                        @if ($isRecouvrement)
+                            <div class="col-md-4">
+                                <a href="{{ route('agent.encaissement.index') }}"
+                                    class="btn btn-secondary w-100 py-3 rounded-pill shadow-sm">
+                                    <i class="fas fa-wallet me-2"></i> Faire Encaissement
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="{{ route('agent.profile') }}"
+                                    class="btn btn-light w-100 py-3 rounded-pill border shadow-sm">
+                                    <i class="fas fa-chart-line me-2"></i> Mon Bilan Financier
+                                </a>
+                            </div>
+                        @endif
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DERNIÈRES ACTIVITÉS (Uniquement Recouvrement) -->
+        @if ($isRecouvrement)
+            <div class="row">
+                <div class="col-12">
+                    <div class="premium-card p-4">
+                        <h5 class="fw-bold mb-4">
+                            Derniers Encaissements Effectués
+                            <small class="text-muted fw-normal fs-6">
+                                @if ($stats['currentFilter'] === 'jour')
+                                    (Aujourd'hui)
+                                @elseif($stats['currentFilter'] === 'mois')
+                                    (Ce mois)
+                                @elseif($stats['currentFilter'] === 'annee')
+                                    (Cette année)
+                                @else
+                                    (Tout)
+                                @endif
+                            </small>
+                        </h5>
+
+                        @if (count($stats['dernieresActivites']) > 0)
+                            <div class="table-responsive">
+                                <table class="innovative-table w-100">
+                                    <thead>
+                                        <tr>
+                                            <th>Contribuable</th>
+                                            <th>Montant</th>
+                                            <th>Date / Heure</th>
+                                            <th>Statut</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($stats['dernieresActivites'] as $act)
+                                            <tr>
+                                                <td class="fw-bold">{{ $act->num_commerce }}</td>
+                                                <td class="text-success fw-bold">
+                                                    {{ number_format($act->montant_percu, 0, ',', ' ') }} FCFA
+                                                </td>
+                                                <td>{{ $act->created_at->format('d/m/Y H:i') }}</td>
+                                                <td>
+                                                    <span class="badge bg-light text-dark border">Enregistré</span>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="text-center py-4">
+                                <p class="text-muted mb-0">Aucune activité récente.</p>
+                            </div>
+                        @endif
+
+                    </div>
+                </div>
+            </div>
+        @endif
+
+    </div>
 @endsection
-
-
-@push('js')
-    <script src="{{ asset('assets/vendors/chart.js/chart.umd.js') }}"></script>
-    <script src="{{ asset('assets/js/jquery.cookie.js') }}"></script>
-    <script src="{{ asset('assets/js/dashboard.js') }}"></script>
-@endpush

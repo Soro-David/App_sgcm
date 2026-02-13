@@ -38,7 +38,7 @@ class Mairie extends Authenticatable
         'status',
         'last_activity',
         'mairie_ref',
-
+        'added_by',
     ];
 
     /**
@@ -79,7 +79,7 @@ class Mairie extends Authenticatable
      */
     public function agents()
     {
-        return $this->hasMany(Agent::class);
+        return $this->hasMany(Agent::class, 'mairie_ref', 'mairie_ref');
     }
 
     /**
@@ -87,7 +87,7 @@ class Mairie extends Authenticatable
      */
     public function secteurs()
     {
-        return $this->hasMany(Secteur::class);
+        return $this->hasMany(Secteur::class, 'mairie_ref', 'mairie_ref');
     }
 
     /**
@@ -95,7 +95,7 @@ class Mairie extends Authenticatable
      */
     public function taxes()
     {
-        return $this->hasMany(Taxe::class);
+        return $this->hasMany(Taxe::class, 'mairie_ref', 'mairie_ref');
     }
 
     /**
@@ -104,7 +104,7 @@ class Mairie extends Authenticatable
     public function versement()
     {
         // La relation devrait probablement être hasMany si une mairie a plusieurs versements
-        return $this->hasMany(Versement::class);
+        return $this->hasMany(Versement::class, 'mairie_ref', 'mairie_ref');
     }
 
     /**
@@ -113,7 +113,7 @@ class Mairie extends Authenticatable
     public function encaissement()
     {
         // De même, hasMany est plus probable
-        return $this->hasMany(Encaissement::class);
+        return $this->hasMany(Encaissement::class, 'mairie_ref', 'mairie_ref');
     }
 
     public function logs()

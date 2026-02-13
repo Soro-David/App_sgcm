@@ -36,6 +36,7 @@ class Agent extends Authenticatable
         'telephone1',
         'telephone2',
         'last_activity',
+        'added_by',
     ];
 
     protected $casts = [
@@ -45,11 +46,12 @@ class Agent extends Authenticatable
         'last_activity' => 'datetime',
         'taxe_id' => 'array',  
         'secteur_id' => 'array',
+        // 'secteur_id' => 'integer',
     ];
 
     public function mairie()
     {
-        return $this->belongsTo(Mairie::class);
+        return $this->belongsTo(Mairie::class, 'mairie_ref', 'mairie_ref');
     }
 
 
@@ -68,9 +70,9 @@ class Agent extends Authenticatable
         return $this->belongsToMany(Secteur::class);
     }
 
-    public function versement()
+    public function versements()
     {
-        return $this->belongsToMany(Versement::class);
+        return $this->hasMany(Versement::class);
     }
 
     public function encaissements()

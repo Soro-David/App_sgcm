@@ -54,7 +54,10 @@
                     </div>
 
                     {{-- Mairie ID (caché) --}}
-                    <input type="hidden" name="mairie_ref" value="{{ Auth::guard('mairie')->user()->mairie_ref }}">
+                    @php
+                        $user = Auth::guard('mairie')->user() ?: Auth::guard('finance')->user();
+                    @endphp
+                    <input type="hidden" name="mairie_ref" value="{{ $user ? $user->mairie_ref : '' }}">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>

@@ -1,8 +1,9 @@
 @php
-    // Je récupère l'agent connecté, comme vous le faites dans la sidebar.
-$agent = Auth::guard('mairie')->user();
+    // Récupère l'agent de la mairie ou l'agent de finance connecté.
+    $agent = Auth::guard('mairie')->user() ?? (Auth::guard('finance')->user() ?? Auth::guard('financier')->user());
 @endphp
 
+{{-- @dd($agent) --}}
 {{-- Votre code Sidebar (CORRIGÉ) --}}
 
 <nav class="sidebar sidebar-offcanvas " id="sidebar">
@@ -61,30 +62,36 @@ $agent = Auth::guard('mairie')->user();
                         </ul>
                     </div>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('mairie.secteurs.index') }}">
+                        <i class="fas fa-layer-group menu-icon"></i>
+                        <span class="menu-title">Secteurs</span>
+                    </a>
+                </li>
             @endif
 
-            {{-- Pour le rôle "financé" --}}
-            @if ($agent && $agent->role === 'financié')
+            {{-- Pour l'Admin Financier (ou rôle "financié") --}}
+            @if ($agent && ($agent->role === 'financié' || ($agent instanceof \App\Models\Finance && $agent->role === 'admin')))
                 <li class="nav-item">
                     <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
                         href="#menu-agents-finance" aria-expanded="false" aria-controls="menu-agents-finance">
                         <div>
                             <i class="fas fa-users menu-icon"></i>
-                            <span class="menu-title">Gestion agents</span>
+                            <span class="menu-title">Gestion des Agents</span>
                         </div>
                         <i class="menu-arrow fas fa-angle-down rotate-icon"></i>
                     </a>
                     <div class="collapse" id="menu-agents-finance">
                         <ul class="nav flex-column sub-menu">
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('mairie.agents.add_agent') }}">Ajouter</a>
+                                <a class="nav-link" href="{{ route('mairie.finance.create') }}">Ajouter Financier</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('mairie.agents.list_agent') }}">Liste</a>
+                                <a class="nav-link" href="{{ route('mairie.finance.index') }}">Liste Financiers</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('mairie.agents.programme_agent') }}">Programmer un
-                                    agent</a>
+                                <a class="nav-link" href="{{ route('mairie.agents.programme_agent') }}">Programmer
+                                    Terrain</a>
                             </li>
                         </ul>
                     </div>
@@ -98,11 +105,91 @@ $agent = Auth::guard('mairie')->user();
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('mairie.secteurs.index') }}">
-                        <i class="fas fa-layer-group menu-icon"></i>
-                        <span class="menu-title">Secteurs</span>
+                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
+                        href="#menu-paiement" aria-expanded="false" aria-controls="menu-paiement">
+                        <div>
+                            <i class="fas fa-coins menu-icon"></i>
+                            <span class="menu-title">Flux Financiers</span>
+                        </div>
+                        <i class="menu-arrow fas fa-angle-down rotate-icon"></i>
                     </a>
-                </li>   
+                    <div class="collapse" id="menu-paiement">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('mairie.encaissement.index') }}">Encaissements
+                                    Terrain</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('mairie.paiement.index') }}">Paiements Taxes</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
+                        href="#menu-versements" aria-expanded="false" aria-controls="menu-versements">
+                        <div>
+                            <i class="fas fa-receipt menu-icon"></i>
+                            <span class="menu-title">Comptabilité</span>
+                        </div>
+                        <i class="menu-arrow fas fa-angle-down rotate-icon"></i>
+                    </a>
+                    <div class="collapse" id="menu-versements">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('mairie.versements.create') }}">Saisir
+                                    Versement</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('mairie.versements.index') }}">Historique
+                                    Versements</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('mairie.recette.index') }}">Journal Recettes</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('mairie.depense.index') }}">Journal Dépenses</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            @endif
+
+            @if ($agent && $agent->role === 'finance')
+                {{-- <li class="nav-item">
+                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
+                        href="#menu-agents-finance" aria-expanded="false" aria-controls="menu-agents-finance">
+                        <div>
+                            <i class="fas fa-users menu-icon"></i>
+                            <span class="menu-title">Gestion agents</span>
+                        </div>
+                        <i class="menu-arrow fas fa-angle-down rotate-icon"></i>
+                    </a>
+                    <div class="collapse" id="menu-agents-finance">
+                        <ul class="nav flex-column sub-menu">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('mairie.finance.create') }}">Ajouter</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('mairie.finance.index') }}">Liste</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('mairie.agents.programme_agent') }}">Programmer un
+                                    agent</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li> --}}
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('mairie.taxe.index') }}">
+                        <i class="fas fa-file-invoice-dollar menu-icon"></i>
+                        <span class="menu-title">Gestion des taxes</span>
+                    </a>
+                </li>
+
+
 
                 <li class="nav-item">
                     <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
@@ -113,7 +200,7 @@ $agent = Auth::guard('mairie')->user();
                         </div>
                         <i class="menu-arrow fas fa-angle-down rotate-icon"></i>
                     </a>
-                    <div class="collapse" id="menu-secteurs">
+                    <div class="collapse" id="menu-paiement">
                         <ul class="nav flex-column sub-menu">
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('mairie.encaissement.index') }}">Liste des
@@ -158,28 +245,33 @@ $agent = Auth::guard('mairie')->user();
                     </div>
                 </li>
             @endif
-
             {{-- Pour les caissiers --}}
-            @if ($agent && $agent->role === 'caisse')
+            @if ($agent && ($agent->role === 'caisié' || $agent->role === 'caissier'))
                 <li class="nav-item">
-                    <a class="nav-link" href="">
-                        <i class="fas fa-user-plus menu-icon"></i>
-                        <span class="menu-title">Ajouter un contribuable</span>
+                    <a class="nav-link" href="{{ route('mairie.caisse.mes_encaissements') }}">
+                        <i class="fa-solid fa-receipt menu-icon"></i>
+                        <span class="menu-title">Mes encaissements</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="">
-                        <i class="fas fa-list menu-icon"></i>
+                    <a class="nav-link" href="{{ route('mairie.caisse.index') }}">
+                        <i class="fas fa-user-plus menu-icon"></i>
+                        <span class="menu-title">Faire un encaissement</span>
+                    </a>
+                </li>
+                {{-- <li class="nav-item">
+                    <a class="nav-link" href="{{ route('mairie.commerce.index') }}">
+                        <i class="fa-solid fa-list menu-icon"></i>
                         <span class="menu-title">Liste des contribuable</span>
                     </a>
-                </li>
+                </li> --}}
             @endif
 
             <!-- Liste des Commerçants -->
             {{-- <li class="nav-item nav-category">Contribuable</li> --}}
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('mairie.commerce.index') }}">
-                    <i class="fas fa-store menu-icon"></i>
+                    <i class="fa-solid fa-list menu-icon"></i>
                     <span class="menu-title">Liste des contribuables</span>
                 </a>
             </li>

@@ -89,7 +89,11 @@ class TacheController extends Controller
         }
 
         try {
-            $mairie_ref = Auth::guard('mairie')->user()->mairie_ref;
+            $user = Auth::guard('mairie')->user() ?: Auth::guard('finance')->user();
+            if (!$user) {
+                return response()->json(['error' => 'Non authentifié'], 401);
+            }
+            $mairie_ref = $user->mairie_ref;
 
             // Récupère uniquement les taxes liées à la mairie authentifiée
             $taxes = Taxe::where('mairie_ref', $mairie_ref)

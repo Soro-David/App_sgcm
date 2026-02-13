@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'auth' => \App\Http\Middleware\Authenticate::class,
             'role' => \App\Http\Middleware\RoleMiddleware::class,
+            'mairie_finance_bridge' => \App\Http\Middleware\EnsureMairieOrFinanceUser::class,
 
             'nocache' => \App\Http\Middleware\NoCache::class,
             'abilities' => \Laravel\Sanctum\Http\Middleware\CheckAbilities::class,
@@ -65,6 +66,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 if ($request->is('super/admin/*')) {
                     return redirect()->route('login');
                 }
+
                 return redirect()->route('login');
             }
 

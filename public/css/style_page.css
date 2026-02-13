@@ -81,6 +81,11 @@ label.form-label {
     padding: 8px;
 }
 
+.select2-selection__choice__display {
+    font-size: 20px;
+    color: #000;
+}
+
 .btn-success {
     padding: 15px 50px;      /* Plus de hauteur et largeur */
     font-size: 1.5rem;       /* Texte plus grand */
@@ -94,3 +99,178 @@ label.form-label {
     border-radius: 8px;      /* Coins légèrement arrondis */
 }
 
+/* ==========================================================================
+   RESPONSIVENESS FIXES (Tablets & Mobile)
+   ========================================================================== */
+
+/* 1. Global Layout Fixes */
+@media (max-width: 991px) {
+    .container-scroller {
+        overflow: hidden; /* Prevent horizontal scroll on body */
+    }
+
+    .page-body-wrapper {
+        padding-top: 70px; /* Space for fixed navbar */
+        min-height: calc(100vh - 70px);
+    }
+
+    .main-panel {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 10px !important;
+    }
+
+    .content-wrapper {
+        padding: 1.5rem 1rem !important;
+    }
+
+    /* Sidebar Off-canvas Logic */
+    .sidebar-offcanvas {
+        position: fixed;
+        top: 70px; /* Match navbar height */
+        bottom: 0;
+        left: -265px; /* Hidden by default */
+        width: 260px !important;
+        z-index: 1030;
+        transition: left 0.3s ease-in-out;
+        background: #fff;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        display: block !important;
+    }
+
+    .sidebar-offcanvas.active {
+        left: 0;
+    }
+
+    /* Navbar brand adjustments */
+    .navbar .navbar-brand-wrapper {
+        width: 100% !important;
+        display: flex;
+        justify-content: space-between !important;
+        align-items: center;
+        padding: 0 15px;
+    }
+
+    .navbar .navbar-menu-wrapper {
+        width: 100% !important;
+        height: 70px;
+        padding: 0 15px;
+        margin-left: 0 !important;
+    }
+
+    .navbar .navbar-brand.brand-logo {
+        display: flex !important;
+    }
+
+    .navbar .navbar-brand.brand-logo span:first-child {
+        font-size: 1.5rem !important; /* Smaller logo text on mobile */
+    }
+
+    .navbar .navbar-brand.brand-logo span:last-child {
+        display: none; /* Hide subtitle on very small devices */
+    }
+
+    /* Hide text in navbar on small screens if necessary */
+    .navbar .navbar-menu-wrapper h4 {
+        font-size: 0.9rem !important;
+        margin-left: 0.5rem !important;
+        display: none; /* Cache le titre sur mobile pour gagner de la place */
+    }
+}
+
+/* 2. Tables & Cards */
+.table-responsive {
+    border: 0;
+    margin-bottom: 0;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 767px) {
+    .card-body {
+        padding: 1rem !important;
+    }
+
+    .card-title {
+        font-size: 1rem !important;
+    }
+
+    /* Stack grid columns more aggressively */
+    .row > [class*="col-"] {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    /* DataTables adjustments */
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_length {
+        text-align: center !important;
+        margin-bottom: 10px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate {
+        text-align: center !important;
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+        flex-wrap: wrap;
+    }
+}
+
+/* 3. Forms & Buttons */
+@media (max-width: 576px) {
+    .btn-success, .btn-primary, .btn-danger, .btn {
+        width: 100% !important; /* Full width buttons on mobile */
+        margin-bottom: 10px;
+        padding: 10px 20px !important;
+        font-size: 1.1rem !important;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .modal-footer .btn {
+        margin: 0 !important;
+    }
+
+    .input-group {
+        flex-direction: column;
+    }
+
+    .input-group > .form-control,
+    .input-group > .input-group-text {
+        width: 100% !important;
+        border-radius: 8px !important;
+        margin-bottom: 5px;
+    }
+    
+    /* Select2 Mobile Fix */
+    .select2-container {
+        width: 100% !important;
+    }
+}
+
+/* 4. Statistics Cards */
+.grid-margin {
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 1200px) {
+    .stretch-card {
+        display: block !important;
+    }
+}
+
+/* Ensure images/canvases don't overflow */
+canvas {
+    max-width: 100% !important;
+    /* height: auto !important; */
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}

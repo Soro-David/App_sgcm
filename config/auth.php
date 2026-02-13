@@ -18,6 +18,11 @@ return [
             'provider' => 'mairies',
         ],
 
+        'finance' => [
+            'driver' => 'session',
+            'provider' => 'finances',
+        ],
+
         'commercant' => [
             'driver' => 'session',
             'provider' => 'commercants',
@@ -39,6 +44,11 @@ return [
             'provider' => 'commercants',
         ],
 
+        'financier' => [
+            'driver' => 'session',
+            'provider' => 'financiers',
+        ],
+
     ],
 
     'providers' => [
@@ -51,6 +61,12 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\Mairie::class,
         ],
+
+        'finances' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Finance::class,
+        ],
+
         'commercants' => [
             'driver' => 'eloquent',
             'model' => App\Models\Commercant::class,
@@ -61,9 +77,9 @@ return [
             'model' => App\Models\Agent::class,
         ],
 
-        'commercants' => [
+        'financiers' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Commercant::class,
+            'model' => App\Models\Financier::class,
         ],
     ],
 
@@ -79,7 +95,14 @@ return [
             'table' => 'password_reset_tokens',
             'expire' => 60,
         ],
-         'commercants' => [
+
+        'finances' => [
+            'provider' => 'finances',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+        ],
+
+        'commercants' => [
             'provider' => 'commercants',
             'table' => 'password_reset_tokens',
             'expire' => 60,
@@ -87,12 +110,6 @@ return [
 
         'agents' => [
             'provider' => 'agents',
-            'table' => 'password_reset_tokens',
-            'expire' => 60,
-        ],
-
-        'commercants' => [
-            'provider' => 'commercants',
             'table' => 'password_reset_tokens',
             'expire' => 60,
         ],

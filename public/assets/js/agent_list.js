@@ -11,7 +11,7 @@ $(function () {
         ajax: ajaxUrl, 
         
         columns: [
-            { data: 'id', name: 'id' },
+            { data: 'added_by', name: 'added_by' },
             { data: 'name', name: 'name' },
             { data: 'email', name: 'email' },
             { data: 'type', name: 'type' }, 

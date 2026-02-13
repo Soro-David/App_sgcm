@@ -14,7 +14,7 @@ class AuthController extends Controller
      */
     protected function logoutAllGuards(Request $request): void
     {
-        foreach (['web', 'commercant', 'mairie', 'agent'] as $guard) {
+        foreach (['web', 'commercant', 'mairie', 'agent', 'finance', 'financier'] as $guard) {
             Auth::guard($guard)->logout();
         }
         $request->session()->invalidate();
@@ -77,13 +77,28 @@ class AuthController extends Controller
 
         $this->logoutAllGuards($request);
 
+        // Tentative avec le guard mairie (table mairies)
         if (Auth::guard('mairie')->attempt($credentials)) {
             $request->session()->regenerate();
 
             return redirect()->route('mairie.dashboard.index');
         }
 
-        return back()->withErrors(['email' => 'Identifiants mairie incorrects.']);
+        // Si échec, tentative avec le guard finance (table finance)
+        if (Auth::guard('finance')->attempt($credentials)) {
+            $request->session()->regenerate();
+
+            return redirect()->route('mairie.dashboard.index');
+        }
+
+        // Si échec, tentative avec le guard financier (table financiers)
+        if (Auth::guard('financier')->attempt($credentials)) {
+            $request->session()->regenerate();
+
+            return redirect()->route('mairie.dashboard.index');
+        }
+
+        return back()->withErrors(['email' => 'Identifiants mairie ou finance incorrects.']);
     }
 
     public function login_commercant(Request $request)
@@ -112,9 +127,32 @@ class AuthController extends Controller
     {
         $commercant = Auth::guard('commercant')->user();
 
+        $commercant->load('mairie', 'secteur', 'taxes', 'typeContribuable', 'solde');
+
+        // Récupérer les derniers paiements de l'année en cours
+        $derniersPaiements = $commercant->paiementTaxes()
+            ->with('taxe')
+            ->whereYear('created_at', date('Y'))
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        // Calculer le nombre de taxes et le montant cumulé (dette potentielle ou montant des taxes assignées)
+        $nombreTaxes = $commercant->taxes->count();
+        $montantTotalTaxes = $commercant->taxes->sum('montant');
+
+        // Solde du compte
+        $soldeCompte = $commercant->solde ? $commercant->solde->montant : 0;
+
+        return view('commercant.dashboard', compact('commercant', 'derniersPaiements', 'nombreTaxes', 'montantTotalTaxes', 'soldeCompte'));
+    }
+
+    public function showVirtualCard()
+    {
+        $commercant = Auth::guard('commercant')->user();
         $commercant->load('mairie', 'secteur', 'taxes', 'typeContribuable');
 
-        return view('commercant.dashboard', compact('commercant'));
+        return view('commercant.virtual_card', compact('commercant'));
     }
 
     public function login_agent(Request $request)
@@ -166,7 +204,7 @@ class AuthController extends Controller
     {
         // Si aucun guard explicitement passé, on détecte celui en session
         if (! $guard) {
-            foreach (['web', 'mairie', 'commercant', 'agent'] as $g) {
+            foreach (['web', 'mairie', 'finance', 'commercant', 'agent', 'financier'] as $g) {
                 if (Auth::guard($g)->check()) {
                     $guard = $g;
                     break;
@@ -174,7 +212,7 @@ class AuthController extends Controller
             }
         }
 
-        if (! in_array($guard, ['web', 'mairie', 'commercant', 'agent'])) {
+        if (! in_array($guard, ['web', 'mairie', 'finance', 'commercant', 'agent', 'financier'])) {
             abort(403);
         }
 
@@ -185,6 +223,8 @@ class AuthController extends Controller
         $redirectRoutes = [
             'web' => 'login',
             'mairie' => 'login.mairie',
+            'finance' => 'login.mairie',
+            'financier' => 'login.mairie',
             'agent' => 'login.agent',
             'commercant' => 'login.commercant',
         ];

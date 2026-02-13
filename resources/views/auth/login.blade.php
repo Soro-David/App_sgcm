@@ -51,7 +51,13 @@
 
                 <div class="mb-4">
                     <label for="password" class="form-label">Mot de passe</label>
-                    <input type="password" class="form-control form-control-lg" id="password" name="password" required>
+                    <div class="input-group">
+                        <input type="password" class="form-control form-control-lg" id="password" name="password"
+                            required>
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="d-grid">
@@ -70,6 +76,19 @@
 
     <!-- Bootstrap JS (Optionnel, mais bon à avoir) -->
     <script src="{{ asset('bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+    <script>
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#password');
+
+        togglePassword.addEventListener('click', function(e) {
+            // toggle the type attribute
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            // toggle the eye slash icon
+            this.querySelector('i').classList.toggle('fa-eye-slash');
+        });
+    </script>
 </body>
 
 </html>

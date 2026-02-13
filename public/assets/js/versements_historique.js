@@ -14,10 +14,11 @@ $(document).ready(function () {
             },
             columns: [
                 { data: 'created_at', name: 'created_at' },
-                { data: 'nom_agent', name: 'agent.name' },
-                { data: 'montant_percu', name: 'montant_percu' },
+                { data: 'nom_versement', name: 'nom_versement' },
+                { data: 'total_due', name: 'total_due' },
                 { data: 'montant_verse', name: 'montant_verse' },
                 { data: 'reste', name: 'reste' },
+                { data: 'recorded_by_name', name: 'recorded_by' }
             ],
             order: [[0, 'desc']]
         });

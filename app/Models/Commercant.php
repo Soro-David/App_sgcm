@@ -65,7 +65,7 @@ class Commercant extends Authenticatable
 
     public function mairie()
     {
-        return $this->belongsTo(Mairie::class);
+        return $this->belongsTo(Mairie::class, 'mairie_ref', 'mairie_ref');
     }
 
     public function encaissements()
@@ -86,5 +86,10 @@ class Commercant extends Authenticatable
     public function paiementTaxes()
     {
         return $this->hasMany(PaiementTaxe::class, 'num_commerce', 'num_commerce');
+    }
+
+    public function solde()
+    {
+        return $this->hasOne(Solde::class);
     }
 }

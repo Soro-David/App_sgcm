@@ -104,7 +104,7 @@ class TaxeController extends Controller
             }
 
             // Récupère les noms uniques avec le plus ancien ID et la date de création correspondante
-            $query = Taxe::selectRaw('MIN(id) as id, nom, MIN(created_at) as created_at')
+            $query = Taxe::selectRaw('MIN(id) as id, nom, MIN(montant) as montant, MIN(created_at) as created_at')
                 ->groupBy('nom')
                 ->orderBy('nom');
 
@@ -116,8 +116,17 @@ class TaxeController extends Controller
                     $editUrl = route('superadmin.taxes.edit', $taxe->id);
                     $deleteUrl = route('superadmin.taxes.destroy', $taxe->id);
 
-                    return '<a href="'.$editUrl.'" class="btn btn-warning btn-sm" title="Assigner cette taxe à une mairie"><i class="fa fa-eye"></i></a>
-                            <button class="btn btn-danger btn-sm btn-delete" data-url="'.$deleteUrl.'" title="Supprimer cette taxe"><i class="fa fa-trash"></i></button>';
+                    return '<div class="action-buttons">
+                                <a href="'.$editUrl.'" class="btn-table-action view" title="Voir les détails">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                <a href="'.$editUrl.'" class="btn-table-action edit" title="Modifier la taxe">
+                                    <i class="fa fa-pencil-alt"></i>
+                                </a>
+                                <button class="btn-table-action delete btn-delete" data-url="'.$deleteUrl.'" title="Supprimer la taxe">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>';
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -151,10 +160,11 @@ class TaxeController extends Controller
 
             return DataTables::of($mairies)
                 ->addColumn('action', function ($mairie) {
-                    // Adaptez les actions selon vos besoins
-                    $detailsButton = '<a href="'.route('superadmin.mairies.show', $mairie->id).'" class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Voir</a>';
-
-                    return $detailsButton;
+                    return '<div class="action-buttons">
+                                <a href="'.route('superadmin.mairies.show', $mairie->id).'" class="btn-table-action view" title="Voir les détails">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </div>';
                 })
                 ->rawColumns(['action'])
                 ->make(true);

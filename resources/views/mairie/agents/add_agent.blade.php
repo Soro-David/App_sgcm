@@ -66,8 +66,8 @@
                             <label for="type_agent" class="form-label">Type d'agent *</label>
                             <select name="type_agent" id="type_agent" class="form-select" required>
                                 <option value="" disabled selected>-- Sélectionnez un type d'agent --</option>
-                                <option value="recensement" {{ old('type_agent') == 'recenssement' ? 'selected' : '' }}>
-                                    Recenssement (agent de mairie)</option>
+                                <option value="recensement" {{ old('type_agent') == 'recensement' ? 'selected' : '' }}>
+                                    Recensement (agent de mairie)</option>
                                 <option value="recouvrement" {{ old('type_agent') == 'recouvrement' ? 'selected' : '' }}>
                                     Recouvrement</option>
                             </select>
@@ -105,7 +105,8 @@
 
                     {{-- Boutons --}}
                     <div class="d-flex justify-content-end mt-5">
-                        <button type="submit" class="btn btn-primary px-4 py-2">Enregistrer</button>
+                        <button type="submit" class="btn btn-primar px-4 py-2"><i class="fa fa-save"></i>
+                            Enregistrer</button>
                     </div>
                 </form>
             </div>

@@ -5,53 +5,116 @@ $(document).ready(function () {
         allowClear: true
     });
 
-    const montantUrlTemplate = $('#versement-container').data('montant-url');
+    const montantUrlTemplate = $('#versement-container').data('montant-url-template');
+
+    function updateCalculations() {
+        const montantPercu = parseFloat($('#montant_percu').val()) || 0;
+        const dette = parseFloat($('#dette').val()) || 0;
+        const montantVerse = parseFloat($('#montant_verse').val()) || 0;
+
+        const totalDue = montantPercu + dette;
+        const montantRestant = Math.max(0, totalDue - montantVerse);
+        $('#montant_restant').val(montantRestant.toFixed(2));
+
+        // Appreciation automatique
+        let appreciation = '';
+        if (totalDue > 0) {
+            const percentage = (montantVerse / totalDue) * 100;
+            if (percentage >= 100) appreciation = 'excellent';
+            else if (percentage >= 75) appreciation = 'bon';
+            else if (percentage >= 50) appreciation = 'moyen';
+            else appreciation = 'faible';
+        } else {
+            appreciation = 'excellent';
+        }
+        $('#appreciation').val(appreciation).trigger('change');
+    }
+
+    // Trigger change on load if an agent is selected (e.g. after validation error)
+    if ($('#agent_id').val()) {
+        $('#agent_id').trigger('change');
+    }
 
     $('#agent_id').on('change', function () {
         const agentId = $(this).val();
         const montantInput = $('#montant_percu');
         const detteInput = $('#dette');
-        const montantRestantInput = $('#montant_restant');
-        const montantVerseInput = $('#montant_verse');
+
+        console.log("Agent sélectionné:", agentId);
 
         if (agentId && montantUrlTemplate) {
+            // Remplacer l'ID dans le template d'URL
             const url = montantUrlTemplate.replace('AGENT_ID', agentId);
+            console.log("Appel Ajax vers:", url);
+
+            // Interface focus - indicateur de chargement
+            montantInput.val('Chargement...');
+            detteInput.val('Chargement...');
 
             $.ajax({
                 url: url,
                 type: 'GET',
                 success: function (response) {
-                    const montantPercu = parseFloat(response.montant) || 0;
+                    console.log("Réponse reçue:", response);
+                    const montant = parseFloat(response.montant) || 0;
                     const dette = parseFloat(response.dette) || 0;
-
-                    montantInput.val(montantPercu);
+                    
+                    montantInput.val(montant);
                     detteInput.val(dette);
+                    
+                    // Remplissage du tableau des encaissements
+                    const tbody = $('#encaissements-body');
+                    tbody.empty();
+                    
+                    if (response.encaissements && response.encaissements.length > 0) {
+                        response.encaissements.forEach(function(enc) {
+                            const date = new Date(enc.created_at).toLocaleDateString('fr-FR', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
+                            const taxe = enc.taxe ? enc.taxe.nom : 'N/A';
+                            const commercant = enc.commercant ? enc.commercant.nom : (enc.num_commerce || 'N/A');
+                            const montantEnc = parseFloat(enc.montant_percu).toLocaleString('fr-FR') + ' FCFA';
+                            
+                            tbody.append(`
+                                <tr>
+                                    <td>${date}</td>
+                                    <td>${taxe}</td>
+                                    <td>${commercant}</td>
+                                    <td class="text-end">${montantEnc}</td>
+                                </tr>
+                            `);
+                        });
+                        $('#total-percu-footer').text(montant.toLocaleString('fr-FR') + ' FCFA');
+                    } else {
+                        tbody.append('<tr><td colspan="4" class="text-center text-muted">Aucun encaissement non versé trouvé pour cet agent</td></tr>');
+                        $('#total-percu-footer').text('0 FCFA');
+                    }
 
-                    const montantVerse = parseFloat(montantVerseInput.val()) || 0;
-                    const montantRestant = dette + (montantPercu - montantVerse);
-                    montantRestantInput.val(montantRestant.toFixed(2));
+                    updateCalculations();
                 },
-                error: function () {
-                    console.error("Erreur lors de la récupération des montants.");
-                    montantInput.val('');
-                    detteInput.val('');
-                    montantRestantInput.val('');
+                error: function (xhr, status, error) {
+                    console.error("Erreur Ajax:", error);
+                    montantInput.val(0);
+                    detteInput.val(0);
+                    $('#encaissements-body').empty().append('<tr><td colspan="4" class="text-center text-danger">Erreur lors du chargement des données</td></tr>');
+                    updateCalculations();
                 }
             });
         } else {
-            montantInput.val('');
-            detteInput.val('');
-            montantRestantInput.val('');
+            montantInput.val(0);
+            detteInput.val(0);
+            $('#encaissements-body').empty().append('<tr><td colspan="4" class="text-center text-muted">Sélectionnez un agent pour voir les détails</td></tr>');
+            $('#total-percu-footer').text('0 FCFA');
+            updateCalculations();
         }
     });
 
     $('#montant_verse').on('input', function () {
-        const montantPercu = parseFloat($('#montant_percu').val()) || 0;
-        const dette = parseFloat($('#dette').val()) || 0;
-        const montantVerse = parseFloat($(this).val()) || 0;
-
-        const montantRestant = dette + (montantPercu - montantVerse);
-        $('#montant_restant').val(montantRestant.toFixed(2));
+        updateCalculations();
     });
 
     // Datatable pour la liste des versements

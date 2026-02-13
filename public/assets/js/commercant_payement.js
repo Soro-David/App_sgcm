@@ -13,7 +13,10 @@ $(function () {
             },
             columns: [
                 { data: "taxe.nom", defaultContent: "N/A" },
-                { data: "montant", render: data => `${data} CFA` },
+                { 
+                    data: "montant",
+                    render: data => `${parseInt(data, 10)} CFA`
+                },  
                 { data: "created_at", render: data => new Date(data).toLocaleString() },
                 {
                     data: "statut",
@@ -111,21 +114,29 @@ $(function () {
 
         const form = $(this);
         const submitButton = $('#submit-button');
-        const messageDiv = $('#payment-message');
 
         submitButton.prop('disabled', true).text('Paiement en cours...');
-        messageDiv.html('');
 
         $.post(form.attr('action'), form.serialize())
             .done(function (response) {
-                messageDiv.html(`<div class="alert alert-success">${response.message}</div>`);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Succès',
+                    text: response.message,
+                    confirmButtonText: 'OK'
+                });
                 reloadHistorique();
                 // Relance le calcul automatique pour la taxe actuelle.
                 fetchAndDisplayPeriods();
             })
             .fail(function (jqXHR) {
                 const errorMessage = jqXHR.responseJSON?.message || "Une erreur est survenue lors du paiement.";
-                messageDiv.html(`<div class="alert alert-danger">${errorMessage}</div>`);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur',
+                    text: errorMessage,
+                    confirmButtonText: 'OK'
+                });
             })
             .always(function () {
                 submitButton.prop('disabled', false).text('Payer');

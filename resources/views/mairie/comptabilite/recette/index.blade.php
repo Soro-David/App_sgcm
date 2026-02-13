@@ -42,7 +42,7 @@
                 </div>
 
                 <div class="d-flex justify-content-end mt-4">
-                    <button type="submit" id="search_button" class="btn btn-primary">
+                    <button type="submit" id="search_button" class="btn btn-primar">
                         <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                         🔍 Rechercher
                     </button>

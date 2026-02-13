@@ -80,8 +80,21 @@ class AgentRecouvrementController extends Controller
                 $lastPeriod = Carbon::createFromFormat('d/m/Y', $dernierPaiement->periode);
             }
         } else {
-            $lastPeriod = $commercant->created_at ?? Carbon::today()->startOfMonth();
-            $lastPeriod = Carbon::parse($lastPeriod)->startOfDay();
+            // Le paiement commence à la date de création du contribuable,
+            // mais on s'assure qu'on ne remonte pas avant la date de création de la taxe elle-même.
+            $dateDebut = ($commercant->created_at && $taxe->created_at && $commercant->created_at->gt($taxe->created_at))
+                ? $commercant->created_at
+                : ($taxe->created_at ?? Carbon::today()->startOfMonth());
+
+            $lastPeriod = Carbon::parse($dateDebut)->startOfDay();
+            
+            // On soustrait une unité de fréquence car le CarbonPeriod::create utilisera ->addUnit() plus bas
+            // Pour que le premier paiement soit bien à la date de début.
+            switch ($taxe->frequence) {
+                case 'jour': $lastPeriod->subDay(); break;
+                case 'mois': $lastPeriod->subMonth(); break;
+                case 'an': $lastPeriod->subYear(); break;
+            }
         }
 
         $today = Carbon::today()->startOfDay();
