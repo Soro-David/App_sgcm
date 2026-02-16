@@ -255,4 +255,132 @@ class AuthController extends Controller
 
         return redirect()->route('commercant.dashboard')->with('success', 'Votre mot de passe a été défini avec succès.');
     }
+
+    // Mot de passe oublié (Universal)
+    public function showForgotPassword()
+    {
+        return view('auth.forgot-password');
+    }
+
+    public function sendResetLinkEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'guard' => 'required',
+        ]);
+
+        $email = $request->email;
+        $guard = $request->guard;
+
+        $providers = [
+            'web' => \App\Models\User::class,
+            'mairie' => \App\Models\Mairie::class,
+            'finance' => \App\Models\Finance::class,
+            'financier' => \App\Models\Financier::class,
+            'agent' => \App\Models\Agent::class,
+            'commercant' => \App\Models\Commercant::class,
+        ];
+
+        // Si le guard est 'mairie', on cherche aussi dans 'finance' et 'financier'
+        // car ils partagent la même page de connexion Mairie
+        $modelsToSearch = [$providers[$guard] ?? null];
+        if ($guard === 'mairie') {
+            $modelsToSearch[] = \App\Models\Finance::class;
+            $modelsToSearch[] = \App\Models\Financier::class;
+        }
+
+        foreach ($modelsToSearch as $modelClass) {
+            if (! $modelClass) {
+                continue;
+            }
+
+            $user = $modelClass::where('email', $email)->first();
+            if ($user) {
+                // Déterminer le vrai guard du modèle trouvé
+                $actualGuard = $guard;
+                if ($modelClass === \App\Models\Finance::class) {
+                    $actualGuard = 'finance';
+                }
+                if ($modelClass === \App\Models\Financier::class) {
+                    $actualGuard = 'financier';
+                }
+
+                $token = \Illuminate\Support\Str::random(64);
+
+                $url = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+                    'password.reset',
+                    now()->addMinutes(60),
+                    ['token' => $token, 'email' => $email, 'guard' => $actualGuard]
+                );
+
+                $user->notify(new \App\Notifications\PasswordResetNotification($url));
+
+                return back()->with('status', 'Le lien de réinitialisation a été envoyé à votre adresse email.');
+            }
+        }
+
+        return back()->withErrors(['email' => 'Aucun utilisateur trouvé avec cette adresse email dans cet espace.']);
+    }
+
+    public function showResetPassword(Request $request, $token)
+    {
+        if (! $request->hasValidSignature()) {
+            abort(403, 'Le lien est invalide ou a expiré.');
+        }
+
+        return view('auth.reset-password', [
+            'token' => $token,
+            'email' => $request->email,
+            'guard' => $request->guard,
+        ]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'guard' => 'required',
+            'password' => 'required|confirmed|min:6',
+        ]);
+
+        $providers = [
+            'web' => \App\Models\User::class,
+            'mairie' => \App\Models\Mairie::class,
+            'finance' => \App\Models\Finance::class,
+            'financier' => \App\Models\Financier::class,
+            'agent' => \App\Models\Agent::class,
+            'commercant' => \App\Models\Commercant::class,
+        ];
+
+        $modelClass = $providers[$request->guard] ?? null;
+
+        if (! $modelClass) {
+            return back()->withErrors(['email' => 'Guard invalide.']);
+        }
+
+        $user = $modelClass::where('email', $request->email)->first();
+
+        if (! $user) {
+            return back()->withErrors(['email' => 'Utilisateur non trouvé.']);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        // Connexion automatique
+        Auth::guard($request->guard)->login($user);
+
+        // Redirection selon le guard
+        $redirectRoutes = [
+            'web' => 'superadmin.dashboard',
+            'mairie' => 'mairie.dashboard.index',
+            'finance' => 'mairie.dashboard.index',
+            'financier' => 'mairie.dashboard.index',
+            'agent' => 'agent.dashboard',
+            'commercant' => 'commercant.dashboard',
+        ];
+
+        return redirect()->route($redirectRoutes[$request->guard])->with('status', 'Votre mot de passe a été réinitialisé et vous êtes maintenant connecté.');
+    }
 }

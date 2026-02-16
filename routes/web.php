@@ -59,6 +59,12 @@ Route::post('/login-agent', [AuthController::class, 'login_agent'])->name('login
 Route::match(['get', 'post'], '/agent-logout', fn (Request $request) => app(AuthController::class)->logout($request, 'agent')
 )->name('logout.agent');
 
+// Mot de passe oublié
+Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
+Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword'])->name('password.reset');
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
+
 // Routes Commerçant Auth (Password Definition)
 Route::middleware('signed')->group(function () {
     Route::get('/commercant/define-password/{commercant}', [AuthController::class, 'showDefinePasswordCommercant'])->name('commercant.define_password');

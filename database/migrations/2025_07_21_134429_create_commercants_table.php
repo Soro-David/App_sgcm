@@ -26,19 +26,18 @@ return new class extends Migration
             $table->string('qr_code_path')->nullable();
             $table->json('autre_images')->nullable();
 
-
+            //Ajout
+            $table->string('otp_code')->nullable();
+            $table->timestamp('otp_expires_at')->nullable();    
+            
             // Relations
             $table->foreignId('agent_id')->constrained()->onDelete('cascade');
             $table->string('mairie_ref')->nullable();
             $table->foreignId('secteur_id')->constrained()->onDelete('cascade');
             //$table->foreignId('type_contribuable_id')->nullable()->onDelete('set null');
             $table->foreignId('type_contribuable_id')->nullable()->constrained()->onDelete('set null');
-
-
-            // Champs JSON
-            // $table->json('taxe_id')->nullable();
-            // $table->json('secteur_id')->nullable();
-
+            //Ajout 
+            $table->timestamp('last_activity')->nullable();
             $table->timestamps();
         });
     }

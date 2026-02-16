@@ -1,6 +1,8 @@
 @php
-    // Récupère l'agent de la mairie ou l'agent de finance connecté.
-    $agent = Auth::guard('mairie')->user() ?? (Auth::guard('finance')->user() ?? Auth::guard('financier')->user());
+    // Récupère l'agent de la mairie ou l'agent de finance connecté avec priorité aux rôles spécifiques.
+    $agent =
+        Auth::guard('agent')->user() ??
+        (Auth::guard('financier')->user() ?? (Auth::guard('finance')->user() ?? Auth::guard('mairie')->user()));
 @endphp
 
 {{-- @dd($agent) --}}

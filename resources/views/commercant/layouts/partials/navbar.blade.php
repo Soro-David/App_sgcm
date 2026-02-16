@@ -2,10 +2,24 @@
     <div class="navbar-brand-wrapper d-flex justify-content-center">
 
         <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">
-            <a class="navbar-brand brand-logo d-flex flex-column align-items-start" href="" style="line-height: 1;">
+            {{-- <a class="navbar-brand brand-logo d-flex flex-column align-items-start" href="" style="line-height: 1;">
                 <span class="fw-bold text-white text-uppercase"
-                    style="font-size: 2.5rem; letter-spacing: 5px;">ANATH</span>
-                <span class="text-white" style="font-size: 0.85rem; font-weight: 400;">Système Gestion des taxes</span>
+                    style="font-size: 2.5rem; letter-spacing: 5px;">SGCTC</span>
+                <span class="text-white" style="font-size: 0.6rem; font-weight: 400;"> Système de gestion et de collecte des taxes communales</span>
+            </a> --}}
+
+            <a class="navbar-brand d-flex flex-column align-items-center text-center"
+                href="" style="line-height: 1; text-decoration: none;">
+
+                <span class="fw-bold text-white text-uppercase"
+                    style="font-size: 3.5rem; letter-spacing: 2px; font-family: 'Outfit', sans-serif;">
+                    SGTC
+                </span>
+
+                <small class="text-white" style="font-size: 0.7rem; letter-spacing: -0.5px;">
+                    Système de gestion des taxes communales
+                </small>
+
             </a>
             <a class="navbar-brand brand-logo-mini d-none d-lg-block" href="">
                 <span class="fw-bold text-white text-uppercase" style="font-size: 1.5rem;"></span>

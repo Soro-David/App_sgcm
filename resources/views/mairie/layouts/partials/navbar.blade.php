@@ -1,9 +1,9 @@
 @php
     $user =
-        Auth::guard('mairie')->user() ?:
-        Auth::guard('finance')->user() ?:
+        Auth::guard('agent')->user() ?:
         Auth::guard('financier')->user() ?:
-        Auth::guard('agent')->user();
+        Auth::guard('finance')->user() ?:
+        Auth::guard('mairie')->user();
     $roleLabel = 'Utilisateur';
     $roleSubtitle = 'Système Gestion des taxes';
     $roleColor = '#ff7b0f'; // Orange par défaut
@@ -67,11 +67,11 @@
 
                 <span class="fw-bold text-white text-uppercase"
                     style="font-size: 2.9rem; letter-spacing: 1px; font-family: 'Outfit', sans-serif;">
-                    SGCTC
+                    SGTC
                 </span>
 
-                <small class="text-white" style="font-size: 0.5rem; letter-spacing: 0.5px;">
-                    Système de gestion et de collecte des taxes communales
+                <small class="text-white" style="font-size: 0.7rem; letter-spacing: -0.5px;">
+                    Système de gestion des taxes communales
                 </small>
 
             </a>

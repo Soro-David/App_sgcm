@@ -38,6 +38,9 @@ return new class extends Migration
             $table->timestamp('otp_expires_at')->nullable();
             $table->string('status')->default('pending');
 
+            // Ajout
+            $table->string('added_by')->nullable();
+
             $table->rememberToken();
             $table->timestamps();
         });

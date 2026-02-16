@@ -10,7 +10,19 @@ return new class extends Migration
     {
         Schema::create('financiers', function (Blueprint $table) {
             $table->id();
-            $table->string('nom');
+            $table->string('name');
+
+            //Ajout
+            $table->string('genre')->nullable();
+            $table->date('date_naissance')->nullable();
+            $table->string('type_piece')->nullable();
+            $table->string('numero_piece')->nullable();
+            $table->string('adresse')->nullable();
+            $table->string('telephone1')->nullable();
+            $table->string('telephone2')->nullable();
+            $table->string('mairie_ref')->nullable();
+            $table->string('added_by')->nullable();
+
             $table->string('region');
             $table->string('commune')->nullable();
             $table->string('role')->default('admin');

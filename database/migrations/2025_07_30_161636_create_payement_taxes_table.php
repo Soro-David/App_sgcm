@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('paiement_taxes', function (Blueprint $table) {
             $table->id();
             // $table->json('secteur_id')->nullable();
-            $table->unsignedBigInteger('secteur_id');
-
+            $table->unsignedBigInteger('secteur_id')->nullable();
 
             $table->foreignId('agent_id')
                 ->nullable()
@@ -31,9 +30,10 @@ return new class extends Migration
             $table->string('num_commerce')->nullable();
             $table->string('montant')->nullable();
             $table->string('statut')->default('payé');
-            $table->string('periode',  50);
+            $table->string('periode', 50);
             $table->boolean('recette_effectuee')->default(false);
             $table->timestamps();
+
         });
     }
 

@@ -13,13 +13,21 @@ return new class extends Migration
     {
         Schema::create('versements', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('taxe_id')->constrained()->onDelete('cascade');
-            $table->foreignId('agent_id')->constrained()->onDelete('cascade');
+            $table->foreignId('taxe_id')->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('agent_id')->constrained()->onDelete('cascade')->nullable();
             $table->string('mairie_ref')->nullable();
+            // Ajout
+            $table->string('recorded_by')->nullable();
+            $table->string('appreciation')->nullable();
+            $table->string('nom_versement')->nullable();
+
             $table->string('montant_percu')->nullable();
             $table->string('montant_verse')->nullable();
             $table->string('reste')->nullable();
-            
+            // Ajout
+            $table->string('total_due')->nullable();
+            $table->string('previous_debt')->nullable();
+
             $table->timestamps();
         });
     }

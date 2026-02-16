@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('mairies', function (Blueprint $table) {
             $table->id();
 
+            // Ajout
+            $table->string('mairie_ref')->nullable();
+
             $table->string('name');
             $table->string('genre')->nullable();
             $table->date('date_naissance')->nullable();
@@ -39,6 +42,9 @@ return new class extends Migration
             $table->timestamp('otp_expires_at')->nullable();
             $table->string('status')->default('pending');
 
+            //Ajout
+            $table->string('added_by')->nullable();
+            
             $table->rememberToken();
             $table->timestamps();
         });

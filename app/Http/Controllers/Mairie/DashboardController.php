@@ -21,7 +21,11 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
-        $user = Auth::guard('mairie')->user() ?: Auth::guard('finance')->user() ?: Auth::guard('financier')->user();
+        // On récupère l'utilisateur en priorisant les guards spécifiques (pour éviter les conflits de session en test)
+        $user = Auth::guard('agent')->user() ?: 
+                Auth::guard('financier')->user() ?: 
+                Auth::guard('finance')->user() ?: 
+                Auth::guard('mairie')->user();
 
         if (! $user) {
             return redirect()->route('login.mairie')->with('error', 'Session expirée.');
@@ -50,7 +54,12 @@ class DashboardController extends Controller
         ];
 
         // Specific statistics for Admin Mairie and Admin Financier
-        if (($user instanceof Mairie && $user->role === 'admin') || ($user instanceof Finance && $user->role === 'admin') || ($user instanceof Mairie && $user->role === 'financié') || ($user instanceof Financier)) {
+        $role = strtolower($user->role ?? ($user->type ?? ''));
+        if (($user instanceof Mairie && ($role === 'admin' || $role === 'financié' || $role === 'responsable_financier')) || 
+            ($user instanceof Finance && ($role === 'finance' || $role === 'agent_finance')) || 
+            ($user instanceof Financier) || 
+            $role === 'financié' || 
+            $role === 'responsable_financier') {
 
             // Counts by type (These are generally totals regardless of time filter)
             $stats['countRecouvrement'] = Agent::where('mairie_ref', $mairieRef)->where('type', 'recouvrement')->count();
@@ -135,7 +144,9 @@ class DashboardController extends Controller
         $stats['montantNonPaye'] = max(0, $totalEncaisse - $totalVerse);
 
         // Redirect to specific views or pass specific data
-        if ($user->role === 'caisié' || $user->role === 'caissier') {
+        $role = strtolower($user->role ?? ($user->type ?? ''));
+
+        if ($role === 'caisié' || $role === 'caissier') {
             // Dashboard for Cashier (Personal activities)
             $stats['mesEncaissements'] = Encaissement::where('mairie_ref', $mairieRef)
                 ->where('recorded_by', $user->id)
@@ -147,7 +158,7 @@ class DashboardController extends Controller
             return view('mairie.dashboards.caissier', compact('stats'));
         }
 
-        if ($user instanceof Finance && $user->role === 'finance') {
+        if (($user instanceof Finance && $role === 'finance') || $role === 'agent_finance') {
             $stats['monTotalVersements'] = \App\Models\Versement::where('mairie_ref', $mairieRef)
                 ->where('recorded_by', $user->name)
                 ->sum('montant_verse');
@@ -155,13 +166,17 @@ class DashboardController extends Controller
             $stats['countRecouvrement'] = Agent::where('mairie_ref', $mairieRef)->where('type', 'recouvrement')->count();
             $stats['countRecensement'] = Agent::where('mairie_ref', $mairieRef)->where('type', 'recensement')->count();
             $stats['countCaissier'] = Mairie::where('mairie_ref', $mairieRef)->where('role', 'caisié')->count() +
-                                      Finance::where('mairie_ref', $mairieRef)->where('role', 'caissier')->count() +
-                                      Agent::where('mairie_ref', $mairieRef)->where('type', 'caissier')->count();
+                                     Finance::where('mairie_ref', $mairieRef)->where('role', 'caissier')->count() +
+                                     Agent::where('mairie_ref', $mairieRef)->where('type', 'caissier')->count();
 
             return view('mairie.dashboards.agent_finance', compact('stats'));
         }
 
-        if (($user instanceof Finance && $user->role === 'admin') || ($user instanceof Mairie && $user->role === 'financié') || ($user instanceof Financier)) {
+        if ($user instanceof Financier || 
+            $role === 'financié' || 
+            $role === 'responsable_financier' || 
+            ($user instanceof Finance && $role === 'admin') ||
+            ($user instanceof Mairie && $role === 'financié')) {
             return view('mairie.dashboards.admin_finance', compact('stats'));
         }
 

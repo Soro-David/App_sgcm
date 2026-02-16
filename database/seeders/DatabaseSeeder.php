@@ -12,13 +12,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            MairieSeeder::class,
-            TaxeSeeder::class,
-            AgentSeeder::class,
-            SecteurSeeder::class,
-            CommercantSeeder::class,
-            VersementSeeder::class,
-            EncaissementSeeder::class,
+            CommuneSeeder::class,
+            AdminUserSeeder::class,
         ]);
     }
 }

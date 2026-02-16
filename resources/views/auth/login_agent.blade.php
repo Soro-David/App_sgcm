@@ -57,6 +57,10 @@
                             <i class="fas fa-eye"></i>
                         </button>
                     </div>
+                    <div class="text-end mt-2">
+                        <a href="{{ route('password.request', ['guard' => 'agent']) }}" class="text-muted small">Mot de
+                            passe oublié ?</a>
+                    </div>
                 </div>
 
                 <div class="d-grid">
