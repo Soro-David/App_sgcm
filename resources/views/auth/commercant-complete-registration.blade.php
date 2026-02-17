@@ -4,101 +4,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finaliser l'inscription - Commerçant</title>
+    <title>Finaliser Inscription Commerçant | SGTC</title>
+
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{ asset('fontawesome/css/all.min.css') }}">
+
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/style_auth.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
-<body class="bg-light">
-    <div class="container">
-        <div class="row justify-content-center align-items-center" style="min-height: 100vh;">
-            <div class="col-md-6 col-lg-5">
-                <div class="card shadow-lg border-0 rounded-lg">
-                    <div class="card-header bg-primary text-white text-center py-4">
-                        <h4 class="mb-0"><i class="fas fa-store me-2"></i>Finaliser l'inscription</h4>
-                        <p class="mb-0 mt-2 small text-white-50">Activation de votre compte commerçant</p>
+<body>
+
+    <a href="/" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+
+    <div class="login-wrapper">
+        <div class="login-card">
+            <!-- Part Gauche -->
+            <div class="login-left">
+                <div class="branding">
+                    <div class="logo-box">
+                        <i class="fas fa-store"></i>
                     </div>
-                    <div class="card-body p-5">
-                        <form method="POST" action="{{ route('commercant.complete-registration.store') }}">
-                            @csrf
-                            <input type="hidden" name="email" value="{{ $email }}">
+                    <span class="brand-name">ESPACE COMMERÇANT</span>
+                </div>
 
-                            <!-- Email Display -->
-                            <div class="mb-4">
-                                <label class="form-label text-muted fw-bold">Email</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light"><i
-                                            class="fas fa-envelope text-muted"></i></span>
-                                    <input type="text" class="form-control" value="{{ $email }}" disabled>
-                                </div>
-                            </div>
+                <div class="left-content">
+                    <h1>Activez votre espace commerçant.</h1>
+                    <p>Validez votre identité avec le code OTP envoyé par mail et définissez votre mot de passe
+                        sécurisé.</p>
+                </div>
 
-                            <!-- OTP Code -->
-                            <div class="mb-4">
-                                <label for="otp_code" class="form-label text-muted fw-bold">Code OTP</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light"><i class="fas fa-key text-muted"></i></span>
-                                    <input id="otp_code" type="text"
-                                        class="form-control @error('otp_code') is-invalid @enderror" name="otp_code"
-                                        placeholder="Entrez le code reçu par mail" required autofocus>
-                                </div>
-                                <div class="form-text">Ce code a été envoyé sur votre adresse e-mail.</div>
-                                @error('otp_code')
-                                    <span class="text-danger small mt-1">{{ $message }}</span>
-                                @enderror
-                            </div>
+                <div class="left-footer">
+                    <p>© 2026 SGTC. Tous droits réservés.</p>
+                </div>
+            </div>
 
-                            <!-- Password -->
-                            <div class="mb-4">
-                                <label for="password" class="form-label text-muted fw-bold">Nouveau Mot de Passe</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light"><i
-                                            class="fas fa-lock text-muted"></i></span>
-                                    <input id="password" type="password"
-                                        class="form-control @error('password') is-invalid @enderror" name="password"
-                                        required>
-                                    <button class="btn btn-outline-secondary toggle-password" type="button"
-                                        data-target="password">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
+            <!-- Part Droite -->
+            <div class="login-right">
+                <div class="form-header">
+                    <h2>Finalisation</h2>
+                    <p>Plus qu'une étape pour ouvrir votre boutique en ligne.</p>
+                </div>
+
+                @if ($errors->any())
+                    <div class="alert alert-danger py-2" style="font-size: 14px; border-radius: 10px;">
+                        <i class="fas fa-exclamation-circle me-2"></i> Erreur lors de la finalisation.
+                    </div>
+                @endif
+
+                <form method="POST" action="{{ route('commercant.complete-registration.store') }}">
+                    @csrf
+                    <input type="hidden" name="email" value="{{ $email }}">
+
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <div class="input-group-custom">
+                            <i class="far fa-envelope"></i>
+                            <input type="email" class="form-control" value="{{ $email }}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="otp_code" class="form-label">Code OTP</label>
+                        <div class="input-group-custom">
+                            <i class="fas fa-key"></i>
+                            <input id="otp_code" type="text"
+                                class="form-control @error('otp_code') is-invalid @enderror" name="otp_code"
+                                placeholder="Code secret" required autofocus>
+                        </div>
+                        <div class="form-text" style="font-size: 11px; margin-top: 4px;">Vérifiez votre boîte de
+                            réception.</div>
+                        @error('otp_code')
+                            <span class="text-danger" style="font-size: 12px;">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Mot de passe</label>
+                            <div class="input-group-custom">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                    id="password" name="password" placeholder="........" required>
+                                <button class="password-toggle toggle-password" type="button" data-target="password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
                                 @error('password')
-                                    <span class="text-danger small mt-1">{{ $message }}</span>
+                                    <span class="text-danger" style="font-size: 12px;">{{ $message }}</span>
                                 @enderror
                             </div>
-
-                            <!-- Confirm Password -->
-                            <div class="mb-4">
-                                <label for="password_confirmation" class="form-label text-muted fw-bold">Confirmer le
-                                    Mot de Passe</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light"><i
-                                            class="fas fa-lock text-muted"></i></span>
-                                    <input id="password_confirmation" type="password" class="form-control"
-                                        name="password_confirmation" required>
-                                    <button class="btn btn-outline-secondary toggle-password" type="button"
-                                        data-target="password_confirmation">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="d-grid mt-4">
-                                <button type="submit" class="btn btn-primary btn-lg shadow-sm">
-                                    Activer mon compte <i class="fas fa-check-circle ms-2"></i>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password_confirmation" class="form-label">Confirmation</label>
+                            <div class="input-group-custom">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" class="form-control" id="password_confirmation"
+                                    name="password_confirmation" placeholder="........" required>
+                                <button class="password-toggle toggle-password" type="button"
+                                    data-target="password_confirmation">
+                                    <i class="fas fa-eye"></i>
                                 </button>
                             </div>
-                        </form>
+                        </div>
+
+                    <button type="submit" class="btn-login">
+                        Valider l'inscription
+                    </button>
+
+                    <div class="signup-text">
+                        Déjà inscrit ? <a href="{{ route('login.commercant') }}">Se connecter</a>
                     </div>
-                </div>
-                <div class="text-center mt-3 text-muted small">
-                    &copy; {{ date('Y') }} - Plateforme de Gestion
-                </div>
+                </form>
             </div>
         </div>
     </div>
+
+    <!-- Bootstrap JS -->
     <script src="{{ asset('bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
     <script>
         document.querySelectorAll('.toggle-password').forEach(button => {
             button.addEventListener('click', function() {

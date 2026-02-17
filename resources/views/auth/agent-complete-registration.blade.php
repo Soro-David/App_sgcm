@@ -4,92 +4,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion</title>
+    <title>Finaliser Inscription Agent | SGTC</title>
+
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
 
-    <!-- Notre CSS personnalisé (doit venir APRES Bootstrap) -->
-    <link rel="stylesheet" href="{{ asset('css/style_auth.css') }}">
-
-
-    <!-- Font Awesome pour les icônes (optionnel mais recommandé pour le bouton) -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ asset('fontawesome/css/all.min.css') }}">
 
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ asset('css/style_auth.css') }}">
 </head>
 
 <body>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">Finaliser l'inscription de la Mairie</div>
 
-                    <div class="card-body">
-                        <form method="POST" action="{{ route('agent.complete-registration.store') }}">
-                            @csrf
+    <a href="/" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+    </a>
 
-                            <!-- Champ email caché mais présent -->
-                            <input type="hidden" name="email" value="{{ $email }}">
-
-                            <div class="mb-3">
-                                <label for="email_display" class="form-label">Adresse e-mail</label>
-                                <input id="email_display" type="email" class="form-control"
-                                    value="{{ $email }}" disabled>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="otp_code" class="form-label">Code OTP (reçu par e-mail)</label>
-                                <input id="otp_code" type="text"
-                                    class="form-control @error('otp_code') is-invalid @enderror" name="otp_code"
-                                    required autofocus>
-                                @error('otp_code')
-                                    <span class="invalid-feedback"
-                                        role="alert"><strong>{{ $message }}</strong></span>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Nouveau mot de passe</label>
-                                <div class="input-group">
-                                    <input id="password" type="password"
-                                        class="form-control @error('password') is-invalid @enderror" name="password"
-                                        required>
-                                    <button class="btn btn-outline-secondary toggle-password" type="button"
-                                        data-target="password">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
-                                @error('password')
-                                    <span class="invalid-feedback"
-                                        role="alert"><strong>{{ $message }}</strong></span>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="password-confirm" class="form-label">Confirmer le mot de passe</label>
-                                <div class="input-group">
-                                    <input id="password-confirm" type="password" class="form-control"
-                                        name="password_confirmation" required>
-                                    <button class="btn btn-outline-secondary toggle-password" type="button"
-                                        data-target="password-confirm">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary">
-                                    Activer mon compte
-                                </button>
-                            </div>
-                        </form>
+    <div class="login-wrapper">
+        <div class="login-card">
+            <!-- Part Gauche -->
+            <div class="login-left">
+                <div class="branding">
+                    <div class="logo-box">
+                        <i class="fas fa-user-shield"></i>
                     </div>
+                    <span class="brand-name">ESPACE AGENT</span>
                 </div>
+
+                <div class="left-content">
+                    <h1>Finaliser votre inscription.</h1>
+                    <p>Définissez votre mot de passe et validez votre code OTP pour activer votre compte agent.</p>
+                </div>
+
+                <div class="left-footer">
+                    <p>© 2026 SGTC. Tous droits réservés.</p>
+                </div>
+            </div>
+
+            <!-- Part Droite -->
+            <div class="login-right">
+                <div class="form-header">
+                    <h2>Activation Compte</h2>
+                    <p>Veuillez remplir les informations requises.</p>
+                </div>
+
+                @if ($errors->any())
+                    <div class="alert alert-danger py-2" style="font-size: 14px; border-radius: 10px;">
+                        <i class="fas fa-exclamation-circle me-2"></i> Erreur lors de la finalisation.
+                    </div>
+                @endif
+
+                <form method="POST" action="{{ route('agent.complete-registration.store') }}">
+                    @csrf
+                    <input type="hidden" name="email" value="{{ $email }}">
+
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <div class="input-group-custom">
+                            <i class="far fa-envelope"></i>
+                            <input type="email" class="form-control" value="{{ $email }}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="otp_code" class="form-label">Code OTP</label>
+                        <div class="input-group-custom">
+                            <i class="fas fa-key"></i>
+                            <input id="otp_code" type="text"
+                                class="form-control @error('otp_code') is-invalid @enderror" name="otp_code"
+                                placeholder="Code reçu par email" required autofocus>
+                            @error('otp_code')
+                                <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Mot de passe</label>
+                        <div class="input-group-custom">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                id="password" name="password" placeholder="........" required>
+                            <button class="password-toggle toggle-password" type="button" data-target="password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            @error('password')
+                                <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password_confirmation" class="form-label">Confirmation</label>
+                        <div class="input-group-custom">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" class="form-control" id="password-confirm"
+                                name="password_confirmation" placeholder="........" required>
+                            <button class="password-toggle toggle-password" type="button"
+                                data-target="password-confirm">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-login">
+                        Activer mon compte
+                    </button>
+
+                    <div class="signup-text">
+                        Déjà activé ? <a href="{{ route('login.agent') }}">Retour à la connexion</a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+
+    <!-- Bootstrap JS -->
     <script src="{{ asset('bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
     <script>
         document.querySelectorAll('.toggle-password').forEach(button => {
             button.addEventListener('click', function() {

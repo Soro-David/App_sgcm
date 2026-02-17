@@ -4,93 +4,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion</title>
+    <title>Connexion | SGTC</title>
+
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
 
-    <!-- Notre CSS personnalisé (doit venir APRES Bootstrap) -->
-    <link rel="stylesheet" href="{{ asset('css/style_auth.css') }}">
-
-
-    <!-- Font Awesome pour les icônes (optionnel mais recommandé pour le bouton) -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ asset('fontawesome/css/all.min.css') }}">
 
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ asset('css/style_auth.css') }}">
 </head>
-
-<style>
-    body {
-        font-size: 1.1rem;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-        background: url("{{ asset('assets/images/login/login4.jpg') }}") no-repeat center center fixed;
-        background-size: cover;
-        /* adapte l’image à toute la page */
-    }
-</style>
 
 <body>
 
-    <div class="card shadow-sm auth-card">
-        <div class="card-body p-4 p-md-5">
-            <h2 class="card-title text-center mb-4">Connexion</h2>
+    <a href="/" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+    </a>
 
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    {{ $errors->first('email', 'Email ou mot de passe invalide.') }}
-                </div>
-            @endif
-
-            <form method="POST" action="{{ route('login') }}">
-                @csrf
-
-                <div class="mb-3">
-                    <label for="email" class="form-label">Adresse e-mail</label>
-                    <input type="email" class="form-control form-control-lg" id="email" name="email" required
-                        value="{{ old('email') }}">
-                </div>
-
-                <div class="mb-4">
-                    <label for="password" class="form-label">Mot de passe</label>
-                    <div class="input-group">
-                        <input type="password" class="form-control form-control-lg" id="password" name="password"
-                            required>
-                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                            <i class="fas fa-eye"></i>
-                        </button>
+    <div class="login-wrapper">
+        <div class="login-card">
+            <!-- Part Gauche -->
+            <div class="login-left">
+                <div class="branding">
+                    <div class="logo-box">
+                        <i class="fas fa-church"></i>
                     </div>
-                    <div class="text-end mt-2">
-                        <a href="{{ route('password.request', ['guard' => 'web']) }}" class="text-muted small">Mot de
-                            passe oublié ?</a>
-                    </div>
+                    <span class="brand-name">SGTC</span>
                 </div>
 
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="fas fa-sign-in-alt me-2"></i> Se connecter
+                <div class="left-content">
+                    <h1>Gestion des Taxes</h1>
+                    <p>Système de Gestion des Taxes Communales</p>
+                </div>
+
+                <div class="left-footer">
+                    <p>© 2026 SGTC. Tous droits réservés.</p>
+                </div>
+            </div>
+
+            <!-- Part Droite -->
+            <div class="login-right">
+                <div class="form-header">
+                    <h2>Bon retour !</h2>
+                    <p>Veuillez entrer vos informations de connexion.</p>
+                </div>
+
+                @if ($errors->any())
+                    <div class="alert alert-danger py-2" style="font-size: 14px; border-radius: 10px;">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        {{ $errors->first('email', 'Email ou mot de passe invalide.') }}
+                    </div>
+                @endif
+
+                <form method="POST" action="{{ route('login') }}">
+                    @csrf
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <div class="input-group-custom">
+                            <i class="far fa-envelope"></i>
+                            <input type="email" class="form-control" id="email" name="email"
+                                placeholder="Ex: jean.dupont@email.com" required value="{{ old('email') }}">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Mot de passe</label>
+                        <div class="input-group-custom">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" class="form-control" id="password" name="password"
+                                placeholder="........" required>
+                            <button class="password-toggle toggle-password" type="button" data-target="password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox" name="remember" class="form-check-input">
+                            <span>Se souvenir de moi</span>
+                        </label>
+                        <a href="{{ route('password.request', ['guard' => 'web']) }}" class="forgot-password">
+                            Mot de passe oublié ?
+                        </a>
+                    </div>
+
+                    <button type="submit" class="btn-login">
+                        Se connecter
                     </button>
-                </div>
-                <div class="text-center mt-4 fw-light">
-                    Vous n'avez pas de compte ? <a href="{{ route('register') }}" class="text-primary">Créer un
-                        compte</a>
-                </div>
 
-            </form>
+
+
+
+
+
+                </form>
+            </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS (Optionnel, mais bon à avoir) -->
+    <!-- Bootstrap JS -->
     <script src="{{ asset('bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
     <script>
-        const togglePassword = document.querySelector('#togglePassword');
-        const password = document.querySelector('#password');
+        document.querySelectorAll('.toggle-password').forEach(button => {
+            button.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                const icon = this.querySelector('i');
 
-        togglePassword.addEventListener('click', function(e) {
-            // toggle the type attribute
-            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-            password.setAttribute('type', type);
-            // toggle the eye slash icon
-            this.querySelector('i').classList.toggle('fa-eye-slash');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
         });
     </script>
 </body>

@@ -89,13 +89,13 @@
                         {{-- Contact 1 --}}
                         <div class="col-md-6 mb-4">
                             <label for="telephone1" class="form-label">Contact 1 *</label>
-                            <input type="tel" class="form-control" id="telephone1" name="telephone1" required
-                                value="{{ old('telephone1', $agent->telephone1) }}">
+                            <input type="tel" class="form-control" id="telephone1" maxlength="10" name="telephone1"
+                                required value="{{ old('telephone1', $agent->telephone1) }}">
                         </div>
                         {{-- Contact 2 --}}
                         <div class="col-md-6 mb-4">
                             <label for="telephone2" class="form-label">Contact 2</label>
-                            <input type="tel" class="form-control" id="telephone2" name="telephone2"
+                            <input type="tel" class="form-control" id="telephone2" maxlength="10" name="telephone2"
                                 value="{{ old('telephone2', $agent->telephone2) }}">
                         </div>
                         {{-- Adresse e-mail --}}
@@ -110,7 +110,8 @@
                     <div class="d-flex justify-content-end mt-5">
                         <a href="{{ route('mairie.agents.list_agent') }}"
                             class="btn btn-secondary px-4 py-2 me-2">Annuler</a>
-                        <button type="submit" class="btn btn-primar px-4 py-2"><i class="fa fa-save"></i> Mettre à jour</button>
+                        <button type="submit" class="btn btn-primar px-4 py-2"><i class="fa fa-save"></i> Mettre à
+                            jour</button>
                     </div>
                 </form>
             </div>

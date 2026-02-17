@@ -81,13 +81,13 @@
                         {{-- Contact 1 --}}
                         <div class="col-md-6 mb-4">
                             <label for="telephone1" class="form-label">Contact 1 *</label>
-                            <input type="tel" class="form-control" id="telephone1" name="telephone1" required
+                            <input type="tel" class="form-control" id="telephone1" name="telephone1" maxlength="10" required
                                 value="{{ old('telephone1') }}">
                         </div>
                         {{-- Contact 2 --}}
                         <div class="col-md-6 mb-4">
                             <label for="telephone2" class="form-label">Contact 2</label>
-                            <input type="tel" class="form-control" id="telephone2" name="telephone2"
+                            <input type="tel" class="form-control" id="telephone2" name="telephone2" maxlength="10"
                                 value="{{ old('telephone2') }}">
                         </div>
                         {{-- Adresse e-mail --}}
