@@ -51,8 +51,15 @@ Route::match(['get', 'post'], '/mairie-logout', fn (Request $request) => app(Aut
 
 Route::get('/login-commercant', [AuthController::class, 'showLoginFinancier'])->name('login.commercant');
 Route::post('/login-commercant', [AuthController::class, 'login_commercant'])->name('login.commercant');
-Route::match(['get', 'post'], '/commercant-logout', fn (Request $request) => app(AuthController::class)->logout($request, 'commercant')
-)->name('logout.commercant');
+// Route::match(['get', 'post'], '/commercant-logout', fn (Request $request) => app(AuthController::class)->logout($request, 'commercant')
+// )->name('logout.commercant');
+Route::get('/commercant-logout', function (Request $request) {
+    return app(AuthController::class)->logout($request, 'commercant');
+});
+
+Route::post('/commercant-logout', function (Request $request) {
+    return app(AuthController::class)->logout($request, 'commercant');
+});
 
 Route::get('/login-agent', [AuthController::class, 'showLoginAgent'])->name('login.agent');
 Route::post('/login-agent', [AuthController::class, 'login_agent'])->name('login.agent');
