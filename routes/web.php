@@ -34,6 +34,9 @@ use Illuminate\Support\Facades\Route;
 | Routes publiques
 |--------------------------------------------------------------------------
 */
+Route::get('/', function () {
+    return view('welcome');
+})->name('welcome');
 
 // Authentification
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
