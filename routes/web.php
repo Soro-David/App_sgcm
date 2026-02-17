@@ -37,20 +37,28 @@ use Illuminate\Support\Facades\Route;
 
 // Authentification
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login');
-Route::match(['get', 'post'], '/logout', fn (Request $request) => app(AuthController::class)->logout($request, 'web')
-)->name('logout');
+Route::post('/login', [AuthController::class, 'login']);
+// Route::match(['get', 'post'], '/logout', fn (Request $request) => app(AuthController::class)->logout($request, 'web')
+// )->name('logout');
+
+Route::get('/logout', function (Request $request) {
+    return app(AuthController::class)->logout($request, 'web');
+})->name('logout.get');
+
+Route::post('/logout', function (Request $request) {
+    return app(AuthController::class)->logout($request, 'web');
+})->name('logout');
 
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 
 Route::get('/login-mairie', [AuthController::class, 'showLoginMairie'])->name('login.mairie');
-Route::post('/login-mairie', [AuthController::class, 'login_mairie'])->name('login.mairie');
+Route::post('/login-mairie', [AuthController::class, 'login_mairie']);
 Route::match(['get', 'post'], '/mairie-logout', fn (Request $request) => app(AuthController::class)->logout($request, 'mairie')
 )->name('logout.mairie');
 
 Route::get('/login-commercant', [AuthController::class, 'showLoginFinancier'])->name('login.commercant');
-Route::post('/login-commercant', [AuthController::class, 'login_commercant'])->name('login.commercant');
+Route::post('/login-commercant', [AuthController::class, 'login_commercant']);
 // Route::match(['get', 'post'], '/commercant-logout', fn (Request $request) => app(AuthController::class)->logout($request, 'commercant')
 // )->name('logout.commercant');
 Route::get('/commercant-logout', function (Request $request) {
@@ -62,7 +70,7 @@ Route::post('/commercant-logout', function (Request $request) {
 });
 
 Route::get('/login-agent', [AuthController::class, 'showLoginAgent'])->name('login.agent');
-Route::post('/login-agent', [AuthController::class, 'login_agent'])->name('login.agent');
+Route::post('/login-agent', [AuthController::class, 'login_agent']);
 Route::match(['get', 'post'], '/agent-logout', fn (Request $request) => app(AuthController::class)->logout($request, 'agent')
 )->name('logout.agent');
 
