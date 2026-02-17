@@ -39,11 +39,11 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Routes pour les Commerçants
-   Route::middleware('abilities:commercant')->prefix('commercant')->name('commercant')->group(function () {
-        Route::get('/me', [CommercantController::class, 'me']);
-        Route::get('/taxes', [CommercantController::class, 'list_taxes_a_payer']);
-        Route::post('/paiement', [CommercantController::class, 'effectuer_paiement']);
-        Route::get('/paiements', [CommercantController::class, 'historique_paiements']);
-        Route::post('/logout', [CommercantController::class, 'logout']);
+   Route::middleware('abilities:commercant')->prefix('commercant')->name('api.commercant.')->group(function () {
+        Route::get('/me', [CommercantController::class, 'me'])->name('me');
+        Route::get('/taxes', [CommercantController::class, 'list_taxes_a_payer'])->name('taxes');
+        Route::post('/paiement', [CommercantController::class, 'effectuer_paiement'])->name('paiement');
+        Route::get('/paiements', [CommercantController::class, 'historique_paiements'])->name('paiements');
+        Route::post('/logout', [CommercantController::class, 'logout'])->name('logout');
     });
 });
