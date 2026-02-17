@@ -33,8 +33,8 @@ class DashboardController extends Controller
 
     public function bilan()
     {
-        // On récupère uniquement les comptes Mairie qui ont le rôle 'financié'
-        $mairiesData = Mairie::where('role', 'financié')
+        // On récupère uniquement les comptes Mairie qui ont le rôle 'financiers'
+        $mairiesData = Mairie::where('role', 'financiers')
             ->withCount(['agents', 'taxes'])
             ->get();
 

@@ -72,8 +72,8 @@
                 </li>
             @endif
 
-            {{-- Pour l'Admin Financier (ou rôle "financié") --}}
-            @if ($agent && ($agent->role === 'financié' || ($agent instanceof \App\Models\Finance && $agent->role === 'admin')))
+            {{-- Pour l'Admin Financier (ou rôle "financiers") --}}
+            @if ($agent && ($agent->role === 'financiers' || ($agent instanceof \App\Models\Finance && $agent->role === 'admin')))
                 <li class="nav-item">
                     <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
                         href="#menu-agents-finance" aria-expanded="false" aria-controls="menu-agents-finance">

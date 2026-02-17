@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SGCM - Plateforme Intégrée de Gestion Municipale</title>
+    <title>SGTC - Plateforme Intégrée de Gestion Municipale</title>
 
     <!-- Meta Tags SEO -->
     <meta name="description"
@@ -36,17 +36,17 @@
 
     <nav>
         <div class="logo">
-            <i class="fas fa-city me-2"></i> SGCM
+            <i class="fas fa-city me-2"></i> SGTC
         </div>
-        <div>
+        {{-- <div>
             <a href="#portals" class="btn btn-primary">Accéder aux Portails</a>
-        </div>
+        </div> --}}
     </nav>
 
     <div class="container text-center">
         <header>
             <h1>
-                <span>Bienvenue sur SGCM</span>
+                <span>Bienvenue sur SGTC</span>
                 L'Administration Municipale<br>Réinventée
             </h1>
             <p class="hero-text">

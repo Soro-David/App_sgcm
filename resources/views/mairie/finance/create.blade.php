@@ -65,7 +65,8 @@
                             <label for="type_agent" class="form-label">Type d'agent *</label>
                             <select name="type_agent" id="type_agent" class="form-select" required>
                                 <option value="" disabled selected>-- Sélectionnez un type d'agent --</option>
-                                <option value="financié" {{ old('type_agent') == 'financié' ? 'selected' : '' }}>Financier
+                                <option value="financiers" {{ old('type_agent') == 'financiers' ? 'selected' : '' }}>
+                                    Financier
                                 </option>
                                 <option value="caisié" {{ old('type_agent') == 'caisié' ? 'selected' : '' }}>Caissier(ère)
                                 </option>
@@ -105,7 +106,8 @@
 
                     {{-- Boutons --}}
                     <div class="d-flex justify-content-end mt-5">
-                        <button type="submit" class="btn btn-primar px-4 py-2"><i class="fa fa-save"></i> Enregistrer</button>
+                        <button type="submit" class="btn btn-primar px-4 py-2"><i class="fa fa-save"></i>
+                            Enregistrer</button>
                     </div>
                 </form>
             </div>

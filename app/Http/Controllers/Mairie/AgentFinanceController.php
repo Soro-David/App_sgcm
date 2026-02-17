@@ -91,7 +91,7 @@ class AgentFinanceController extends Controller
                     'date_naissance' => $request->date_naissance,
                     'type_piece' => $request->type_piece,
                     'numero_piece' => $request->numero_piece,
-                    'role' => 'financié',
+                    'role' => 'financiers',
                     'adresse' => $request->adresse,
                     'telephone1' => $request->telephone1,
                     'telephone2' => $request->telephone2,

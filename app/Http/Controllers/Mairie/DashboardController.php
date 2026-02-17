@@ -55,10 +55,10 @@ class DashboardController extends Controller
 
         // Specific statistics for Admin Mairie and Admin Financier
         $role = strtolower($user->role ?? ($user->type ?? ''));
-        if (($user instanceof Mairie && ($role === 'admin' || $role === 'financié' || $role === 'responsable_financier')) || 
+        if (($user instanceof Mairie && ($role === 'admin' || $role === 'financiers' || $role === 'responsable_financier')) || 
             ($user instanceof Finance && ($role === 'finance' || $role === 'agent_finance')) || 
             ($user instanceof Financier) || 
-            $role === 'financié' || 
+            $role === 'financiers' || 
             $role === 'responsable_financier') {
 
             // Counts by type (These are generally totals regardless of time filter)
@@ -173,10 +173,10 @@ class DashboardController extends Controller
         }
 
         if ($user instanceof Financier || 
-            $role === 'financié' || 
+            $role === 'financiers' || 
             $role === 'responsable_financier' || 
             ($user instanceof Finance && $role === 'admin') ||
-            ($user instanceof Mairie && $role === 'financié')) {
+            ($user instanceof Mairie && $role === 'financiers')) {
             return view('mairie.dashboards.admin_finance', compact('stats'));
         }
 

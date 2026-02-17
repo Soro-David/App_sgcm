@@ -217,12 +217,12 @@ Route::middleware(['auth:mairie,finance,financier', 'mairie_finance_bridge'])->p
 
     /*
     |--------------------------------------------------------------------------
-    | 3. Routes PARTAGÉES (Accessibles par 'financié' ET 'finance/mairie_finance_bridge')
+    | 3. Routes PARTAGÉES (Accessibles par 'financiers' ET 'finance/mairie_finance_bridge')
     |--------------------------------------------------------------------------
     | Ici, on met tout ce qui concerne la gestion quotidienne (Recettes, Dépenses, Taxes)
     */
     // On autorise si l'utilisateur a l'un OU l'autre rôle
-    Route::middleware(['role:admin,financié,finance,mairie_finance_bridge'])->group(function () {
+    Route::middleware(['role:admin,financiers,finance,mairie_finance_bridge'])->group(function () {
 
         // Routes de données partagées pour DataTables (Taxes et Secteurs)
         Route::get('taches/liste/data', [TacheController::class, 'get_list_taches'])->name('taches.get_list_tache');
@@ -288,7 +288,7 @@ Route::middleware(['auth:mairie,finance,financier', 'mairie_finance_bridge'])->p
     | Ces routes ne sont PAS accessibles par l'agent finance simple.
     | (Gestion des secteurs, Création des agents finances, Programmation)
     */
-    Route::middleware(['role:financié'])->group(function () {
+    Route::middleware(['role:financiers'])->group(function () {
 
         // Gestion des Tâches et Secteurs (Logique métier avancée)
         Route::prefix('taches')->name('taches.')->group(function () {

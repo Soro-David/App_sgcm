@@ -16,7 +16,7 @@
                 $roleSubtitle = 'Administration Communale';
                 $roleColor = '#e74c3c'; // Rouge
                 $roleIcon = 'fas fa-user-cog';
-            } elseif ($user->role === 'financié') {
+            } elseif ($user->role === 'financiers') {
                 $roleLabel = 'Admin Financier';
                 $roleSubtitle = 'Gestion des Finances';
                 $roleColor = '#f39c12'; // Orange/Jaune
