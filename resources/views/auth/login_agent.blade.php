@@ -45,7 +45,7 @@
                 </div>
 
                 <div class="left-footer">
-                    <p>© 2026 E-Messe. Tous droits réservés.</p>
+                    <p>© 2026 SGTC. Tous droits réservés.</p>
                 </div>
             </div>
 

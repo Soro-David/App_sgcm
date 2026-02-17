@@ -351,6 +351,134 @@ class AgentController extends Controller
         ));
     }
 
+    public function editPersonnel(string $id)
+    {
+        // Rechercher le personnel dans les 3 tables
+        $personnel = null;
+        $source = null;
+
+        // Vérifier dans Mairie
+        $mairie = Mairie::find($id);
+        if ($mairie) {
+            $personnel = $mairie;
+            $source = 'mairies';
+        }
+
+        // Vérifier dans Finance
+        if (!$personnel) {
+            $finance = Finance::find($id);
+            if ($finance) {
+                $personnel = $finance;
+                $source = 'finances';
+            }
+        }
+
+        // Vérifier dans Financier
+        if (!$personnel) {
+            $financier = Financier::find($id);
+            if ($financier) {
+                $personnel = $financier;
+                $source = 'financiers';
+            }
+        }
+
+        if (!$personnel) {
+            return redirect()->route('mairie.agents.index')
+                ->with('error', 'Personnel non trouvé.');
+        }
+
+        return view('mairie.agents.edit_personnel', compact('personnel', 'source'));
+    }
+
+    public function updatePersonnel(Request $request, string $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'genre' => 'required|in:masculin,féminin',
+            'date_naissance' => 'required|date',
+            'type_piece' => 'required|string|max:50',
+            'numero_piece' => 'required|string|max:100',
+            'type_agent' => 'required|string|max:50',
+            'adresse' => 'required|string|max:255',
+            'telephone1' => 'required|string|max:20',
+            'telephone2' => 'nullable|string|max:20',
+            'email' => 'required|email|max:255',
+        ]);
+
+        try {
+            $updated = false;
+
+            // Chercher dans Mairie
+            $mairie = Mairie::find($id);
+            if ($mairie) {
+                $mairie->update([
+                    'name' => $request->name,
+                    'genre' => $request->genre,
+                    'date_naissance' => $request->date_naissance,
+                    'type_piece' => $request->type_piece,
+                    'numero_piece' => $request->numero_piece,
+                    'adresse' => $request->adresse,
+                    'telephone1' => $request->telephone1,
+                    'telephone2' => $request->telephone2,
+                    'email' => $request->email,
+                ]);
+                $updated = true;
+            }
+
+            // Chercher dans Finance
+            if (!$updated) {
+                $finance = Finance::find($id);
+                if ($finance) {
+                    $finance->update([
+                        'name' => $request->name,
+                        'genre' => $request->genre,
+                        'date_naissance' => $request->date_naissance,
+                        'type_piece' => $request->type_piece,
+                        'numero_piece' => $request->numero_piece,
+                        'role' => $request->type_agent,
+                        'adresse' => $request->adresse,
+                        'telephone1' => $request->telephone1,
+                        'telephone2' => $request->telephone2,
+                        'email' => $request->email,
+                    ]);
+                    $updated = true;
+                }
+            }
+
+            // Chercher dans Financier
+            if (!$updated) {
+                $financier = Financier::find($id);
+                if ($financier) {
+                    $financier->update([
+                        'name' => $request->name,
+                        'genre' => $request->genre,
+                        'date_naissance' => $request->date_naissance,
+                        'type_piece' => $request->type_piece,
+                        'numero_piece' => $request->numero_piece,
+                        'adresse' => $request->adresse,
+                        'telephone1' => $request->telephone1,
+                        'telephone2' => $request->telephone2,
+                        'email' => $request->email,
+                    ]);
+                    $updated = true;
+                }
+            }
+
+            if ($updated) {
+                return redirect()->route('mairie.agents.index')
+                    ->with('success', 'Personnel mis à jour avec succès.');
+            }
+
+            return redirect()->back()
+                ->with('error', 'Personnel non trouvé.');
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Erreur lors de la mise à jour : '.$e->getMessage());
+        }
+    }
+
     public function create(Request $request)
     {
         $mairie = Auth::guard('mairie')->user();
@@ -469,7 +597,52 @@ class AgentController extends Controller
 
     public function destroy(string $id)
     {
-        //
+        try {
+            // Supprimer un agent de type Mairie/Finance/Financier
+            $deleted = false;
+            
+            $mairie = Mairie::find($id);
+            if ($mairie) {
+                $mairie->delete();
+                $deleted = true;
+            }
+            
+            if (!$deleted) {
+                $finance = Finance::find($id);
+                if ($finance) {
+                    $finance->delete();
+                    $deleted = true;
+                }
+            }
+            
+            if (!$deleted) {
+                $financier = Financier::find($id);
+                if ($financier) {
+                    $financier->delete();
+                    $deleted = true;
+                }
+            }
+            
+            if ($deleted) {
+                return response()->json(['success' => 'Agent supprimé avec succès.']);
+            }
+            
+            return response()->json(['error' => 'Agent non trouvé.'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur lors de la suppression : ' . $e->getMessage()], 500);
+        }
+    }
+    
+    public function destroy_agent(string $id)
+    {
+        try {
+            $agent = Agent::findOrFail($id);
+            $agent->delete();
+            
+            return response()->json(['success' => 'Agent supprimé avec succès.']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur lors de la suppression : ' . $e->getMessage()], 500);
+        }
     }
 
     public function get_list_mairie(Request $request)
@@ -512,12 +685,12 @@ class AgentController extends Controller
                     return $agent->created_at ? \Carbon\Carbon::parse($agent->created_at)->format('d/m/Y H:i') : 'N/A';
                 })
                 ->addColumn('action', function ($agent) {
-                    $editUrl = route('mairie.agents.edit', $agent->id);
+                    $editUrl = route('mairie.agents.edit_personnel', $agent->id);
                     $deleteUrl = route('mairie.agents.destroy', $agent->id);
 
                     return '<div class="action-buttons">
-                                <button class="btn-table-action delete btn-delete" data-url="'.$deleteUrl.'"><i class="fa fa-trash"></i></button>
-                                <a href="'.$editUrl.'" class="btn-table-action edit"><i class="fa fa-edit"></i></a>
+                                <a href="'.$editUrl.'" class="btn-table-action edit btn-warning" title="Modifier"><i class="fa fa-edit"></i></a>
+                                <button class="btn-table-action delete btn-delete btn-danger" data-url="'.$deleteUrl.'" title="Supprimer"><i class="fa fa-trash"></i></button>
                             </div>';
                 })
                 ->rawColumns(['action'])
@@ -558,11 +731,11 @@ class AgentController extends Controller
                 })
                 ->addColumn('action', function ($agent) {
                     $editUrl = route('mairie.agents.edit', $agent->id);
-                    $deleteUrl = route('mairie.agents.destroy', $agent->id);
+                    $deleteUrl = route('mairie.agents.destroy_agent', $agent->id);
 
                     return '<div class="action-buttons">
-                                <button class="btn-table-action delete btn-delete" data-url="'.$deleteUrl.'" title="Supprimer"><i class="fa fa-trash"></i></button>
-                                <a href="'.$editUrl.'" class="btn-table-action edit" title="Modifier"><i class="fa fa-edit"></i></a>
+                                <button class="btn-table-action delete btn-delete btn-danger" data-url="'.$deleteUrl.'" title="Supprimer"><i class="fa fa-trash"></i></button>
+                                <a href="'.$editUrl.'" class="btn-table-action edit btn-warning" title="Modifier"><i class="fa fa-edit"></i></a>
                             </div>';
                 })
                 ->rawColumns(['action'])

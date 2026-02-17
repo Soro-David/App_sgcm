@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="{{ asset('css/style_mairie.css') }}">
 <link rel="stylesheet" href="{{ asset('css/style_page.css') }}">
 <link rel="stylesheet" href="{{ asset('css/modals/mairie.css') }}">
+<link rel="stylesheet" href="{{ asset('css/action-buttons.css') }}">
 <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -25,6 +26,7 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
 
 {{-- Emplacement pour des CSS spécifiques à une page --}}
 @stack('css')

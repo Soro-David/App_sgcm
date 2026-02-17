@@ -99,8 +99,9 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="telephone" class="form-label">Numéro de Téléphone</label>
-                                <input type="text" class="form-control" id="telephone" name="telephone"
-                                    value="{{ old('telephone') }}">
+                                <input type="text" class="form-control" id="telephone" maxlength="10" minlength="10"
+                                    name="telephone" value="{{ old('telephone') }}"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
                             </div>
                             <div class="col-md-6">
                                 <label for="adresse" class="form-label">Adresse</label>

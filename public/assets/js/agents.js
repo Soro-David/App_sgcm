@@ -47,24 +47,45 @@ $(document).ready(function () {
     // Gestion de la suppression
     mairiesTableElement.on('click', '.btn-delete', function () {
         const deleteUrl = $(this).data('url');
-        if (confirm('Êtes-vous sûr de vouloir supprimer cette mairie ?')) {
-            $.ajax({
-                url: deleteUrl,
-                type: 'POST', // Laravel attend une requête POST pour la méthode DELETE via formulaire/AJAX
-                data: {
-                    // _token n'est plus nécessaire ici car il est déjà dans ajaxSetup
-                    _method: 'DELETE'
-                },
-                success: function (response) {
-                    alert(response.success || 'Suppression réussie.');
-                    table.ajax.reload(); // recharge les données de la table
-                },
-                error: function (jqXHR) {
-                    alert('Erreur lors de la suppression.');
-                    console.error(jqXHR.responseText);
-                }
-            });
-        }
+        
+        Swal.fire({
+            title: 'Êtes-vous sûr ?',
+            text: "Voulez-vous vraiment supprimer cet agent ? Cette action est irréversible.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Oui, supprimer',
+            cancelButtonText: 'Annuler'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: deleteUrl,
+                    type: 'POST',
+                    data: {
+                        _method: 'DELETE'
+                    },
+                    success: function (response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Supprimé !',
+                            text: response.success || 'Suppression réussie.',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        table.ajax.reload();
+                    },
+                    error: function (jqXHR) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erreur',
+                            text: jqXHR.responseJSON?.error || 'Erreur lors de la suppression.',
+                        });
+                        console.error(jqXHR.responseText);
+                    }
+                });
+            }
+        });
     });
 
     // Gestion du chargement dynamique des communes dans le modal

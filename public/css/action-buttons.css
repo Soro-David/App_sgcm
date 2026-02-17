@@ -1,0 +1,76 @@
+/* Styles pour les boutons d'action dans les DataTables */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-table-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    text-decoration: none;
+    color: #fff;
+}
+
+/* Bouton Edit - Jaune/Warning */
+.btn-table-action.edit.btn-warning {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.btn-table-action.edit.btn-warning:hover {
+    background-color: #ffb300;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+}
+
+/* Bouton Delete - Rouge/Danger */
+.btn-table-action.delete.btn-danger {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.btn-table-action.delete.btn-danger:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+/* Animation au clic */
+.btn-table-action:active {
+    transform: scale(0.95);
+}
+
+/* Style pour les icônes */
+.btn-table-action i {
+    pointer-events: none;
+}
+
+/* Amélioration visuelle pour les tableaux */
+table.dataTable tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Styles pour SweetAlert2 personnalisé */
+.swal2-popup {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+.swal2-confirm {
+    padding: 10px 24px !important;
+    font-weight: 500;
+}
+
+.swal2-cancel {
+    padding: 10px 24px !important;
+    font-weight: 500;
+}

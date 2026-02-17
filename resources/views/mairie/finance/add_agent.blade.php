@@ -66,7 +66,7 @@
                             <label for="type_agent" class="form-label">Type d'agent *</label>
                             <select name="type_agent" id="type_agent" class="form-select" required>
                                 <option value="" disabled selected>-- Sélectionnez un type d'agent --</option>
- 
+
                                 <option value="finance" {{ old('type_agent') == 'finance' ? 'selected' : '' }}>
                                     Agent Financier</option>
                                 <option value="caissier" {{ old('type_agent') == 'caissier' ? 'selected' : '' }}>
@@ -82,14 +82,17 @@
                         {{-- Contact 1 --}}
                         <div class="col-md-6 mb-4">
                             <label for="telephone1" class="form-label">Contact 1 *</label>
-                            <input type="tel" class="form-control" id="telephone1" name="telephone1" required
-                                value="{{ old('telephone1') }}">
+                            <input type="text" class="form-control" id="telephone1" name="telephone1" maxlength="10"
+                                required value="{{ old('telephone1') }}" placeholder="10 chiffres"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+
                         </div>
                         {{-- Contact 2 --}}
                         <div class="col-md-6 mb-4">
                             <label for="telephone2" class="form-label">Contact 2</label>
-                            <input type="tel" class="form-control" id="telephone2" name="telephone2"
-                                value="{{ old('telephone2') }}">
+                            <input type="text" class="form-control" id="telephone2" maxlength="10"
+                                name="telephone2" value="{{ old('telephone2') }}"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         </div>
                         {{-- Adresse e-mail --}}
                         <div class="col-md-6 mb-4">

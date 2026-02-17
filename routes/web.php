@@ -62,15 +62,14 @@ Route::match(['get', 'post'], '/mairie-logout', fn (Request $request) => app(Aut
 
 Route::get('/login-commercant', [AuthController::class, 'showLoginFinancier'])->name('login.commercant');
 Route::post('/login-commercant', [AuthController::class, 'login_commercant']);
-// Route::match(['get', 'post'], '/commercant-logout', fn (Request $request) => app(AuthController::class)->logout($request, 'commercant')
-// )->name('logout.commercant');
+
 Route::get('/commercant-logout', function (Request $request) {
     return app(AuthController::class)->logout($request, 'commercant');
-});
+})->name('logout.commercant.get');
 
 Route::post('/commercant-logout', function (Request $request) {
     return app(AuthController::class)->logout($request, 'commercant');
-});
+})->name('logout.commercant');
 
 Route::get('/login-agent', [AuthController::class, 'showLoginAgent'])->name('login.agent');
 Route::post('/login-agent', [AuthController::class, 'login_agent']);
@@ -189,8 +188,11 @@ Route::middleware(['auth:mairie,finance,financier', 'mairie_finance_bridge'])->p
             Route::post('/recensement-recouvrement', [AgentController::class, 'store_agent'])->name('store_agent');
             Route::get('/liste/agent', [AgentController::class, 'get_list_agent'])->name('get_list_agent');
             Route::get('/{mairie}/edit', [AgentController::class, 'edit'])->name('edit');
+            Route::get('/{id}/edit-personnel', [AgentController::class, 'editPersonnel'])->name('edit_personnel');
+            Route::put('/{id}/update-personnel', [AgentController::class, 'updatePersonnel'])->name('update_personnel');
             Route::put('/{mairie}', [AgentController::class, 'update'])->name('update');
             Route::delete('/{mairie}', [AgentController::class, 'destroy'])->name('destroy');
+            Route::delete('/agent/{id}', [AgentController::class, 'destroy_agent'])->name('destroy_agent');
             Route::get('/liste/data', [AgentController::class, 'get_list_mairie'])->name('get_list_mairie');
         });
 

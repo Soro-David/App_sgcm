@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion Commerçant | E-Messe</title>
+    <title>Connexion Commerçant | SGTC</title>
 
     <!-- Google Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,7 +45,7 @@
                 </div>
 
                 <div class="left-footer">
-                    <p>© 2026 E-Messe. Tous droits réservés.</p>
+                    <p>© 2026 SGTC. Tous droits réservés.</p>
                 </div>
             </div>
 
