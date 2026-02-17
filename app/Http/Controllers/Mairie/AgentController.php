@@ -157,9 +157,10 @@ class AgentController extends Controller
         ]);
 
         if ($validator->fails()) {
-            dd($validator->errors());
-
-            return redirect()->back()->withErrors($validator)->withInput();
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('error', 'Cette Adresse mail est deja utiliser pour un compte, utiliser une autre adresse SVP');
         }
 
         // dd($request->all());
