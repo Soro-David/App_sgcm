@@ -99,9 +99,9 @@ select.form-select {
 }
 
 .navbar .navbar-brand-wrapper .navbar-brand img {
-  max-height: 140px !important; /* Restored to a larger size */
-  width: 250px !important;
-  height: 250px !important;
+  max-height: 100% !important;
+  width: auto !important;
+  height: auto !important;
   object-fit: contain;
 }
 
