@@ -133,9 +133,10 @@ class AgentController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'genre' => 'required|in:masculin,féminin',
-            'date_naissance' => 'required|date',
-            'type_piece' => 'required|string|max:50',
-            'numero_piece' => 'required|string|max:100',
+            'date_naissance' => 'required|date|before:-16 years',
+            'type_piece' => 'nullable|string|max:50',
+            'numero_piece' => 'nullable|string|max:100',
+            'matricule' => 'required|string|max:100',
             'type_agent' => 'required|string|max:50',
             'adresse' => 'required|string|max:255',
             'telephone1' => 'required|string|max:20',
@@ -151,9 +152,12 @@ class AgentController extends Controller
                     }
                 },
             ],
+            'filiation' => 'required|string|max:255',
             'mairie_ref' => 'required|exists:mairies,mairie_ref',
             'region' => 'required|string',
             'commune' => 'required|string',
+        ], [
+            'date_naissance.before' => "il Doit avoir au moins 16 ans",
         ]);
 
         if ($validator->fails()) {
@@ -178,11 +182,13 @@ class AgentController extends Controller
                     'date_naissance' => $request->date_naissance,
                     'type_piece' => $request->type_piece,
                     'numero_piece' => $request->numero_piece,
+                    'matricule' => $request->matricule,
                     'role' => 'financiers',
                     'adresse' => $request->adresse,
                     'telephone1' => $request->telephone1,
                     'telephone2' => $request->telephone2,
                     'email' => $request->email,
+                    'filiation' => $request->filiation,
                     'otp_code' => $otp,
                     'otp_expires_at' => now()->addMinutes(30),
                     'mairie_ref' => $request->mairie_ref,
@@ -198,11 +204,13 @@ class AgentController extends Controller
                     'date_naissance' => $request->date_naissance,
                     'type_piece' => $request->type_piece,
                     'numero_piece' => $request->numero_piece,
+                    'matricule' => $request->matricule,
                     'role' => $request->type_agent,
                     'adresse' => $request->adresse,
                     'telephone1' => $request->telephone1,
                     'telephone2' => $request->telephone2,
                     'email' => $request->email,
+                    'filiation' => $request->filiation,
                     'otp_code' => $otp,
                     'otp_expires_at' => now()->addMinutes(30),
                     'mairie_ref' => $request->mairie_ref,
@@ -218,11 +226,13 @@ class AgentController extends Controller
                     'date_naissance' => $request->date_naissance,
                     'type_piece' => $request->type_piece,
                     'numero_piece' => $request->numero_piece,
+                    'matricule' => $request->matricule,
                     'role' => $request->type_agent,
                     'adresse' => $request->adresse,
                     'telephone1' => $request->telephone1,
                     'telephone2' => $request->telephone2,
                     'email' => $request->email,
+                    'filiation' => $request->filiation,
                     'remember_token' => $request->_token,
                     'otp_code' => $otp,
                     'otp_expires_at' => now()->addMinutes(30),
@@ -275,9 +285,10 @@ class AgentController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'genre' => 'required|in:masculin,féminin',
-            'date_naissance' => 'required|date',
-            'type_piece' => 'required|string|max:50',
-            'numero_piece' => 'required|string|max:100',
+            'date_naissance' => 'required|date|before:-16 years',
+            'type_piece' => 'nullable|string|max:50',
+            'numero_piece' => 'nullable|string|max:100',
+            'matricule' => 'required|string|max:100',
             'type_agent' => 'required|string|max:50',
             'adresse' => 'required|string|max:255',
             'telephone1' => 'required|string|max:20',
@@ -288,8 +299,11 @@ class AgentController extends Controller
                 'max:255',
 
             ],
+            'filiation' => 'required|string|max:255',
             'mairie_ref' => 'required|exists:mairies,mairie_ref',
 
+        ], [
+            'date_naissance.before' => "il Doit avoir au moins 16 ans",
         ]);
 
         if ($validator->fails()) {
@@ -308,11 +322,13 @@ class AgentController extends Controller
                 'date_naissance' => $request->date_naissance,
                 'type_piece' => $request->type_piece,
                 'numero_piece' => $request->numero_piece,
+                'matricule' => $request->matricule,
                 'type' => $request->type_agent,
                 'adresse' => $request->adresse,
                 'telephone1' => $request->telephone1,
                 'telephone2' => $request->telephone2,
                 'email' => $request->email,
+                'filiation' => $request->filiation,
                 'remember_token' => $request->_token,
                 'otp_code' => $otp,
                 'otp_expires_at' => now()->addMinutes(30),
@@ -395,14 +411,18 @@ class AgentController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'genre' => 'required|in:masculin,féminin',
-            'date_naissance' => 'required|date',
-            'type_piece' => 'required|string|max:50',
-            'numero_piece' => 'required|string|max:100',
+            'date_naissance' => 'required|date|before:-16 years',
+            'type_piece' => 'nullable|string|max:50',
+            'numero_piece' => 'nullable|string|max:100',
             'type_agent' => 'required|string|max:50',
             'adresse' => 'required|string|max:255',
+            'matricule' => 'nullable|string|max:100',
+            'filiation' => 'nullable|string|max:255',
             'telephone1' => 'required|string|max:20',
             'telephone2' => 'nullable|string|max:20',
             'email' => 'required|email|max:255',
+        ], [
+            'date_naissance.before' => "il Doit avoir au moins 16 ans",
         ]);
 
         try {
@@ -418,6 +438,8 @@ class AgentController extends Controller
                     'type_piece' => $request->type_piece,
                     'numero_piece' => $request->numero_piece,
                     'adresse' => $request->adresse,
+                    'matricule' => $request->matricule,
+                    'filiation' => $request->filiation,
                     'telephone1' => $request->telephone1,
                     'telephone2' => $request->telephone2,
                     'email' => $request->email,
@@ -437,6 +459,8 @@ class AgentController extends Controller
                         'numero_piece' => $request->numero_piece,
                         'role' => $request->type_agent,
                         'adresse' => $request->adresse,
+                        'matricule' => $request->matricule,
+                        'filiation' => $request->filiation,
                         'telephone1' => $request->telephone1,
                         'telephone2' => $request->telephone2,
                         'email' => $request->email,
@@ -456,6 +480,8 @@ class AgentController extends Controller
                         'type_piece' => $request->type_piece,
                         'numero_piece' => $request->numero_piece,
                         'adresse' => $request->adresse,
+                        'matricule' => $request->matricule,
+                        'filiation' => $request->filiation,
                         'telephone1' => $request->telephone1,
                         'telephone2' => $request->telephone2,
                         'email' => $request->email,
@@ -501,22 +527,37 @@ class AgentController extends Controller
 
     public function update(Request $request, string $id)
     {
+        $agent = Agent::findOrFail($id);
+        
         $request->validate([
-            // 'name' => 'required|string|max:255',
-            // 'email' => 'required|email',
-            // 'region' => 'required|string',
-            // 'commune' => 'required|integer|exists:communes,id'
+            'name' => 'required|string|max:255',
+            'genre' => 'required|in:masculin,féminin',
+            'date_naissance' => 'required|date|before:-16 years',
+            'matricule' => 'required|string|max:100',
+            'type_agent' => 'required|string|max:50',
+            'adresse' => 'required|string|max:255',
+            'telephone1' => 'required|string|max:20',
+            'telephone2' => 'nullable|string|max:20',
+            'email' => 'required|email|max:255',
+            'filiation' => 'required|string|max:255',
+        ], [
+            'date_naissance.before' => "il Doit avoir au moins 16 ans",
         ]);
 
-        $mairie = Agent::findOrFail($id);
-        $mairie->update([
+        $agent->update([
             'name' => $request->name,
+            'genre' => $request->genre,
+            'date_naissance' => $request->date_naissance,
+            'matricule' => $request->matricule,
+            'type' => $request->type_agent,
+            'adresse' => $request->adresse,
+            'telephone1' => $request->telephone1,
+            'telephone2' => $request->telephone2,
             'email' => $request->email,
-            'region' => $request->region,
-            'commune_id' => $request->commune,
+            'filiation' => $request->filiation,
         ]);
 
-        return redirect()->route('superadmin.mairies.index')->with('success', 'Mairie mise à jour avec succès.');
+        return redirect()->route('mairie.agents.list_agent')->with('success', "L'agent a été mis à jour avec succès.");
     }
 
     public function editProgramme(string $id)

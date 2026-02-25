@@ -10,7 +10,7 @@
                     <div class="card-body">
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <strong>Nom :</strong> {{ $commercant->nom }}
+                                <strong>Nom et Prénom :</strong> {{ $commercant->nom }}
                             </div>
                             <div class="col-md-6">
                                 <strong>Email :</strong> {{ $commercant->email ?? '-' }}

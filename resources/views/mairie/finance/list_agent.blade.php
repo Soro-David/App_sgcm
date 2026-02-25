@@ -13,7 +13,7 @@
                         <thead>
                             <tr>
                                 <th>Ajouter Par</th>
-                                <th>Nom</th>
+                                <th>Nom et Prénom</th>
                                 <th>Email</th>
                                 <th>Rôle</th>
                                 <th>Date de création</th>
@@ -21,7 +21,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {{-- Le corps du tableau sera rempli dynamiquement par DataTables --}}
+                            {{-- Le corps du tableau sera rempli  dynamiquement par DataTables --}}
                         </tbody>
                     </table>
                 </div>

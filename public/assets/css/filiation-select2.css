@@ -1,0 +1,92 @@
+/* Wrapper pleine largeur */
+.s2-filiation .select2-container {
+    width: 100% !important;
+}
+
+/* Bouton principal (imite .form-control Bootstrap) */
+.s2-filiation .select2-container--default .select2-selection--single {
+    height: calc(1.5em + .75rem + 2px);
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #212529;
+    background: #fff;
+    border: 1px solid #ced4da;
+    border-radius: .375rem;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.s2-filiation .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: calc(1.5em + .75rem + 2px);
+    padding: 0;
+    color: #212529;
+}
+
+.s2-filiation .select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: #6c757d;
+}
+
+.s2-filiation .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: calc(1.5em + .75rem + 2px);
+    right: 8px;
+}
+
+/* Focus / ouvert */
+.s2-filiation .select2-container--default.select2-container--focus .select2-selection--single,
+.s2-filiation .select2-container--default.select2-container--open .select2-selection--single {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25);
+}
+
+/* Dropdown */
+.select2-dropdown {
+    border: 1px solid #86b7fe;
+    border-radius: .375rem;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .12);
+    z-index: 99999;
+}
+
+.select2-search--dropdown .select2-search__field {
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    padding: .375rem .75rem;
+    font-size: .9rem;
+}
+
+.select2-results__option {
+    padding: .45rem .75rem;
+    font-size: .9rem;
+}
+
+.select2-results__option--highlighted {
+    background: #0d6efd !important;
+    color: #fff !important;
+}
+
+/* Indicateur "Créer : …" */
+.s2-new-tag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #198754;
+    font-weight: 500;
+}
+
+.s2-new-tag .s2-badge {
+    background: #d1e7dd;
+    color: #0a3622;
+    border-radius: 4px;
+    padding: 1px 7px;
+    font-size: .72em;
+    font-weight: 700;
+    white-space: nowrap;
+    letter-spacing: .05em;
+}
+
+/* Message "Tapez pour rechercher" */
+.s2-hint {
+    color: #6c757d;
+    font-size: .85em;
+    font-style: italic;
+}

@@ -528,15 +528,25 @@ class AgentController extends Controller
         $agent_id = $agent->id;
 
         $request->validate([
-            'libelle' => 'required|string|max:255',
+            'libelle' => 'required|string|max:255|unique:type_contribuables,libelle',
+        ], [
+            'libelle.required' => 'Le libellé est obligatoire.',
+            'libelle.unique' => 'Ce type de contribuable existe déjà.',
         ]);
 
-        // dd($request);
-        TypeContribuable::create([
+        $type = TypeContribuable::create([
             'libelle' => $request->libelle,
             'mairie_ref' => $mairie_ref,
             'agent_id' => $agent_id,
         ]);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Type de contribuable ajouté avec succès.',
+                'type' => $type,
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Type de contribuable ajouté avec succès.');
     }

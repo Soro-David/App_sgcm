@@ -47,11 +47,13 @@ class AgentFinanceController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'genre' => 'required|in:masculin,féminin',
-            'date_naissance' => 'required|date',
-            'type_piece' => 'required|string|max:50',
-            'numero_piece' => 'required|string|max:100',
+            'date_naissance' => 'required|date|before:-16 years',
+            'type_piece' => 'nullable|string|max:50',
+            'numero_piece' => 'nullable|string|max:100',
             'type_agent' => 'required|string|max:50',
             'adresse' => 'required|string|max:255',
+            'matricule' => 'nullable|string|max:100',
+            'filiation' => 'nullable|string|max:255',
             'telephone1' => 'required|string|max:20',
             'telephone2' => 'nullable|string|max:20',
             'email' => [
@@ -67,6 +69,8 @@ class AgentFinanceController extends Controller
                 },
             ],
             'mairie_ref' => 'required|exists:mairies,mairie_ref',
+        ], [
+            'date_naissance.before' => "il Doit avoir au moins 16 ans",
         ]);
 
         if ($validator->fails()) {
@@ -103,6 +107,8 @@ class AgentFinanceController extends Controller
                     'commune' => $mairie->commune,
                     'status' => 'pending',
                     'added_by' => $added_by,
+                    'matricule' => $request->matricule,
+                    'filiation' => $request->filiation,
                 ]);
             } else {
                 $agent = Finance::create([
@@ -123,6 +129,8 @@ class AgentFinanceController extends Controller
                     'commune' => $mairie->commune,
                     'status' => 'pending',
                     'added_by' => $added_by,
+                    'matricule' => $request->matricule,
+                    'filiation' => $request->filiation,
                 ]);
             }
 
@@ -170,9 +178,11 @@ class AgentFinanceController extends Controller
                     return $agent->created_at ? \Carbon\Carbon::parse($agent->created_at)->format('d/m/Y H:i') : 'N/A';
                 })
                 ->addColumn('action', function ($agent) {
-                    // Les routes edit/destroy à adapter si nécessaire
-                    return '<button class="btn btn-warning btn-sm" title="Modifier"><i class="fa fa-edit"></i></button> '.
-                           '<button class="btn btn-danger btn-sm btn-delete" title="Supprimer"><i class="fa fa-trash"></i></button>';
+                    $editUrl = route('mairie.finance.edit', ['source' => $agent->source_table, 'id' => $agent->id]);
+                    $deleteUrl = route('mairie.finance.destroy', ['source' => $agent->source_table, 'id' => $agent->id]);
+
+                    return '<a href="'.$editUrl.'" class="btn btn-warning btn-sm" title="Modifier"><i class="fa fa-edit"></i></a> '.
+                           '<button class="btn btn-danger btn-sm btn-delete" data-url="'.$deleteUrl.'" title="Supprimer"><i class="fa fa-trash"></i></button>';
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -181,6 +191,102 @@ class AgentFinanceController extends Controller
             \Log::error('Erreur lors de la récupération des agents finance pour DataTables : '.$e->getMessage());
 
             return response()->json(['error' => 'Une erreur interne est survenue : '.$e->getMessage()], 500);
+        }
+    }
+
+    public function edit($source, $id)
+    {
+        $agent = $source === 'financier' ? Financier::find($id) : Finance::find($id);
+
+        if (! $agent) {
+            return redirect()->back()->with('error', 'Agent introuvable.');
+        }
+
+        $mairie = Auth::guard('mairie')->user() ?? Auth::guard('finance')->user();
+
+        return view('mairie.finance.edit_agent', compact('agent', 'source', 'mairie'));
+    }
+
+    public function update(Request $request, $source, $id)
+    {
+        $agent = $source === 'financier' ? Financier::find($id) : Finance::find($id);
+
+        if (! $agent) {
+            return redirect()->back()->with('error', 'Agent introuvable.');
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'genre' => 'required|in:masculin,féminin',
+            'date_naissance' => 'required|date|before:-16 years',
+            'type_piece' => 'nullable|string|max:50',
+            'numero_piece' => 'nullable|string|max:100',
+            'type_agent' => 'required|string|max:50',
+            'adresse' => 'required|string|max:255',
+            'matricule' => 'nullable|string|max:100',
+            'filiation' => 'nullable|string|max:255',
+            'telephone1' => 'required|string|max:20',
+            'telephone2' => 'nullable|string|max:20',
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                function ($attribute, $value, $fail) use ($agent, $source) {
+                    $existsInFinance = Finance::where('email', $value)->where('id', '!=', $source === 'finance' ? $agent->id : 0)->exists();
+                    $existsInFinancier = Financier::where('email', $value)->where('id', '!=', $source === 'financier' ? $agent->id : 0)->exists();
+                    if ($existsInFinance || $existsInFinancier) {
+                        $fail('Cette adresse e-mail est déjà utilisée.');
+                    }
+                },
+            ],
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        try {
+            $data = [
+                'name' => $request->name,
+                'genre' => $request->genre,
+                'date_naissance' => $request->date_naissance,
+                'type_piece' => $request->type_piece,
+                'numero_piece' => $request->numero_piece,
+                'adresse' => $request->adresse,
+                'telephone1' => $request->telephone1,
+                'telephone2' => $request->telephone2,
+                'email' => $request->email,
+                'matricule' => $request->matricule,
+                'filiation' => $request->filiation,
+            ];
+
+            if ($source === 'finance') {
+                $data['role'] = $request->type_agent;
+            }
+
+            $agent->update($data);
+
+            return redirect()->route('mairie.finance.index')
+                ->with('success', "L'agent a été mis à jour avec succès.");
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->with('error', 'Erreur lors de la mise à jour : '.$e->getMessage());
+        }
+    }
+
+    public function destroy($source, $id)
+    {
+        try {
+            $agent = $source === 'financier' ? Financier::find($id) : Finance::find($id);
+
+            if (! $agent) {
+                return response()->json(['error' => 'Agent introuvable.'], 404);
+            }
+
+            $agent->delete();
+
+            return response()->json(['success' => 'Agent supprimé avec succès.']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur lors de la suppression : '.$e->getMessage()], 500);
         }
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laravel\Sanctum\HasApiTokens;
 
 class Agent extends Authenticatable
@@ -37,6 +37,9 @@ class Agent extends Authenticatable
         'telephone2',
         'last_activity',
         'added_by',
+        'matricule',
+        'filiation',
+        'photo_profil',
     ];
 
     protected $casts = [
@@ -44,7 +47,7 @@ class Agent extends Authenticatable
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'last_activity' => 'datetime',
-        'taxe_id' => 'array',  
+        'taxe_id' => 'array',
         'secteur_id' => 'array',
         // 'secteur_id' => 'integer',
     ];
@@ -54,7 +57,6 @@ class Agent extends Authenticatable
         return $this->belongsTo(Mairie::class, 'mairie_ref', 'mairie_ref');
     }
 
-
     public function commune()
     {
         return $this->belongsTo(Commune::class);
@@ -62,7 +64,7 @@ class Agent extends Authenticatable
 
     public function taxes()
     {
-        return $this->belongsToMany(Taxe::class); 
+        return $this->belongsToMany(Taxe::class);
     }
 
     public function secteurs()
@@ -86,9 +88,7 @@ class Agent extends Authenticatable
     }
 
     public function isOnline()
-{
-    return $this->last_activity && $this->last_activity->gt(now()->subMinutes(5));
-}
-
-
+    {
+        return $this->last_activity && $this->last_activity->gt(now()->subMinutes(5));
+    }
 }

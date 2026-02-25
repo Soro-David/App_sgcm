@@ -39,6 +39,9 @@ class Mairie extends Authenticatable
         'last_activity',
         'mairie_ref',
         'added_by',
+        'matricule',
+        'filiation',
+        'photo_profil',
     ];
 
     /**

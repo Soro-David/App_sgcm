@@ -34,6 +34,9 @@ class Finance extends Authenticatable
         'status',
         'added_by',
         'remember_token',
+        'matricule',
+        'filiation',
+        'photo_profil',
     ];
 
     protected $hidden = [

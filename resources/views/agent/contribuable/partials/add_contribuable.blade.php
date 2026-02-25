@@ -1,6 +1,6 @@
 <div class="modal fade" id="addTypeModal" tabindex="-1" aria-labelledby="addTypeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form method="POST" action="{{ route('agent.contribuable.ajouter_contribuable') }}">
+        <form id="addTypeForm" method="POST" action="{{ route('agent.contribuable.ajouter_contribuable') }}">
             @csrf
             <div class="modal-content">
                 <div class="modal-header">

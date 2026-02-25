@@ -159,6 +159,69 @@ $(document).ready(function () {
             }
         });
     });
+
+    // Logique de soumission du formulaire de nouveau type via AJAX
+    $('#addTypeForm').on('submit', function (e) {
+        e.preventDefault();
+        const form = this;
+        const formData = new FormData(form);
+        const submitButton = $(this).find('button[type="submit"]');
+        const originalButtonText = submitButton.html();
+
+        submitButton.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>...');
+
+        $.ajax({
+            url: $(form).attr('action'),
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Succès !',
+                        text: response.message,
+                        confirmButtonColor: '#009E60',
+                        timer: 1500
+                    });
+
+                    // Ajouter la nouvelle option au Select2
+                    const newOption = new Option(response.type.libelle, response.type.id, true, true);
+                    $('#type_contribuable').append(newOption).trigger('change');
+
+                    // Fermer le modal
+                    $('.btn-close[data-bs-dismiss="modal"]').click();
+                    $('#addTypeModal').modal('hide');
+                    form.reset();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erreur',
+                        text: response.message || 'Une erreur est survenue.',
+                        confirmButtonColor: '#009E60'
+                    });
+                }
+            },
+            error: function (xhr) {
+                let errorMsg = "Une erreur serveur est survenue.";
+                if (xhr.status === 422) {
+                    errorMsg = "Le libellé est requis et doit être valide.";
+                }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur',
+                    text: errorMsg,
+                    confirmButtonColor: '#009E60'
+                });
+            },
+            complete: function () {
+                submitButton.prop('disabled', false).html(originalButtonText);
+            }
+        });
+    });
 });
 
 

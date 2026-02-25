@@ -90,7 +90,7 @@ class CommerceController extends Controller
         if (! $agent) {
             return redirect()->route('login.agent')->with('error', 'Connexion requise.');
         }
-        
+
         // dd($request->all());
         $data = $request->validate([
             'nom' => 'required|string|max:255',
@@ -102,6 +102,11 @@ class CommerceController extends Controller
             'taxe_ids.*' => 'exists:taxes,id',
             'agent_id' => 'nullable|string|max:255',
             'num_commerce' => 'required|string|max:255|unique:commercants,num_commerce',
+        ], [
+            'nom.required' => 'Le nom est obligatoire.',
+            'num_commerce.unique' => 'Ce numéro de commerce est déjà utilisé.',
+            'secteur_id.required' => 'Le secteur est obligatoire.',
+            'taxe_ids.required' => 'Veuillez sélectionner au moins une taxe.',
         ]);
         // dd($data);
 

@@ -7,7 +7,7 @@
 <title>@yield('title', 'Gestion Foncière de Mairie')</title>
 
 {{-- Styles CSS --}}
-<link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
+
 <link rel="stylesheet" href="{{ asset('assets/vendors/typicons/typicons.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/vendors/css/vendor.bundle.base.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">

@@ -1,11 +1,11 @@
 @extends('agent.layouts.app')
 
 @section('content')
-    <div class="card">
+    <div class="card m-4">
         <div class="modal-header justify-content-center">
             <h2 class="modal-title">Ajout d'un contribuable</h2>
         </div>
-        <div class="card-body">
+        <div class="card-body p-4">
             <div class="container mt-4">
                 <form id="addCommerceForm" method="POST" action="{{ route('agent.contribuable.store') }}"
                     enctype="multipart/form-data">
@@ -44,7 +44,7 @@
 
                             <!-- Photos des pièces - Côte à côte -->
                             <div class="col-md-6">
-                                <div class="photo-piece-container">
+                                <div class="photo-piece-container mt-4">
                                     <div class="photo-piece-box">
                                         <img id="preview_recto" src="{{ asset('images/idrecto.jpg') }}" alt="Pièce Recto"
                                             class="img-piece">
@@ -62,7 +62,7 @@
                             </div>
 
                             <div class="col-md-6">
-                                <div class="photo-piece-container">
+                                <div class="photo-piece-container mt-4">
                                     <div class="photo-piece-box">
                                         <img id="preview_verso" src="{{ asset('images/default_piece_verso.jpg') }}"
                                             alt="Pièce Verso" class="img-piece">
@@ -87,6 +87,7 @@
                                 <input type="text" class="form-control" id="nom" name="nom" required
                                     value="{{ old('nom') }}">
                             </div>
+
                             <div class="col-md-6">
                                 <label for="num_commerce" class="form-label">Numéro de commerce</label>
                                 <input type="text" class="form-control" id="num_commerce" name="num_commerce"
@@ -109,7 +110,7 @@
                                     value="{{ old('adresse') }}">
                             </div>
                             <div class="col-md-6">
-                                <label for="secteur_id" class="form-label">Secteur</label>
+                                <label for="secteur_id" class="form-label">Secteur d'activités</label>
                                 <select name="secteur_id" id="secteur_id" class="form-select" required>
                                     <option value="" disabled selected>-- Sélectionnez un secteur --</option>
                                     @foreach ($nomsSecteurs as $secteur)
@@ -130,7 +131,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-outline-success mt-2" data-bs-toggle="modal"
                                     data-bs-target="#addTypeModal">
                                     +
                                 </button>

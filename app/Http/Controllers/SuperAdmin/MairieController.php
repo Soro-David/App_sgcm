@@ -39,6 +39,12 @@ class MairieController extends Controller
             'email' => 'required|email|unique:mairies,email',
             'region' => 'required|string',
             'commune' => 'required|string',
+        ], [
+            'email.unique' => 'Cette adresse e-mail est déjà utilisée.',
+            'email.required' => 'L\'adresse e-mail est obligatoire.',
+            'name.required' => 'Le nom de la mairie est obligatoire.',
+            'region.required' => 'La région est obligatoire.',
+            'commune.required' => 'La commune est obligatoire.',
         ]);
 
         if ($validator->fails()) {

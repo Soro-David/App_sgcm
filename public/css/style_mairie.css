@@ -4,7 +4,45 @@
 
 @media (min-width: 992px) {
   .main-panel {
-    margin-left: 300px;
+    margin-left: 250px; /* Reduced from 300px to match sidebar width */
+    transition: margin-left 0.25s ease;
+  }
+  
+  .sidebar-icon-only .main-panel {
+    margin-left: 70px !important;
+  }
+  
+  .sidebar-icon-only .sidebar {
+    width: 70px !important;
+  }
+  
+  .sidebar-icon-only .navbar-brand-wrapper {
+    width: 70px !important;
+  }
+  
+  .sidebar-icon-only .brand-logo {
+    display: none !important;
+  }
+  
+  .sidebar-icon-only .navbar-brand-inner-wrapper {
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  .sidebar-icon-only .sidebar .nav-item .menu-title,
+  .sidebar-icon-only .sidebar .nav-item .menu-arrow {
+    display: none !important;
+  }
+  
+  .sidebar-icon-only .sidebar .nav-item .nav-link {
+    justify-content: center !important;
+    padding: 10px 0 !important;
+  }
+  
+  .sidebar-icon-only .sidebar .nav-item .nav-link i.menu-icon {
+    margin-right: 0 !important;
+    font-size: 1.5rem !important;
   }
 }
 

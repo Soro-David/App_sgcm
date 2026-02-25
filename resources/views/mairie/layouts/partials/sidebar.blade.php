@@ -1,5 +1,5 @@
 @php
-    // Récupère l'agent de la mairie ou l'agent de finance connecté avec priorité aux rôles spécifiques.
+    // Récupère  l'agent de la mairie ou l'agent de finance connecté avec priorité aux rôles spécifiques.
     $agent =
         Auth::guard('agent')->user() ??
         (Auth::guard('financier')->user() ?? (Auth::guard('finance')->user() ?? Auth::guard('mairie')->user()));
@@ -9,7 +9,7 @@
 {{-- Votre code Sidebar (CORRIGÉ) --}}
 
 <nav class="sidebar sidebar-offcanvas " id="sidebar">
-    <div class="d-flex flex-column justify-content-between h-10">
+    <div class="d-flex flex-column justify-content-between h-100">
         <ul class="nav flex-column">
             <!-- Tableau de bord -->
             <li class="nav-item">
@@ -67,7 +67,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('mairie.secteurs.index') }}">
                         <i class="fas fa-layer-group menu-icon"></i>
-                        <span class="menu-title">Secteurs</span>
+                        <span class="menu-title">Secteurs d'activités</span>
                     </a>
                 </li>
             @endif
@@ -277,15 +277,31 @@
                     <span class="menu-title">Liste des contribuables</span>
                 </a>
             </li>
+            {{-- <li class="nav-item">
+                <a class="nav-link" href="{{ route('mairie.profile.show') }}">
+                    <i class="fa-solid fa-user-circle menu-icon"></i>
+                    <span class="menu-title">Mon profil</span>
+                </a>
+            </li> --}}
         </ul>
 
         <!-- Déconnexion -->
-        <div class="mt-auto mb-3 px-3">
-            {{-- Utilisation de la même logique de formulaire de déconnexion que  le header --}}
-            <form id="logout-form-sidebar" method="POST" action="{{ route('mairie.logout') }}">
+        {{-- <div class="mt-5 mb-3 px-3">
+            <form id="logout-form-sidebar" method="POST" action="">
                 @csrf
-                <button type="submit" class="btn btn-danger w-100">
-                    <i class="fas fa-sign-out-alt me-2"></i> Déconnexion
+                <button type="submit" class="btn btn-outline-danger w-100">
+                    Déconnexion <i class="fas fa-sign-out-alt me-2"></i>
+                </button>
+            </form>
+        </div> --}}
+
+        <div class="mt-auto mb-3 px-2 logout-container">
+            <form method="POST" action="{{ route('mairie.logout') }}">
+                @csrf
+                <button type="submit"
+                    class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center logout-btn">
+                    <i class="fas fa-sign-out-alt logout-icon"></i>
+                    <span class="logout-text ms-2">Déconnexion</span>
                 </button>
             </form>
         </div>

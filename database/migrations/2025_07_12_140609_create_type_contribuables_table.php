@@ -11,17 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('type_contribuables', function (Blueprint $table) {
-            $table->id();
+        if (!Schema::hasTable('type_contribuables')) {
+            Schema::create('type_contribuables', function (Blueprint $table) {
+                $table->id();
 
-            // Limite la taille pour éviter l'erreur d'index
-            $table->string('libelle', 191)->unique();
+                // Limite la taille pour éviter l'erreur d'index
+                $table->string('libelle', 191)->unique();
 
-            $table->foreignId('agent_id')->constrained()->onDelete('cascade')->nullable();
-            $table->string('mairie_ref')->nullable();
-            $table->timestamps();
-        });
-
+                $table->foreignId('agent_id')->constrained()->onDelete('cascade')->nullable();
+                $table->string('mairie_ref')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

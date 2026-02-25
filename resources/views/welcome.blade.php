@@ -15,6 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" />
 
     <!-- Styles -->
     <link rel="stylesheet" href="{{ asset('css/welcome.css') }}">
@@ -36,7 +37,8 @@
 
     <nav>
         <div class="logo">
-            <i class="fas fa-city me-2"></i> SGTC
+            <img src="{{ asset('assets/images/logo_navbar.png') }}" alt="Logo SGTC"
+                style="height: 100px; width: 100px;">
         </div>
         {{-- <div>
             <a href="#portals" class="btn btn-primary">Accéder aux Portails</a>
@@ -111,7 +113,7 @@
     </div>
 
     <footer class="footer">
-        <p>&copy; {{ date('Y') }} SGCM - Système de Gestion des Commerçants et Collectes. Tous droits réservés.</p>
+        <p>&copy; {{ date('Y') }} SGTC - Système de Gestion des Taxes Communales. Tous droits réservés.</p>
         <p class="mt-2" style="font-size: 0.8rem; opacity: 0.7;">Solution technologique pour une gouvernance locale
             transparente.</p>
     </footer>

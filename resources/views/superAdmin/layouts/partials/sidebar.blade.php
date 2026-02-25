@@ -4,7 +4,7 @@
 
             {{-- Tableau de bord --}}
             <li class="nav-item">
-                <a class="nav-link" href="">
+                <a class="nav-link" href="{{ route('superadmin.dashboard') }}">
                     <i class="typcn typcn-device-desktop menu-icon"></i>
                     <span class="menu-title">Tableau de bord</span>
                 </a>
@@ -24,33 +24,23 @@
                 </a>
             </li>
 
-            {{-- Gestion des Taxes --}}
             {{-- <li class="nav-item">
-                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
-                    href="#menu-taxes" aria-expanded="false" aria-controls="menu-taxes">
-                    <div>
-                        <i class="typcn typcn-document-text menu-icon"></i>
-                        <span class="menu-title">Gestion des Taxes</span>
-                    </div>
-                    <i class="menu-arrow fas fa-angle-down rotate-icon"></i>
+                <a class="nav-link" href="{{ route('superadmin.profile.show') }}">
+                    <i class="fa-solid fa-user-circle menu-icon"></i>
+                    <span class="menu-title">Mon profil</span>
                 </a>
-                <div class="collapse" id="menu-taxes">
-                    <ul class="nav flex-column sub-menu">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('superadmin.taxes.index') }}">Liste des taxes</a>
-                        </li>
-                    </ul>
-                </div>
             </li> --}}
 
         </ul>
 
         <!-- Bouton Déconnexion -->
-        <div class="mt-5 mb-3 px-3">
+        <div class="mt-auto mb-3 px-2 logout-container">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit" class="btn btn-danger w-100">
-                    Déconnexion <i class="fas fa-sign-out-alt me-2"></i>
+                <button type="submit"
+                    class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center logout-btn">
+                    <i class="fas fa-sign-out-alt logout-icon"></i>
+                    <span class="logout-text ms-2">Déconnexion</span>
                 </button>
             </form>
         </div>

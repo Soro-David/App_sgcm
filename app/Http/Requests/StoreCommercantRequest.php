@@ -57,6 +57,13 @@ class StoreCommercantRequest extends FormRequest
             'secteur_id.required' => 'Le secteur est obligatoire.',
             'photo_profil.image' => 'Le fichier de profil doit être une image.',
             'photo_profil.max' => 'La photo de profil ne doit pas dépasser 2 Mo.',
+            'email.unique' => 'Cet e-mail est déjà utilisé par un autre contribuable.',
+            'num_commerce.unique' => 'Ce numéro de commerce est déjà utilisé.',
         ];
+    }
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    {
+        \Illuminate\Support\Facades\Log::info('Validation FAILED for StoreCommercantRequest', $validator->errors()->toArray());
+        parent::failedValidation($validator);
     }
 }

@@ -28,7 +28,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Ajouter Par</th>
-                                <th>Nom</th>
+                                <th>Nom et Prénom</th>
                                 <th>Email</th>
                                 <th>Type</th>
                                 <th>Date de Création</th>

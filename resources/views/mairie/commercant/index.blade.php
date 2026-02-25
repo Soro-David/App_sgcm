@@ -43,7 +43,7 @@
                                 </th>
                                 <th>Date de Création</th>
                                 <th>Numero Commerce</th>
-                                <th>Nom</th>
+                                <th>Nom et Prénom</th>
                                 <th>Email</th>
                                 <th>Téléphone</th>
                                 <th>Action</th>

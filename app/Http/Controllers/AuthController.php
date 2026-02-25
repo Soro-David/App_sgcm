@@ -180,6 +180,10 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|confirmed|min:6',
             'role' => 'required|in:superadmin',
+        ], [
+            'email.unique' => 'Cette adresse e-mail est déjà utilisée.',
+            'email.required' => 'L\'adresse e-mail est obligatoire.',
+            'password.confirmed' => 'La confirmation du mot de passe ne correspond pas.',
         ]);
 
         $user = User::create([

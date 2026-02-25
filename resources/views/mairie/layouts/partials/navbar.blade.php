@@ -15,16 +15,19 @@
                 $roleLabel = 'Admin Mairie';
                 $roleSubtitle = 'Administration Communale';
                 $roleColor = '#e74c3c'; // Rouge
+                $roleColor2 = '#e74c3c';
                 $roleIcon = 'fas fa-user-cog';
             } elseif ($user->role === 'financiers') {
                 $roleLabel = 'Admin Financier';
                 $roleSubtitle = 'Gestion des Finances';
                 $roleColor = '#f39c12'; // Orange/Jaune
+                $roleColor2 = '#e74c3c';
                 $roleIcon = 'fas fa-file-invoice-dollar';
             } elseif ($user->role === 'caisié') {
                 $roleLabel = 'Caissier';
                 $roleSubtitle = 'Régie des Recettes';
                 $roleColor = '#27ae60'; // Vert
+                $roleColor2 = '#e74c3c';
                 $roleIcon = 'fas fa-cash-register';
             }
         } elseif ($user instanceof \App\Models\Finance) {
@@ -32,52 +35,49 @@
                 $roleLabel = 'Admin Financier';
                 $roleSubtitle = 'Direction Financière';
                 $roleColor = '#f39c12';
+                $roleColor2 = '#e74c3c';
                 $roleIcon = 'fas fa-chart-line';
             } elseif ($user->role === 'finance') {
                 $roleLabel = 'Agent Financier';
                 $roleSubtitle = 'Trésorerie & Comptabilité';
                 $roleColor = '#2980b9'; // Bleu
+                $roleColor2 = '#e74c3c';
                 $roleIcon = 'fas fa-user-check';
             } elseif ($user->role === 'caissier') {
                 $roleLabel = 'Caissier';
                 $roleSubtitle = 'Service de Caisse';
                 $roleColor = '#27ae60';
+                $roleColor2 = '#e74c3c';
                 $roleIcon = 'fas fa-money-bill-wave';
             }
         } elseif ($user instanceof \App\Models\Financier) {
             $roleLabel = 'Responsable financier';
             $roleSubtitle = 'Direction Financière';
             $roleColor = '#f39c12';
+            $roleColor2 = '#e74c3c';
             $roleIcon = 'fas fa-chart-line';
         } elseif ($user instanceof \App\Models\Agent) {
             $roleLabel = 'Agent ' . ucfirst($user->type);
             $roleSubtitle = 'Opérations de Terrain';
             $roleColor = '#8e44ad'; // Violet
+            $roleColor2 = '#e74c3c';
             $roleIcon = 'fas fa-walking';
         }
     }
 @endphp
 
 <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row" id="main-navbar">
-    <div class="navbar-brand-wrapper d-flex justify-content-center">
-        <div class="navbar-brand-inner-wrapper d-flex justify-content-center align-items-center w-100">
-
-            <a class="navbar-brand d-flex flex-column align-items-center text-center"
-                href="{{ route('mairie.dashboard.index') }}" style="line-height: 1; text-decoration: none;">
-
-                <span class="fw-bold text-white text-uppercase"
-                    style="font-size: 2.9rem; letter-spacing: 1px; font-family: 'Outfit', sans-serif;">
-                    SGTC
-                </span>
-
-                <small class="text-white" style="font-size: 0.7rem; letter-spacing: -0.5px;">
-                    Système de gestion des taxes communales
-                </small>
-
+    <div class="navbar-brand-wrapper d-flex align-items-center justify-content-center"
+        style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100 px-3">
+            <a class="navbar-brand d-flex justify-content-center align-items-center brand-logo"
+                href="{{ route('mairie.dashboard.index') }}">
+                <img src="{{ asset('assets/images/logo_navbar.png') }}" alt="Logo SGTC">
             </a>
-
+            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                <i class="fas fa-bars text-white"></i>
+            </button>
         </div>
-
     </div>
     <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end"
         style="margin-left: 0px; box-shadow: 0 2px 15px rgba(0,0,0,0.1);">
@@ -93,7 +93,7 @@
                 <a class="nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center"
                     id="notificationDropdown" href="#" data-bs-toggle="dropdown">
                     <i class="fas fa-bell" style="color: {{ $roleColor }}; font-size: 1.4rem;"></i>
-                    <span class="count" style="background: {{ $roleColor }};"></span>
+                    <span class="count" style="background: {{ $roleColor2 }};"></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list shadow-sm"
                     aria-labelledby="notificationDropdown" style="border-radius: 12px; border: none;">
@@ -113,24 +113,21 @@
                     </a>
                 </div>
             </li>
+
             <li class="nav-item nav-profile dropdown">
-                <a class="nav-link" href="#" data-bs-toggle="dropdown" id="profileDropdown">
+                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-toggle="dropdown"
+                    id="profileDropdown">
                     <div class="profile-img-container" style="position: relative;">
-                        <img src="{{ Auth::user()->photo ?? asset('images/default_avatar.jpg') }}" alt="Profile"
-                            class="img-xs rounded-circle" />
-
-
+                        <img src="{{ Auth::user()->photo_profil ? asset('storage/' . Auth::user()->photo_profil) : asset('images/default_avatar.jpg') }}"
+                            alt="Profile" class="img-xs rounded-circle"
+                            style="border: 2px solid {{ $roleColor }}; padding: 2px;" />
                     </div>
                 </a>
-                <div class="dropdown-menu dropdown-menu-right navbar-dropdown shadow-sm"
+                <div class="dropdown-menu dropdown-menu-right dropdown-menu-end navbar-dropdown shadow-sm"
                     aria-labelledby="profileDropdown" style="border-radius: 12px; border: none; padding: 10px;">
-                    <a class="dropdown-item py-2" href="#">
+                    <a class="dropdown-item py-2" href="{{ route('mairie.profile.show') }}">
                         <i class="typcn typcn-user text-primary me-2"></i>
                         Mon Profil
-                    </a>
-                    <a class="dropdown-item py-2" href="#">
-                        <i class="typcn typcn-cog-outline text-primary me-2"></i>
-                        Paramètres
                     </a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item py-2" href="#"

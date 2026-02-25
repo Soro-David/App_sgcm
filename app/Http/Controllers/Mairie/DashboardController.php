@@ -37,10 +37,10 @@ class DashboardController extends Controller
         // Base statistics for everyone
         $stats = [
             'onlineAgentsCount' => Agent::where('mairie_ref', $mairieRef)
-                ->where('last_activity', '>=', Carbon::now()->subMinutes(5))
+                ->where('last_activity', '>=', Carbon::now()->subMinutes(15))
                 ->count(),
             'onlineContribuablesCount' => Commercant::where('mairie_ref', $mairieRef)
-                ->where('last_activity', '>=', Carbon::now()->subMinutes(5))
+                ->where('last_activity', '>=', Carbon::now()->subMinutes(15))
                 ->count(),
             'totalContribuables' => Commercant::where('mairie_ref', $mairieRef)->count(),
             'countRecouvrement' => 0,

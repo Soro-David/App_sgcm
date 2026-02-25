@@ -57,8 +57,8 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center gap-2" href="{{ route('agent.profile') }}">
-                        <i class="fa-solid fa-business-time menu-icon"></i>
+                    <a class="nav-link d-flex align-items-center gap-2"  href="{{ route('agent.profile') }}">
+                        <i class="fa-solid fa-id-card-clip menu-icon"></i>
                         <span class="menu-title">Mon compte</span>
                     </a>
                 </li>
@@ -69,8 +69,8 @@
         <div class="mt-5 mb-3 px-3">
             <form method="POST" action="{{ route('agent.logout') }}">
                 @csrf
-                <button type="submit" class="btn btn-danger w-100">
-                    <i class="fas fa-sign-out-alt me-2"></i> Déconnexion
+                <button type="submit" class="btn btn-outline-danger w-100">
+                    Déconnexion <i class="fas fa-sign-out-alt me-2"></i>
                 </button>
             </form>
         </div>

@@ -34,7 +34,10 @@ class Financier extends Authenticatable
         'otp_expires_at',
         'status',
         'added_by',
-        "created_at"
+        "created_at",
+        'matricule',
+        'filiation',
+        'photo_profil',
     ];
 
    

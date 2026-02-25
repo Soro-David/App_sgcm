@@ -6,7 +6,7 @@
 
     <div class="row mb-4">
         <!-- Carte Solde Compte -->
-        <div class="col-md-3 grid-margin stretch-card">
+        <div class="col-md-4 grid-margin stretch-card">
             <div class="card bg-success text-white shadow-sm border-0">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -22,7 +22,7 @@
         </div>
 
         <!-- Carte Cumul Taxes -->
-        <div class="col-md-3 grid-margin stretch-card">
+        {{-- <div class="col-md-3 grid-margin stretch-card">
             <div class="card bg-warning text-white shadow-sm border-0">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -35,10 +35,10 @@
                     <p class="mt-2 mb-0 text-white-50 small">Total des taxes assignées</p>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <!-- Carte Nombre de Taxes -->
-        <div class="col-md-3 grid-margin stretch-card">
+        <div class="col-md-4 grid-margin stretch-card">
             <div class="card bg-info text-white shadow-sm border-0">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -54,7 +54,7 @@
         </div>
 
         <!-- Carte Raccourci -->
-        <div class="col-md-3 grid-margin stretch-card">
+        <div class="col-md-4 grid-margin stretch-card">
             <div class="card bg-dark text-white shadow-sm border-0">
                 <div class="card-body d-flex flex-column justify-content-between">
                     <div>

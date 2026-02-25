@@ -1,29 +1,14 @@
 <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-    <div class="navbar-brand-wrapper d-flex justify-content-center">
-
-        <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">
-            {{-- <a class="navbar-brand brand-logo d-flex flex-column align-items-start" href="" style="line-height: 1;">
-                <span class="fw-bold text-white text-uppercase"
-                    style="font-size: 2.5rem; letter-spacing: 5px;">SGCTC</span>
-                <span class="text-white" style="font-size: 0.6rem; font-weight: 400;"> Système de gestion et de collecte des taxes communales</span>
-            </a> --}}
-
-            <a class="navbar-brand d-flex flex-column align-items-center text-center"
-                href="" style="line-height: 1; text-decoration: none;">
-
-                <span class="fw-bold text-white text-uppercase"
-                    style="font-size: 3.5rem; letter-spacing: 2px; font-family: 'Outfit', sans-serif;">
-                    SGTC
-                </span>
-
-                <small class="text-white" style="font-size: 0.7rem; letter-spacing: -0.5px;">
-                    Système de gestion des taxes communales
-                </small>
-
+    <div class="navbar-brand-wrapper d-flex align-items-center justify-content-center"
+        style="background-color: #1000f7 !important; border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100 px-3">
+            <a class="navbar-brand d-flex justify-content-center align-items-center brand-logo"
+                href="{{ route('commercant.dashboard') }}">
+                <img src="{{ asset('assets/images/logo_navbar.png') }}" alt="Logo SGTC">
             </a>
-            <a class="navbar-brand brand-logo-mini d-none d-lg-block" href="">
-                <span class="fw-bold text-white text-uppercase" style="font-size: 1.5rem;"></span>
-            </a>
+            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                <i class="fas fa-bars text-white"></i>
+            </button>
         </div>
     </div>
 
@@ -82,11 +67,11 @@
             </li>
             <li class="nav-item nav-profile dropdown">
                 <a class="nav-link" href="#" data-bs-toggle="dropdown" id="profileDropdown">
-                    <img src="{{ Auth::user()->photo ?? asset('images/default_avatar.jpg') }}" alt="Profile"
-                        class="img-xs rounded-circle" style="margin-top: -11px;" />
+                    <img src="{{ Auth::user()->photo_profil ? asset('storage/' . Auth::user()->photo_profil) : asset('images/default_avatar.jpg') }}"
+                        alt="Profile" class="img-xs rounded-circle" style="margin-top: -11px;" />
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-                    <a class="dropdown-item" href="#">
+                    <a class="dropdown-item" href="{{ route('commercant.profile.show') }}">
                         <i class="typcn typcn-cog-outline text-primary"></i>
                         Profil
                     </a>
@@ -97,7 +82,7 @@
                     </a>
                 </div>
             </li>
-            <form id="logout-form" action="{{ route('logout.agent') }}" method="GET" style="display: none;">
+            <form id="logout-form" action="{{ route('logout.commercant') }}" method="GET" style="display: none;">
                 @csrf
             </form>
         </ul>

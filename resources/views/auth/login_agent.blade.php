@@ -16,7 +16,7 @@
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ asset('fontawesome/css/all.min.css') }}">
-
+    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" />
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/style_auth.css') }}">
 </head>

@@ -10,14 +10,17 @@
         if ($user->type === 'recouvrement') {
             $roleSubtitle = 'Collecte & Recouvrement';
             $roleColor = '#f39c12'; // Orange
+            $roleColor2 = '#e74c3c';
             $roleIcon = 'fas fa-hand-holding-usd';
         } elseif ($user->type === 'recensement') {
             $roleSubtitle = 'Recensement Municipal';
             $roleColor = '#3498db'; // Bleu
+            $roleColor2 = '#e74c3c';
             $roleIcon = 'fas fa-clipboard-list';
         } elseif ($user->type === 'caissier') {
             $roleSubtitle = 'Encaissements & Caisse';
             $roleColor = '#2ecc71'; // Vert
+            $roleColor2 = '#e74c3c';
             $roleIcon = 'fas fa-cash-register';
         }
     }
@@ -26,12 +29,11 @@
 <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row" id="agent-navbar">
     <div class="navbar-brand-wrapper d-flex justify-content-center">
         <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">
-            <a class="navbar-brand brand-logo d-flex flex-column align-items-start" href="{{ route('agent.dashboard') }}"
-                style="line-height: 1; text-decoration: none;">
-                <span class="fw-bold text-white text-uppercase"
-                    style="font-size: 2.2rem; letter-spacing: 4px; font-family: 'Outfit', sans-serif;">ANATH</span>
-            </a>
-            <a class="navbar-brand brand-logo-mini d-none d-lg-block" href="{{ route('agent.dashboard') }}">
+
+            <a class="navbar-brand d-flex justify-content-center align-items-center"
+                href="{{ route('agent.dashboard') }}">
+                <img src="{{ asset('assets/images/logo_navbar.png') }}" alt="Logo SGTC"
+                    style="height: 100px; width: auto;">
             </a>
         </div>
     </div>
@@ -50,7 +52,7 @@
                 <a class="nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center"
                     id="notificationDropdown" href="#" data-bs-toggle="dropdown">
                     <i class="fas fa-bell" style="color: {{ $roleColor }}; font-size: 1.4rem;"></i>
-                    <span class="count" style="background: {{ $roleColor }};"></span>
+                    <span class="count" style="background: {{ $roleColor2 }};"></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list shadow-sm"
                     aria-labelledby="notificationDropdown" style="border-radius: 12px; border: none;">
@@ -71,30 +73,29 @@
                 </div>
             </li>
             <li class="nav-item nav-profile dropdown">
-                <a class="nav-link" href="#" data-bs-toggle="dropdown" id="profileDropdown">
+                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-toggle="dropdown"
+                    id="profileDropdown">
                     <div class="profile-img-container" style="position: relative;">
-                        <img src="{{ Auth::user()->photo ?? asset('images/default_avatar.jpg') }}" alt="Profile"
-                            class="img-xs rounded-circle"
+                        <img src="{{ $user->photo_profil ? asset('storage/' . $user->photo_profil) : asset('images/default_avatar.jpg') }}"
+                            alt="Profile" class="img-xs rounded-circle"
                             style="border: 2px solid {{ $roleColor }}; padding: 2px;" />
-                        <span class="status-indicator"
-                            style="position: absolute; bottom: 0; right: 0; width: 10px; height: 10px; background: #2ecc71; border-radius: 50%; border: 2px solid #fff;"></span>
                     </div>
                 </a>
-                <div class="dropdown-menu dropdown-menu-right navbar-dropdown shadow-sm"
+                <div class="dropdown-menu dropdown-menu-right dropdown-menu-end navbar-dropdown shadow-sm"
                     aria-labelledby="profileDropdown" style="border-radius: 12px; border: none; padding: 10px;">
-                    <a class="dropdown-item py-2" href="{{ route('agent.profile') }}">
+                    <a class="dropdown-item py-2" href="{{ route('agent.profile.show') }}">
                         <i class="typcn typcn-user text-primary me-2"></i>
                         Mon Profil
                     </a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item py-2" href="#"
-                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        onclick="event.preventDefault(); document.getElementById('logout-form-agent').submit();">
                         <i class="typcn typcn-power text-danger me-2"></i>
                         Déconnexion
                     </a>
                 </div>
             </li>
-            <form id="logout-form" action="{{ route('logout.agent') }}" method="GET" style="display: none;">
+            <form id="logout-form-agent" action="{{ route('logout.agent') }}" method="GET" style="display: none;">
                 @csrf
             </form>
         </ul>

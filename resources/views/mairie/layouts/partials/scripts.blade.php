@@ -8,7 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 {{-- Scripts de base de votre template --}}
-<script src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
+
 <script src="{{ asset('assets/js/off-canvas.js') }}"></script>
 <script src="{{ asset('assets/js/hoverable-collapse.js') }}"></script>
 <script src="{{ asset('assets/js/template.js') }}"></script>

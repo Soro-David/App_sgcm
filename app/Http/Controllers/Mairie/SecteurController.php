@@ -138,6 +138,10 @@ class SecteurController extends Controller
         $request->validate([
             'nom' => 'required|string|max:255',
             'code' => 'required|string|max:255|unique:secteurs,code,'.$id,
+        ], [
+            'nom.required' => 'Le nom du secteur est obligatoire.',
+            'code.required' => 'Le code du secteur est obligatoire.',
+            'code.unique' => 'Ce code de secteur est déjà utilisé.',
         ]);
 
         try {

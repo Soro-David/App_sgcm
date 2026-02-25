@@ -52,7 +52,7 @@
 
                     <div class="row">
                         <div class="mb-3 col-md-6">
-                            <label>Secteur</label>
+                            <label>Secteur d'activités</label>
                             <select name="secteur_id" class="form-select" required>
                                 @foreach ($secteurs as $secteur)
                                     <option value="{{ $secteur->id }}"
@@ -124,8 +124,6 @@
                             <input type="file" accept="image/*" class="d-none" id="photo_verso" name="photo_verso">
                         </div>
                     </div>
-
-
                     <button class="btn btn-primary" type="submit">Mettre à jour</button>
                     <a href="{{ route('agent.contribuable.index') }}" class="btn btn-secondary">Annuler</a>
                 </form>

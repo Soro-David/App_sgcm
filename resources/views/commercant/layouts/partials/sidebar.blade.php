@@ -18,14 +18,14 @@
 
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('commercant.payement.create') }}">
-                    <i class="typcn typcn-document-text menu-icon"></i>
+                    <i class="fa-solid fa-arrow-trend-up menu-icon"></i>
                     <span class="menu-title">Effectuer paiement</span>
                 </a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('commercant.payement.index') }}">
-                    <i class="typcn typcn-document-text menu-icon"></i>
+                    <i class="fa-solid fa-filter-circle-dollar menu-icon"></i>
                     <span class="menu-title">Mes paiements</span>
                 </a>
             </li>
@@ -33,17 +33,19 @@
             <!-- Recharge -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('commercant.recharge.index') }}">
-                    <i class="typcn typcn-document-text menu-icon"></i>
-                    <span class="menu-title">Mon Compte</span>
+                    <i class="typcn typcn-credit-card menu-icon"></i>
+                    <span class="menu-title">Mon compte</span>
                 </a>
             </li>
 
             <!-- Déconnexion -->
-            <div class="mt-5 mb-3 px-3">
+            <div class="mt-auto mb-5 px-2 logout-container">
                 <form method="POST" action="{{ route('logout.commercant') }}">
                     @csrf
-                    <button type="submit" class="btn btn-danger w-100" style="margin-top: auto !important;">
-                        <i class="fas fa-sign-out-alt"></i> Déconnexion
+                    <button type="submit"
+                        class="btn btn-outline-danger mt-5 w-100 d-flex align-items-center justify-content-center logout-btn">
+                        <i class="fas fa-sign-out-alt logout-icon"></i>
+                        <span class="logout-text ms-2">Déconnexion</span>
                     </button>
                 </form>
             </div>

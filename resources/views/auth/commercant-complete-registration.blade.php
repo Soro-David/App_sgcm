@@ -16,6 +16,7 @@
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{ asset('fontawesome/css/all.min.css') }}">
+    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" />
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/style_auth.css') }}">
@@ -89,32 +90,32 @@
                         @enderror
                     </div>
 
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Mot de passe</label>
-                            <div class="input-group-custom">
-                                <i class="fas fa-lock"></i>
-                                <input type="password" class="form-control @error('password') is-invalid @enderror"
-                                    id="password" name="password" placeholder="........" required>
-                                <button class="password-toggle toggle-password" type="button" data-target="password">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                @error('password')
-                                    <span class="text-danger" style="font-size: 12px;">{{ $message }}</span>
-                                @enderror
-                            </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Mot de passe</label>
+                        <div class="input-group-custom">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                id="password" name="password" placeholder="........" required>
+                            <button class="password-toggle toggle-password" type="button" data-target="password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            @error('password')
+                                <span class="text-danger" style="font-size: 12px;">{{ $message }}</span>
+                            @enderror
                         </div>
-                        <div class="mb-3">
-                            <label for="password_confirmation" class="form-label">Confirmation</label>
-                            <div class="input-group-custom">
-                                <i class="fas fa-lock"></i>
-                                <input type="password" class="form-control" id="password_confirmation"
-                                    name="password_confirmation" placeholder="........" required>
-                                <button class="password-toggle toggle-password" type="button"
-                                    data-target="password_confirmation">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                            </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password_confirmation" class="form-label">Confirmation</label>
+                        <div class="input-group-custom">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" class="form-control" id="password_confirmation"
+                                name="password_confirmation" placeholder="........" required>
+                            <button class="password-toggle toggle-password" type="button"
+                                data-target="password_confirmation">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
+                    </div>
 
                     <button type="submit" class="btn-login">
                         Valider l'inscription

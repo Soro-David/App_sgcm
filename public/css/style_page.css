@@ -12,8 +12,101 @@ select.form-select {
 
 @media (min-width: 992px) {
   .main-panel {
-    margin-left: 300px;
+    margin-left: 250px;
+    transition: margin-left 0.25s ease;
   }
+}
+
+/* Sidebar Mini / Icon only overrides */
+@media (min-width: 992px) {
+  .sidebar-icon-only .main-panel {
+    margin-left: 70px !important;
+  }
+  
+  .sidebar-icon-only .sidebar {
+    width: 70px !important;
+  }
+  
+  .sidebar-icon-only .navbar-brand-wrapper {
+    width: 70px !important;
+  }
+  
+  .sidebar-icon-only .brand-logo {
+    display: none !important;
+  }
+  
+  .sidebar-icon-only .navbar-brand-inner-wrapper {
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+  }
+  
+  .sidebar-icon-only .navbar-brand-inner-wrapper .navbar-toggler {
+    margin: 0 !important;
+  }
+  
+  .sidebar-icon-only .sidebar .nav-item .menu-title,
+  .sidebar-icon-only .sidebar .nav-item .menu-arrow {
+    display: none !important;
+  }
+  
+  .sidebar-icon-only .sidebar .nav-item .nav-link {
+    justify-content: center !important;
+    padding: 10px 0 !important;
+  }
+  
+  .sidebar-icon-only .sidebar .nav-item .nav-link i.menu-icon {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    font-size: 1.5rem !important;
+  }
+  
+  /* Transition for smooth width changes */
+  .sidebar, .navbar-brand-wrapper, .main-panel {
+    transition: all 0.3s ease-in-out !important;
+  }
+
+  /* Resetting Bootstrap margin utilities in icon-only mode */
+  .sidebar-icon-only .sidebar .nav-item .nav-link i.menu-icon.me-1,
+  .sidebar-icon-only .sidebar .nav-item .nav-link i.menu-icon.me-2,
+  .sidebar-icon-only .sidebar .nav-item .nav-link i.menu-icon.me-3 {
+    margin-right: 0 !important;
+  }
+
+  /* Logout button minimization */
+  .sidebar-icon-only .logout-text {
+    display: none !important;
+  }
+  
+  .sidebar-icon-only .logout-btn {
+    padding: 12px 0 !important;
+    border: none !important;
+    background: transparent !important;
+    color: #dc3545 !important;
+  }
+  
+  .sidebar-icon-only .logout-icon {
+    font-size: 1.5rem !important;
+    margin: 0 !important;
+  }
+
+  .sidebar-icon-only .logout-container {
+    padding: 0 !important;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.navbar .navbar-brand-wrapper .navbar-brand img {
+  max-height: 140px !important; /* Restored to a larger size */
+  width: 250px !important;
+  height: 250px !important;
+  object-fit: contain;
+}
+
+.navbar-toggler:hover {
+  opacity: 0.8;
 }
 /* Placeholder gris doux */
 input::placeholder {

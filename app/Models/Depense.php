@@ -33,7 +33,7 @@ class Depense extends Model
      */
     public function agent()
     {
-        return $this->belongsTo(Agent::class, 'agent_id'); // <-- MODIFIÉ
+        return $this->belongsTo(Agent::class, 'agent_id');
     }
 
     /**

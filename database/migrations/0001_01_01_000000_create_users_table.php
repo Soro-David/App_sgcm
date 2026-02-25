@@ -15,7 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('role')->default('user');
-            $table->string('email', 191)->unique(); // ✅ Limiter à 191
+            $table->string('email', 191)->unique();
+            $table->string('adresse')->nullable();
+            $table->string('telephone')->nullable();
+            // Ajout photo profil
+            $table->string('photo_profil')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

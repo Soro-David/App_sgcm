@@ -87,7 +87,7 @@
                                 </div>
 
                                 <div class="back-footer">
-                                    <div class="footer-brand">ANATH - SYSTÈME SÉCURISÉ</div>
+                                    <div class="footer-brand">SGTC - SYSTÈME SÉCURISÉ</div>
                                     <div class="footer-version">REF: {{ substr($commercant->num_commerce, -6) }}</div>
                                 </div>
                             </div>

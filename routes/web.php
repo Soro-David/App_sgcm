@@ -5,6 +5,7 @@ use App\Http\Controllers\Agent\EncaissementController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Commercant\PayementController;
 use App\Http\Controllers\Commercant\RechargeController;
+use App\Http\Controllers\FiliationController;
 use App\Http\Controllers\MailRegistrationController;
 use App\Http\Controllers\Mairie\AgentController;
 use App\Http\Controllers\Mairie\AgentFinanceController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\Mairie\SecteurController;
 use App\Http\Controllers\Mairie\TacheController;
 use App\Http\Controllers\Mairie\TaxeController;
 use App\Http\Controllers\Mairie\VersementController;
+use App\Http\Controllers\ProfileController;
 // use App\Http\Controllers\OrderController;
 // use App\Http\Controllers\ProfileController;
 // use App\Http\Controllers\RoleController;
@@ -105,6 +107,9 @@ Route::get('/test-mail', function () {
     return 'Test de mail envoyé.';
 });
 
+// Route AJAX - Filiations distinctes (accessible aux utilisateurs authentifiés)
+Route::middleware(['auth:mairie,finance,financier,agent,web'])->get('/ajax/filiations', [FiliationController::class, 'index'])->name('ajax.filiations');
+
 // Route dashboard universelle (pas protégée par 'auth')
 Route::get('/dashboard', function () {
     if (Auth::guard('web')->check()) {
@@ -147,6 +152,10 @@ Route::middleware(['auth:mairie,finance,financier', 'mairie_finance_bridge'])->p
         Route::get('/', [DashboardController::class, 'index'])->name('index');
         Route::get('/users-status', [DashboardController::class, 'getUsersStatus'])->name('users_status');
     });
+
+    // Profil Mairie
+    Route::get('/mon-profil', [ProfileController::class, 'index'])->name('profile.show');
+    Route::post('/mon-profil', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::prefix('commerce')->name('commerce.')->group(function () {
         Route::get('/', [CommerceController::class, 'index'])->name('index');
@@ -231,7 +240,7 @@ Route::middleware(['auth:mairie,finance,financier', 'mairie_finance_bridge'])->p
         Route::get('taches/show/{id}', [TacheController::class, 'show'])->name('taches.show');
 
         Route::prefix('encaissement')->name('encaissement.')->group(function () {
-            Route::get('/index', [EncaissementMairie::class, 'index'])->name('index');
+            Route::get('/liste-encaissement', [EncaissementMairie::class, 'index'])->name('index');
             Route::get('/get-list', [EncaissementMairie::class, 'get_list_encaissement'])->name('get_list');
             Route::get('/get-grouped-list', [EncaissementMairie::class, 'get_grouped_encaissements'])->name('get_grouped_list');
             Route::get('/get-details', [EncaissementMairie::class, 'get_details_encaissement'])->name('get_details');
@@ -312,6 +321,9 @@ Route::middleware(['auth:mairie,finance,financier', 'mairie_finance_bridge'])->p
             Route::get('/get-list', [AgentFinanceController::class, 'get_list'])->name('get_list');
             Route::get('/create/agent-finance', [AgentFinanceController::class, 'create'])->name('create');
             Route::post('/agent-finance', [AgentFinanceController::class, 'store'])->name('store');
+            Route::get('/{source}/{id}/edit', [AgentFinanceController::class, 'edit'])->name('edit');
+            Route::put('/{source}/{id}', [AgentFinanceController::class, 'update'])->name('update');
+            Route::delete('/{source}/{id}', [AgentFinanceController::class, 'destroy'])->name('destroy');
         });
 
         // Programmation des agents
@@ -347,6 +359,10 @@ Route::middleware(['auth:commercant'])->prefix('commercant')->name('commercant.'
     // Route::get('/dashboard', fn() => view('commercant.dashboard'))->name('dashboard');
     Route::get('/dashboard', [AuthController::class, 'showDashboard'])->name('dashboard');
     Route::get('/ma-carte', [AuthController::class, 'showVirtualCard'])->name('virtual_card');
+
+    // Profil Commerçant
+    Route::get('/mon-profil', [ProfileController::class, 'index'])->name('profile.show');
+    Route::post('/mon-profil', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::prefix('recharge')->name('recharge.')->group(function () {
         Route::get('/', [RechargeController::class, 'index'])->name('index');
@@ -464,7 +480,11 @@ Route::middleware(['auth:commercant'])->prefix('commercant')->name('commercant.'
 // Agent
 Route::middleware(['auth:agent'])->prefix('agent')->name('agent.')->group(function () {
     Route::get('/dashboard', [AgentContribuable::class, 'dashboard'])->name('dashboard');
-    Route::get('/mon-compte', [AgentContribuable::class, 'profile'])->name('profile');
+
+    // Profil Agent (remplace l'ancien profile)
+    Route::get('/mon-profil', [ProfileController::class, 'index'])->name('profile.show');
+    Route::post('/mon-profil', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/mon-bilan-financier', [AgentContribuable::class, 'profile'])->name('profile');
 
     Route::prefix('contribuable')->name('contribuable.')->group(function () {
         Route::get('/index', [AgentContribuable::class, 'index'])->name('index');
@@ -531,6 +551,10 @@ Route::middleware(['auth:agent'])->prefix('agent')->name('agent.')->group(functi
 Route::middleware(['auth:web', 'role:superadmin'])->prefix('super/admin')->name('superadmin.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'index'])->name('dashboard');
     Route::get('/bilan', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'bilan'])->name('bilan');
+
+    // Profil SuperAdmin
+    Route::get('/mon-profil', [ProfileController::class, 'index'])->name('profile.show');
+    Route::post('/mon-profil', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::prefix('mairies')->name('mairies.')->group(function () {
         Route::get('/', [MairieController::class, 'index'])->name('index');
