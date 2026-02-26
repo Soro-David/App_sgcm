@@ -37,8 +37,16 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
+    return view('public.accueil');
+})->name('accueil');
+
+Route::get('/a-propos', function () {
+    return view('public.apropos');
+})->name('apropos');
+
+Route::get('/contacts', function () {
+    return view('public.contact');
+})->name('contact');
 
 // Authentification
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');

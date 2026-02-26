@@ -1,4 +1,3 @@
-
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -15,6 +14,7 @@
 <link rel="stylesheet" href="{{ asset('css/style_superadmin.css') }}">
 <link rel="stylesheet" href="{{ asset('css/style_page.css') }}">
 <link rel="stylesheet" href="{{ asset('css/modals/mairie.css') }}">
+<link rel="stylesheet" href="{{ asset('css/responsive_logo.css') }}">
 <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 

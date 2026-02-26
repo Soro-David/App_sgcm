@@ -57,7 +57,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center gap-2"  href="{{ route('agent.profile') }}">
+                    <a class="nav-link d-flex align-items-center gap-2" href="{{ route('agent.profile') }}">
                         <i class="fa-solid fa-id-card-clip menu-icon"></i>
                         <span class="menu-title">Mon compte</span>
                     </a>
@@ -66,11 +66,13 @@
         </ul>
 
         <!-- Bouton Déconnexion en bas -->
-        <div class="mt-5 mb-3 px-3">
+        <div class="mt-auto mb-3 px-2 logout-container">
             <form method="POST" action="{{ route('agent.logout') }}">
                 @csrf
-                <button type="submit" class="btn btn-outline-danger w-100">
-                    Déconnexion <i class="fas fa-sign-out-alt me-2"></i>
+                <button type="submit"
+                    class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center logout-btn">
+                    <i class="fas fa-sign-out-alt logout-icon"></i>
+                    <span class="logout-text ms-2">Déconnexion</span>
                 </button>
             </form>
         </div>

@@ -27,14 +27,17 @@
 @endphp
 
 <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row" id="agent-navbar">
-    <div class="navbar-brand-wrapper d-flex justify-content-center">
-        <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">
 
-            <a class="navbar-brand d-flex justify-content-center align-items-center"
+    <div class="navbar-brand-wrapper d-flex align-items-center justify-content-center"
+        style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100 px-3">
+            <a class="navbar-brand d-flex justify-content-center align-items-center brand-logo"
                 href="{{ route('agent.dashboard') }}">
-                <img src="{{ asset('assets/images/logo_navbar.png') }}" alt="Logo SGTC"
-                    style="height: 100px; width: auto;">
+                <img src="{{ asset('assets/images/logo_navbar.png') }}" alt="Logo SGTC">
             </a>
+            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                <i class="fas fa-bars text-white"></i>
+            </button>
         </div>
     </div>
 
