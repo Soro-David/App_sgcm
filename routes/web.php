@@ -48,6 +48,18 @@ Route::get('/contacts', function () {
     return view('public.contact');
 })->name('contact');
 
+Route::get('/conditions-utilisation', function () {
+    return view('public.legal.conditions-utilisation');
+})->name('conditions-utilisation');
+
+Route::get('/politique-confidentialite', function () {
+    return view('public.legal.politique-confidentialite');
+})->name('politique-confidentialite');
+
+Route::get('/mentions-legales', function () {
+    return view('public.legal.mentions-legales');
+})->name('mentions-legales');
+
 // Authentification
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);

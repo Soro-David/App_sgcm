@@ -10,7 +10,7 @@
             </div>
         </div>
         <div class="hero-image">
-            <img src="{{ asset('assets/images/hero_slider_bg.png') }}" alt="Hero Illustration">
+            <img src="{{ asset('assets/images/site/img_slider.png') }}" alt="Hero Illustration">
         </div>
     </div>
 </section>

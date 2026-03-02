@@ -282,117 +282,127 @@
             margin-bottom: 60px;
         }
 
+        /* =========================================
+                                           FEATURE TABS — Logique de couleur claire
+                                           Par défaut  : fond blanc, bordure verte, texte vert, icône gradient vert
+                                           Hover       : fond orange légère, bordure orange, texte orange foncé, icône blanche/orange
+                                           Active      : fond orange plein, bordure orange, texte blanc, icône blanche
+                                        ========================================= */
+
         .feature-tabs {
             display: flex;
             gap: 15px;
             margin-bottom: 40px;
+            flex-wrap: wrap;
         }
 
+        /* --- État par défaut --- */
         .feature-tab {
             flex: 1;
-            padding: 20px 24px;
+            min-width: 200px;
+            padding: 20px 22px;
             border-radius: 16px;
             display: flex;
             align-items: center;
             gap: 16px;
             font-weight: 600;
-            border: 2px solid #eee;
             cursor: pointer;
             transition: all 0.35s ease;
-            background: #fff;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+            background: #ffffff;
             border: 2px solid #219c62;
-
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
         }
 
-        .feature-tab.active {
-            border-color: var(--secondary-orange);
-            background-color: #ff7b0f;
-            box-shadow: 0 8px 24px rgba(230, 106, 0, 0.18);
-            transform: translateY(-3px);
-        }
-
-        .feature-tab:hover:not(.active) {
-            border-color: #ccc;
-            background-color: #ff7b0f;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Icône circulaire dans la card */
+        /* --- Icône : fond gradient vert, icône blanche --- */
         .feature-card-icon {
-            width: 56px;
-            height: 56px;
+            width: 54px;
+            height: 54px;
             border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            color: #fff;
+            font-size: 1.4rem;
             flex-shrink: 0;
+            color: #ffffff;
             background: linear-gradient(135deg, #1a9e5f, #2dcf7f);
+            transition: all 0.35s ease;
         }
 
-        .feature-card-icon:active {
-            color: #ffffffff;
-            /* background: #ffffffff; */
-            background: linear-gradient(135deg, #ffffffff, #ffffffff);
-
-        }
-
-        .feature-card-icon:hover {
-            color: #ffffffff;
-            background: linear-gradient(135deg, #ffffffff, #ffffffff);
-
-        }
-
-        /* Texte dans la card */
-        .feature-card-body {
-            flex: 1;
-        }
-
+        /* --- Titre : vert --- */
         .feature-card-title {
             font-size: 1.05rem;
             font-weight: 800;
-            margin: 0 0 5px 0;
-            color: #219c62;
+            margin: 0 0 4px 0;
+            color: #1a7d4e;
+            transition: color 0.3s ease;
         }
 
+        /* --- Texte : vert atténué --- */
         .feature-card-text {
             font-size: 0.82rem;
-            color: #219c62;
+            color: #4aaa7a;
             margin: 0;
             line-height: 1.4;
+            transition: color 0.3s ease;
         }
 
-        .feature-tab.active .feature-card-text {
-            color: #ffffffff;
+        /* --- Hover (non actif) : fond orange très clair, bordure orange --- */
+        .feature-tab:hover:not(.active) {
+            border-color: var(--secondary-orange);
+            background-color: #fff5ed;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(230, 106, 0, 0.15);
         }
 
-        .feature-tab:hover .feature-card-text {
-            color: #ffffffff;
+        .feature-tab:hover:not(.active) .feature-card-icon {
+            background: linear-gradient(135deg, #ff7b0f, #ffaa55);
+            color: #ffffff;
         }
 
-        .feature-card-title:hover {
-            color: #ffffffff;
+        .feature-tab:hover:not(.active) .feature-card-title {
+            color: #e66a00;
+        }
+
+        .feature-tab:hover:not(.active) .feature-card-text {
+            color: #c05500;
+        }
+
+        /* --- Active : fond orange plein, tout en blanc --- */
+        .feature-tab.active {
+            border-color: var(--secondary-orange);
+            background-color: var(--secondary-orange);
+            box-shadow: 0 8px 28px rgba(230, 106, 0, 0.35);
+            transform: translateY(-3px);
+        }
+
+        .feature-tab.active .feature-card-icon {
+            background: rgba(255, 255, 255, 0.25);
+            color: #ffffff;
         }
 
         .feature-tab.active .feature-card-title {
-            color: #ffffffff;
+            color: #ffffff;
         }
 
-        .feature-tab:hover .feature-card-title {
-            color: #ffffffff;
+        .feature-tab.active .feature-card-text {
+            color: rgba(255, 255, 255, 0.85);
         }
+
+        /* Corps de carte */
+        .feature-card-body {
+            flex: 1;
+            min-width: 0;
+        }
+
 
         .feature-content h3 {
             font-size: 1.8rem;
             font-weight: 800;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
+            margin-bottom: 15px;
+            margin-top: 15px;
+            color: #111;
         }
+
 
         .feature-icon-circle {
             width: 80px;
@@ -452,11 +462,59 @@
         /* Feature content visibility */
         .feature-content {
             display: none;
-            animation: fadeInUp 0.4s ease forwards;
+            animation: fadeInUp 0.45s ease forwards;
         }
 
         .feature-content.active {
-            display: block;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 60px;
+        }
+
+        /* Colonne texte du feature content */
+        .feature-text-col {
+            min-width: 0;
+        }
+
+        /* Colonne image du feature content */
+        .feature-img-col {
+            min-width: 0;
+        }
+
+        .feature-img-box {
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+            aspect-ratio: 4 / 3;
+            position: relative;
+        }
+
+        .feature-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .feature-img-box:hover img {
+            transform: scale(1.04);
+        }
+
+        /* Badge de la feature */
+        .feature-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 123, 15, 0.12);
+            color: var(--secondary-orange);
+            padding: 7px 16px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         @keyframes fadeInUp {
@@ -471,10 +529,17 @@
             }
         }
 
-        /* Feature tab cursor */
-        .feature-tab {
-            cursor: pointer;
+        @media (max-width: 900px) {
+            .feature-content.active {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-img-col {
+                order: -1;
+            }
         }
+
+
 
         /* Partenaires */
         .partners-section {
@@ -565,7 +630,7 @@
 
         /* Contactez-nous */
         .contact-section {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80');
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url("{{ asset('assets/images/site/contact.png') }}");
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -770,7 +835,7 @@
         <p class="feature-subtitle">Les fonctionnalités clés qui font de notre plateforme l'outil indispensable de votre
             administration locale.</p>
 
-        <!-- Tabs -->
+        <!-- Tabs de navigation -->
         <div class="feature-tabs">
             <!-- Card Innovation -->
             <div class="feature-tab active" data-tab="innovation">
@@ -779,8 +844,7 @@
                 </div>
                 <div class="feature-card-body">
                     <h3 class="feature-card-title">Innovation</h3>
-                    <p class="feature-card-text">Solution moderne pour la
-                        gestion des taxes.</p>
+                    <p class="feature-card-text">Solution moderne pour la gestion des taxes.</p>
                 </div>
             </div>
 
@@ -798,32 +862,35 @@
             <!-- Card Écologique -->
             <div class="feature-tab" data-tab="ecologique">
                 <div class="feature-card-icon">
-                    <i class="fas fa-leaf"></i>
+                    <i class="fas fa-clock"></i>
                 </div>
                 <div class="feature-card-body">
-                    <h3 class="feature-card-title">Écologique</h3>
-                    <p class="feature-card-text">Supervision instantanés.</p>
+                    <h3 class="feature-card-title">Suivi en temps réel</h3>
+                    <p class="feature-card-text">Supervision instantanée.</p>
                 </div>
             </div>
         </div>
-        <div class="row" style="display: flex; flex-wrap: wrap; gap: 50px;">
-            <!-- Gauche : Menu et détails -->
-            <div class="col-md-12" style="flex: 1.2; min-width: 300px;">
 
-                <!-- Contenu Innovation -->
-                <div class="feature-content active" id="fc-innovation">
+        <!-- ===============================================
+             Zone de contenu : chaque caractéristique a son
+             propre layout 2 colonnes (texte | image dédiée)
+             =============================================== -->
+        <div class="features-content-area">
+
+            <!-- ===== Contenu Innovation ===== -->
+            <div class="feature-content active" id="fc-innovation">
+                <div class="feature-text-col">
                     <div class="feature-icon-circle"><i class="fas fa-rocket"></i></div>
                     <h3>Innovation Excellence</h3>
-                    <p class="about-text text-muted">
+                    <p class="about-text" style="color:#666;">
                         SGTC introduit une approche innovante dans la gestion des taxes communales en remplaçant les
                         méthodes traditionnelles par une solution digitale intelligente. La plateforme utilise des
                         technologies modernes pour automatiser les processus, réduire les tâches manuelles et améliorer
                         l'efficacité globale des services de collecte.
                     </p>
-
                     <div class="feature-list">
                         <div class="feature-list-item">
-                            <i class="fas fa-check-circle" style="color: #e66a00"></i>
+                            <i class="fas fa-check-circle" style="color:#e66a00"></i>
                             <p>Digitalisation complète des processus.</p>
                         </div>
                         <div class="feature-list-item">
@@ -835,33 +902,33 @@
                             <p>Synchronisation en temps réel.</p>
                         </div>
                         <div class="feature-list-item">
-                            <i class="fas fa-check-circle" style="color: #e66a00"></i>
+                            <i class="fas fa-check-circle" style="color:#e66a00"></i>
                             <p>Automatisation des opérations administratives.</p>
                         </div>
                     </div>
-
-                    <button class="btn-savoir-plus">
-                        En savoir plus <i class="fas fa-arrow-right"></i>
-                    </button>
+                    <button class="btn-savoir-plus">En savoir plus <i class="fas fa-arrow-right"></i></button>
                 </div>
-
-                <!-- Contenu Sécurité -->
-                <div class="feature-content" id="fc-securite">
-                    <div class="feature-icon-circle">
-                        <i class="fas fa-shield-alt"></i>
+                <div class="feature-img-col">
+                    <div class="feature-img-box">
+                        <img src="{{ asset('assets/images/site/innovation.png') }}" alt="Innovation SGTC">
                     </div>
+                </div>
+            </div>
+
+            <!-- ===== Contenu Sécurité ===== -->
+            <div class="feature-content" id="fc-securite">
+                <div class="feature-text-col">
+                    <div class="feature-icon-circle"><i class="fas fa-shield-alt"></i></div>
                     <h3>Sécurité des données</h3>
-                    <p class="about-text text-muted">
+                    <p class="about-text" style="color:#666;">
                         La sécurité est au cœur de SGTC. Chaque transaction, chaque accès et chaque donnée sont protégés
                         par des protocoles de chiffrement avancés. Notre architecture garantit la confidentialité des
-                        informations
-                        financières des communes et des contribuables, avec une traçabilité complète de toutes les
-                        opérations.
+                        informations financières des communes et des contribuables, avec une traçabilité complète de
+                        toutes les opérations.
                     </p>
-
                     <div class="feature-list">
                         <div class="feature-list-item">
-                            <i class="fas fa-check-circle"></i>
+                            <i class="fas fa-check-circle" style="color:#e66a00"></i>
                             <p>Chiffrement SSL/TLS de bout en bout.</p>
                         </div>
                         <div class="feature-list-item">
@@ -873,32 +940,33 @@
                             <p>Journalisation et audit de toutes les actions.</p>
                         </div>
                         <div class="feature-list-item">
-                            <i class="fas fa-check-circle"></i>
+                            <i class="fas fa-check-circle" style="color:#e66a00"></i>
                             <p>Sauvegardes automatiques et plan de reprise.</p>
                         </div>
                     </div>
-
-                    <button class="btn-savoir-plus">
-                        En savoir plus <i class="fas fa-arrow-right"></i>
-                    </button>
+                    <button class="btn-savoir-plus">En savoir plus <i class="fas fa-arrow-right"></i></button>
                 </div>
-
-                <!-- Contenu Écologique -->
-                <div class="feature-content" id="fc-ecologique">
-                    <div class="feature-icon-circle">
-                        <i class="fas fa-clock"></i>
+                <div class="feature-img-col">
+                    <div class="feature-img-box">
+                        <img src="{{ asset('assets/images/site/securite.png') }}" alt="Sécurité SGTC">
                     </div>
-                    <h3>Engagement Écologique</h3>
-                    <p class="about-text text-muted">
+                </div>
+            </div>
+
+            <!-- ===== Contenu Écologique ===== -->
+            <div class="feature-content" id="fc-ecologique">
+                <div class="feature-text-col">
+                    <div class="feature-icon-circle"><i class="fas fa-clock"></i></div>
+                    <h3>Suivi en temps réel</h3>
+                    <p class="about-text" style="color:#666;">
                         SGTC s'inscrit dans une démarche de développement durable. En éliminant le papier et les
                         déplacements inutiles grâce à la digitalisation, nous réduisons l'empreinte carbone des
                         administrations communales. Chaque reçu numérique est un pas de plus vers une administration
                         respectueuse de l'environnement.
                     </p>
-
                     <div class="feature-list">
                         <div class="feature-list-item">
-                            <i class="fas fa-check-circle"></i>
+                            <i class="fas fa-check-circle" style="color:#e66a00"></i>
                             <p>Zéro papier grâce aux reçus et rapports numériques.</p>
                         </div>
                         <div class="feature-list-item">
@@ -910,26 +978,20 @@
                             <p>Serveurs hébergés sur infrastructures à faible énergie.</p>
                         </div>
                         <div class="feature-list-item">
-                            <i class="fas fa-check-circle"></i>
+                            <i class="fas fa-check-circle" style="color:#e66a00"></i>
                             <p>Contribution à une commune verte et connectée.</p>
                         </div>
                     </div>
-
-                    <button class="btn-savoir-plus">
-                        En savoir plus <i class="fas fa-arrow-right"></i>
-                    </button>
+                    <button class="btn-savoir-plus">En savoir plus <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div class="feature-img-col">
+                    <div class="feature-img-box">
+                        <img src="{{ asset('assets/images/site/suivi_temps.png') }}" alt="Écologique SGTC">
+                    </div>
                 </div>
             </div>
 
-            <!-- Droite : Image téléphone -->
-            <div class="col-md-5" style="flex: 1; min-width: 300px;">
-                <div
-                    style="border-radius: 20px; overflow: hidden; box-shadow: 0 15px 30px rgba(0,0,0,0.1); height: 100%;">
-                    <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80"
-                        style="width: 100%; height: 100%; object-fit: cover;" alt="Application Mobile">
-                </div>
-            </div>
-        </div>
+        </div><!-- /features-content-area -->
     </div>
 </section>
 
@@ -943,7 +1005,7 @@
             tab.addEventListener('click', function() {
                 const target = tab.getAttribute('data-tab');
 
-                // Retirer la classe active de tous les onglets
+                // Retirer la classe active de tous les onglets 
                 tabs.forEach(function(t) {
                     t.classList.remove('active');
                 });
