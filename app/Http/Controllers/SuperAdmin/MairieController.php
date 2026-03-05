@@ -55,7 +55,7 @@ class MairieController extends Controller
         $otp = random_int(100000, 999999);
 
         // Création de la mairie avec un statut en attente
-        $mairie = Mairie::create([
+        $mairieData = [
             'name' => $request->name,
             'email' => $request->email,
             'region' => $request->region,
@@ -63,8 +63,14 @@ class MairieController extends Controller
             'mairie_ref' => $this->generateMairieRef(),
             'status' => 'pending', // Statut initial
             'otp_code' => $otp,
-            'otp_expires_at' => Carbon::now()->addMinutes(30),
-        ]);
+            'otp_expires_at' => Carbon::now()->addHours(48),
+        ];
+
+        if ($request->hasFile('logo')) {
+            $mairieData['logo'] = $request->file('logo')->store('mairie_logos', 'public');
+        }
+
+        $mairie = Mairie::create($mairieData);
 
         // dd($mairie);
         // Envoi de la notification par e-mail avec le code d'invitation
@@ -125,19 +131,43 @@ class MairieController extends Controller
         ]);
 
         $mairie = Mairie::findOrFail($id);
-        $mairie->update([
+
+        $updateData = [
             'name' => $request->name,
             'email' => $request->email,
             'region' => $request->region,
             'commune_id' => $request->commune,
-        ]);
+        ];
+
+        if ($request->hasFile('logo')) {
+            // Delete old logo if exists
+            if ($mairie->logo) {
+                \Storage::disk('public')->delete($mairie->logo);
+            }
+            $updateData['logo'] = $request->file('logo')->store('mairie_logos', 'public');
+        }
+
+        $mairie->update($updateData);
 
         return redirect()->route('superadmin.mairies.index')->with('success', 'Mairie mise à jour avec succès.');
     }
 
     public function destroy(string $id)
     {
-        //
+        try {
+            $mairie = Mairie::findOrFail($id);
+            $mairie->delete();
+
+            return response()->json([
+                'success' => 'La mairie a été supprimée avec succès.',
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Erreur lors de la suppression de la mairie : '.$e->getMessage());
+
+            return response()->json([
+                'error' => 'Une erreur est survenue lors de la suppression : '.$e->getMessage(),
+            ], 500);
+        }
     }
 
     public function get_list_mairie(Request $request)
@@ -149,7 +179,6 @@ class MairieController extends Controller
 
             $query = Mairie::select(['id', 'name', 'email', 'created_at']);
 
-            // dd($query);
             return DataTables::of($query)
                 ->editColumn('created_at', function ($mairie) {
                     return $mairie->created_at ? $mairie->created_at->format('d/m/Y H:i') : 'N/A';

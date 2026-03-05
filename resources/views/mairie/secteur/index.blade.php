@@ -16,9 +16,44 @@
         <div class="row mb-3">
             <div class="col d-flex justify-content-between align-items-center flex-wrap">
                 <h1 class="h3 mb-2">Liste des secteurs</h1>
-                <button class="btn btn-primar" data-bs-toggle="modal" data-bs-target="#addMairieModal">
-                    <i class="fas fa-plus"></i> Ajouter un secteur
-                </button>
+                <div class="d-flex gap-2">
+                    <a href="{{ route('mairie.secteurs.export.excel') }}" class="btn btn-outline-success">
+                        <i class="fas fa-file-excel"></i> Excel
+                    </a>
+                    <a href="{{ route('mairie.secteurs.export.pdf') }}" class="btn btn-outline-danger">
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </a>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMairieModal">
+                        <i class="fas fa-plus"></i> Ajouter un secteur
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Import Card -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Importer des secteurs</h6>
+            </div>
+            <div class="card-body">
+                <form action="{{ route('mairie.secteurs.import') }}" method="POST" enctype="multipart/form-data"
+                    class="row g-3 align-items-center">
+                    @csrf
+                    <div class="col-auto">
+                        <label for="file" class="visually-hidden">Fichier</label>
+                        <input type="file" name="file" class="form-control" id="file" accept=".xlsx,.xls,.csv"
+                            required>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary mb-3 mt-3">
+                            <i class="fas fa-upload"></i> Uploder
+                        </button>
+                    </div>
+                    <div class="col-12">
+                        <small class="text-muted">Format supporté: Excel (.xlsx, .xls), CSV. La colonne doit être nommée
+                            "nom" ou "nom du secteur".</small>
+                    </div>
+                </form>
             </div>
         </div>
 

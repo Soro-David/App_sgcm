@@ -394,7 +394,7 @@ class AgentController extends Controller
                     // Génération OTP
                     $otp = rand(100000, 999999);
                     $commercant->otp_code = $otp;
-                    $commercant->otp_expires_at = Carbon::now()->addMinutes(30);
+                    $commercant->otp_expires_at = Carbon::now()->addHours(48);
                     $commercant->save();
 
                     // Utilisation de sendNow pour garantir l'envoi immédiat (synchrone)

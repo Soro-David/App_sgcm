@@ -749,7 +749,7 @@
                 <h3>Espace Mairie</h3>
                 <p>Accédez à votre espace pour gérer les taxes, les acteurs et l'administration financière avec une vue
                     globale des opérations.</p>
-                <a href="{{ route('login') }}" class="btn-connexion">Se connecter</a>
+                <a href="{{ route('login.mairie') }}" class="btn-connexion">Se connecter</a>
             </div>
 
             <!-- Espace Contribuable -->
@@ -760,7 +760,7 @@
                 <h3>Espace Contribuable</h3>
                 <p>Déclarez vos activités, suivez vos paiements de taxes et recevez vos attestations directement via
                     votre portail dédié.</p>
-                <a href="#" class="btn-connexion">Se connecter</a>
+                <a href="{{ route('login.commercant') }}" class="btn-connexion">Se connecter</a>
             </div>
 
             <!-- Espace Agent -->
@@ -771,7 +771,7 @@
                 <h3>Espace Agent</h3>
                 <p>Espace réservé aux agents percepteurs pour enregistrer les encaissements sur le terrain et suivre les
                     paiements.</p>
-                <a href="#" class="btn-connexion">Se connecter</a>
+                <a href="{{ route('login.agent') }}" class="btn-connexion">Se connecter</a>
             </div>
         </div>
     </div>
@@ -906,7 +906,7 @@
                             <p>Automatisation des opérations administratives.</p>
                         </div>
                     </div>
-                    <button class="btn-savoir-plus">En savoir plus <i class="fas fa-arrow-right"></i></button>
+                    {{-- <button class="btn-savoir-plus">En savoir plus <i class="fas fa-arrow-right"></i></button> --}}
                 </div>
                 <div class="feature-img-col">
                     <div class="feature-img-box">
@@ -944,7 +944,7 @@
                             <p>Sauvegardes automatiques et plan de reprise.</p>
                         </div>
                     </div>
-                    <button class="btn-savoir-plus">En savoir plus <i class="fas fa-arrow-right"></i></button>
+                    {{-- <button class="btn-savoir-plus">En savoir plus <i class="fas fa-arrow-right"></i></button> --}}
                 </div>
                 <div class="feature-img-col">
                     <div class="feature-img-box">
@@ -982,7 +982,7 @@
                             <p>Contribution à une commune verte et connectée.</p>
                         </div>
                     </div>
-                    <button class="btn-savoir-plus">En savoir plus <i class="fas fa-arrow-right"></i></button>
+                    {{-- <button class="btn-savoir-plus">En savoir plus <i class="fas fa-arrow-right"></i></button> --}}
                 </div>
                 <div class="feature-img-col">
                     <div class="feature-img-box">

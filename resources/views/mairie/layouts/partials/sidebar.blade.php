@@ -70,6 +70,13 @@
                         <span class="menu-title">Secteurs d'activités</span>
                     </a>
                 </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('mairie.profile.show') }}">
+                        <i class="fas fa-building menu-icon"></i>
+                        <span class="menu-title">Informations Mairie</span>
+                    </a>
+                </li>
             @endif
 
             {{-- Pour l'Admin Financier (ou rôle "financiers") --}}

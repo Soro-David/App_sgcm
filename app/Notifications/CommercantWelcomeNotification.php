@@ -38,6 +38,6 @@ class CommercantWelcomeNotification extends Notification implements ShouldQueue
             ->line('Utilisez ce code OTP pour finaliser votre inscription :')
             ->line(new \Illuminate\Support\HtmlString('<strong style="font-size: 1.5em; color: #0d6efd;">'.$this->otp.'</strong>'))
             ->action('Finaliser mon inscription', $completionUrl)
-            ->line('Ce code expirera dans 30 minutes.');
+            ->line('Ce code expirera dans 48 heures.');
     }
 }

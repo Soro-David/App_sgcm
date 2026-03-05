@@ -8,6 +8,9 @@ use App\Models\Commercant;
 use App\Models\Agent;
 use App\Models\Encaissement;
 use App\Models\PaiementTaxe;
+use App\Models\Financier;
+use App\Models\Finance;
+use App\Models\UserLog;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -54,5 +57,58 @@ class DashboardController extends Controller
         }
 
         return view('superAdmin.bilan', compact('mairiesData'));
+    }
+
+    public function recapitulatif()
+    {
+        // On récupère toutes les mairies
+        $mairies = Mairie::where('role', 'admin')->get();
+
+        foreach ($mairies as $mairie) {
+            // Liste des contribuables par mairie avec l'agent qui les a ajoutés
+            $mairie->contribuables = Commercant::where('mairie_ref', $mairie->mairie_ref)
+                ->with('agent')
+                ->get();
+
+            // Personnel de la mairie (Comptes mairie qui ne sont pas l'admin principal)
+            $mairie->personnel = Mairie::where('mairie_ref', $mairie->mairie_ref)
+                ->where('role', '!=', 'admin')
+                ->get();
+
+            // Agents financiers (de la table financiers et finances)
+            $mairie->agents_financiers = Financier::where('mairie_ref', $mairie->mairie_ref)->get();
+            $mairie->ag_finances = Finance::where('mairie_ref', $mairie->mairie_ref)->get();
+
+            // "Qui à fait quoi" - On récupère les logs récents liés aux utilisateurs de cette mairie
+            // Pour simplifier, on prend les logs où l'utilisateur a cette mairie_ref dans son profil
+            // Mais la table UserLog n'a pas mairie_ref. Donc il faut faire une jointure ou récupérer les IDs.
+            
+            $mairie_ref = $mairie->mairie_ref;
+            
+            $mairie->logs = UserLog::where(function($query) use ($mairie_ref) {
+                // Logs des agents de cette mairie
+                $query->whereHasMorph('user', [Agent::class], function($q) use ($mairie_ref) {
+                    $q->where('mairie_ref', $mairie_ref);
+                })
+                // Logs du personnel mairie (admin, financiers, etc.)
+                ->orWhereHasMorph('user', [Mairie::class], function($q) use ($mairie_ref) {
+                    $q->where('mairie_ref', $mairie_ref);
+                })
+                // Logs des financiers
+                ->orWhereHasMorph('user', [Financier::class], function($q) use ($mairie_ref) {
+                    $q->where('mairie_ref', $mairie_ref);
+                })
+                // Logs des finances
+                ->orWhereHasMorph('user', [Finance::class], function($q) use ($mairie_ref) {
+                    $q->where('mairie_ref', $mairie_ref);
+                });
+            })
+            ->with('user')
+            ->latest()
+            ->take(50)
+            ->get();
+        }
+
+        return view('superAdmin.recapitulatif', compact('mairies'));
     }
 }

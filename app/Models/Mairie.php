@@ -42,6 +42,7 @@ class Mairie extends Authenticatable
         'matricule',
         'filiation',
         'photo_profil',
+        'logo',
     ];
 
     /**

@@ -15,9 +15,25 @@
                             <div class="bg-overlay"></div>
 
                             <div class="card-content-wrapper">
-                                <div class="card-header-text">
-                                    <h1 class="card-title">CARTE DE CONTRIBUABLE</h1>
-                                    <h2 class="card-subtitle text-truncate">{{ $commercant->nom }}</h2>
+                                <div class="card-header-text d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h1 class="card-title">CARTE DE CONTRIBUABLE</h1>
+                                        <h2 class="card-subtitle text-truncate">{{ $commercant->nom }}</h2>
+                                    </div>
+                                    @if ($commercant->mairie && $commercant->mairie->logo)
+                                        <div class="mairie-logo-box">
+                                            <div class="logo-img-wrapper">
+                                                <img src="{{ asset('storage/' . $commercant->mairie->logo) }}"
+                                                    alt="Logo Mairie" class="mairie-logo">
+                                            </div>
+                                            {{-- <div class="mairie-logo-text">
+                                                <span class="district-text">District Autonome d'Abidjan</span>
+                                                <span class="commune-label">COMMUNE DE</span>
+                                                <span
+                                                    class="commune-name">{{ strtoupper($commercant->mairie->name) }}</span>
+                                            </div> --}}
+                                        </div>
+                                    @endif
                                 </div>
 
                                 <hr class="card-divider">
@@ -31,19 +47,19 @@
                                     </div>
 
                                     <div class="info-group-grid">
-                                        <div class="info-item full-width">
-                                            <span class="info-label">ID COMMERCE</span>
+                                        <div class="info-item">
+                                            <span class="info-label">N° DE COMMERCE</span>
                                             <span class="info-value highlight">{{ $commercant->num_commerce }}</span>
                                         </div>
 
                                         <div class="info-item">
-                                            <span class="info-label">SECTEUR D'ACTIVITÉ</span>
+                                            <span class="info-label">TYPE DE TAXE</span>
                                             <span
                                                 class="info-value">{{ $commercant->secteur->nom ?? 'Commerce Général' }}</span>
                                         </div>
 
                                         <div class="info-item">
-                                            <span class="info-label">COMMUNE / MAIRIE</span>
+                                            <span class="info-label">MAIRIE DE</span>
                                             <span
                                                 class="info-value">{{ $commercant->mairie->name ?? ($commercant->mairie->nom ?? 'Non défini') }}</span>
                                         </div>
@@ -224,7 +240,7 @@
 
         .card-title {
             color: var(--text-heading);
-            font-size: 1.1rem;
+            font-size: 0.9rem;
             font-weight: 800;
             margin: 0;
             letter-spacing: 1px;
@@ -235,14 +251,85 @@
                 1px 1px 0 #fff;
         }
 
+        .mairie-logo-box {
+            /* width: 85px;
+            background: white;
+            border-radius: 4px;
+            padding: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10; */
+        }
+
+        .logo-img-wrapper {
+            width: 100%;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2px;
+        }
+
+        .mairie-logo {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .mairie-logo-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1;
+            text-align: center;
+            width: 100%;
+        }
+
+        .district-text {
+            font-size: 5px;
+            font-weight: 500;
+            color: #444;
+            margin-bottom: 1px;
+        }
+
+        .commune-label {
+            font-size: 4px;
+            font-weight: 400;
+            color: #666;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .commune-label::before,
+        .commune-label::after {
+            content: "";
+            flex: 1;
+            height: 0.5px;
+            background: #ccc;
+            margin: 0 2px;
+        }
+
+        .commune-name {
+            font-size: 8px;
+            font-weight: 800;
+            color: #000;
+            text-transform: uppercase;
+        }
+
         .card-subtitle {
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 1.8rem;
+            font-weight: 800;
             margin: 2px 0 0 0;
         }
 
-       .card-divider {
+        .card-divider {
             color: #fff !important;
             background: rgba(255, 255, 255, 0.5) !important;
             margin: 15px 0;
@@ -278,8 +365,8 @@
 
         .info-group-grid {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
             text-align: left;
             width: 100%;
         }
@@ -554,7 +641,7 @@
             }
 
             /* Cacher l'overlay décoratif pour économiser l'encre si souhaité,
-                                           sinon laisser tel quel */
+                                                               sinon laisser tel quel */
             .bg-overlay {
                 opacity: 0.5;
             }

@@ -109,15 +109,85 @@
 
         .card-title {
             color: var(--text-heading);
-            font-size: 1.1rem;
+            font-size: 0.9rem;
             font-weight: 800;
             margin: 0;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
             text-shadow:
-                -2px -1px 0 #fff,
-                -1px 1px 0 #fff,
                 1px 1px 0 #fff;
+        }
+
+        .mairie-logo-box {
+            /* width: 70px; */
+            /* background: white; */
+            /* border-radius: 3px; */
+            /* padding: 3px; */
+            /* display: flex; */
+            /* flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-left: 10px;
+            position: relative;
+            z-index: 10; */
+        }
+
+        .logo-img-wrapper {
+            width: 100%;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2px;
+        }
+
+        .mairie-logo {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .mairie-logo-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1;
+            text-align: center;
+            width: 100%;
+        }
+
+        .district-text {
+            font-size: 4px;
+            font-weight: 500;
+            color: #444;
+            margin-bottom: 1px;
+        }
+
+        .commune-label {
+            font-size: 3.5px;
+            font-weight: 400;
+            color: #666;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .commune-label::before,
+        .commune-label::after {
+            content: "";
+            flex: 1;
+            height: 0.3px;
+            background: #ccc;
+            margin: 0 1px;
+        }
+
+        .commune-name {
+            font-size: 7px;
+            font-weight: 800;
+            color: #000;
+            text-transform: uppercase;
         }
 
         .card-subtitle {
@@ -166,9 +236,10 @@
 
         .info-grid {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 5px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
             text-align: left;
+            flex-grow: 1;
         }
 
         .info-label {
@@ -333,9 +404,25 @@
                 <div class="card-front">
                     <div class="bg-overlay"></div>
                     <div class="card-content-wrapper">
-                        <div class="card-header-text text-center" style="text-align: center;">
-                            <h1 class="card-title">CARTE DE CONTRIBUABLE</h1>
-                            <h2 class="card-subtitle">{{ $commercant->nom }}</h2>
+                        <div class="card-header-text d-flex align-items-center justify-content-between"
+                            style="display: flex; align-items: center; justify-content: space-between;">
+                            <div style="text-align: left;">
+                                <h1 class="card-title">CARTE DE CONTRIBUABLE</h1>
+                                <h2 class="card-subtitle" style="text-align: left;">{{ $commercant->nom }}</h2>
+                            </div>
+                            @if ($commercant->mairie && $commercant->mairie->logo)
+                                <div class="mairie-logo-box">
+                                    <div class="logo-img-wrapper">
+                                        <img src="{{ asset('storage/' . $commercant->mairie->logo) }}" alt="Logo Mairie"
+                                            class="mairie-logo">
+                                    </div>
+                                    {{-- <div class="mairie-logo-text">
+                                        <span class="district-text">District Autonome d'Abidjan</span>
+                                        <span class="commune-label">COMMUNE DE</span>
+                                        <span class="commune-name">{{ strtoupper($commercant->mairie->name) }}</span>
+                                    </div> --}}
+                                </div>
+                            @endif
                         </div>
                         <hr class="card-divider">
 
@@ -346,16 +433,16 @@
                             </div>
                             <div class="info-grid">
                                 <div class="info-item">
-                                    <span class="info-label">ID commerce:</span>
+                                    <span class="info-label">N° DE COMMERCE</span>
                                     <span class="info-value">{{ $commercant->num_commerce }}</span>
                                 </div>
                                 <div class="info-item">
-                                    <span class="info-label">SECTEUR:</span>
+                                    <span class="info-label">TYPE DE TAXE</span>
                                     <span
                                         class="info-value">{{ $commercant->secteur->nom ?? 'Commerce Général' }}</span>
                                 </div>
                                 <div class="info-item">
-                                    <span class="info-label">MAIRIE:</span>
+                                    <span class="info-label">MAIRIE DE</span>
                                     <span
                                         class="info-value">{{ $commercant->mairie->name ?? ($commercant->mairie->nom ?? 'N/A') }}</span>
                                 </div>

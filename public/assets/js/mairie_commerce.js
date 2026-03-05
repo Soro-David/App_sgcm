@@ -17,6 +17,7 @@ $(document).ready(function () {
             { data: 'nom', name: 'nom' },
             { data: 'email', name: 'email' },
             { data: 'telephone', name: 'telephone' },
+            { data: 'recenseur', name: 'recenseur' },
             { data: 'action', name: 'action', orderable: false, searchable: false }
         ]
     });

@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Mairie;
 use App\Http\Controllers\Controller;
 use App\Models\Mairie;
 use App\Models\Taxe;
+use App\Exports\TaxesExport;
+use App\Imports\TaxesImport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
@@ -231,5 +235,48 @@ class TaxeController extends Controller
 
         // Si la requête n'est pas AJAX, vous pouvez retourner une erreur ou rediriger
         return abort(403, 'Accès non autorisé');
+    }
+
+    /**
+     * Importe des taxes depuis un fichier Excel ou CSV.
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:2048',
+        ]);
+
+        try {
+            Excel::import(new TaxesImport, $request->file('file'));
+
+            return redirect()->route('mairie.taxe.index')->with('success', 'Taxes importées avec succès.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Une erreur est survenue lors de l\'importation : '.$e->getMessage());
+        }
+    }
+
+    /**
+     * Exporte les taxes en format Excel.
+     */
+    public function exportExcel()
+    {
+        return Excel::download(new TaxesExport, 'taxes-'.now()->format('Y-m-d').'.xlsx');
+    }
+
+    /**
+     * Exporte les taxes en format PDF.
+     */
+    public function exportPdf()
+    {
+        $user = Auth::guard('mairie')->user() ?: Auth::guard('finance')->user();
+        if (! $user) {
+            return redirect()->route('login.mairie');
+        }
+
+        $taxes = Taxe::where('mairie_ref', $user->mairie_ref)->orderBy('nom')->get();
+
+        $pdf = Pdf::loadView('mairie.pdfExport.taxes_pdf', compact('taxes'));
+
+        return $pdf->download('liste-taxes-'.now()->format('Y-m-d').'.pdf');
     }
 }

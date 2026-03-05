@@ -1,7 +1,7 @@
     <div class="modal fade" id="addMairieModal" tabindex="-1" aria-labelledby="addMairieModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
-                <form method="POST" action="{{ route('superadmin.mairies.store') }}">
+                <form method="POST" action="{{ route('superadmin.mairies.store') }}" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-header">
                         <div class="d-flex align-items-center">
@@ -16,7 +16,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="row g-3">
+                        <div class="row g-3 mt-3">
                             <div class="col-md-6">
                                 <label for="name" class="form-label">Nom de mairie</label>
                                 <input type="text" class="form-control" id="name" name="name" required
@@ -29,7 +29,7 @@
                                     value="{{ old('email') }}">
                             </div>
                         </div>
-                        <div class="row g-3">
+                        <div class="row g-3 mt-3">
                             <div class="col-md-6">
                                 <label for="region" class="form-label">Région</label>
                                 <select class="form-select" id="region" name="region"
@@ -48,6 +48,14 @@
                                     <option value="" selected disabled>-- Sélectionnez d'abord une région --
                                     </option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-3">
+                            <div class="col-md-12">
+                                <label for="logo" class="form-label">Logo de la mairie</label>
+                                <input type="file" class="form-control" id="logo" name="logo"
+                                    accept="image/*">
+                                <div class="form-text">Format accepté : JPG, PNG. Max 2Mo.</div>
                             </div>
                         </div>
                     </div>

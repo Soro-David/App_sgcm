@@ -64,6 +64,17 @@
             $roleIcon = 'fas fa-walking';
         }
     }
+
+    // Logo Mairie
+    $mairieLogo = null;
+    if ($user) {
+        if ($user instanceof \App\Models\Mairie) {
+            $mairieLogo = $user->logo;
+        } elseif (isset($user->mairie_ref)) {
+            $mairieRecord = \App\Models\Mairie::where('mairie_ref', $user->mairie_ref)->first();
+            $mairieLogo = $mairieRecord ? $mairieRecord->logo : null;
+        }
+    }
 @endphp
 
 <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row" id="main-navbar">
@@ -72,7 +83,7 @@
         <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100 px-3">
             <a class="navbar-brand d-flex justify-content-center align-items-center brand-logo"
                 href="{{ route('mairie.dashboard.index') }}">
-                <img src="{{ asset('assets/images/logo_navbar.png') }}" alt="Logo SGTC">
+                <img src="{{ asset('assets/images/logo_navbar.png') }}" alt="Logo SGTC" style="max-height: 45px;">
             </a>
             <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                 <i class="fas fa-bars text-white"></i>
@@ -81,6 +92,14 @@
     </div>
     <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end"
         style="margin-left: 0px; box-shadow: 0 2px 15px rgba(0,0,0,0.1);">
+            @if ($mairieLogo)
+                <li class="nav-item me-3 d-none d-md-block">
+                    <div class="mairie-logo-nav" style="border-right: 1px solid #eee; padding-right: 15px;">
+                        <img src="{{ asset('storage/' . $mairieLogo) }}" alt="Logo Mairie"
+                            style="max-height: 40px; width: auto; object-fit: contain;">
+                    </div>
+                </li>
+            @endif
         <div class="d-flex flex-column ms-3 me-auto">
             <h4 class="fw-bold mb-0" style="color: #2c3e50; font-size: 1.1rem;">{{ Auth::user()->name }}</h4>
             <span class="badge rounded-pill d-flex align-items-center"
@@ -89,6 +108,7 @@
             </span>
         </div>
         <ul class="navbar-nav navbar-nav-right">
+
             <li class="nav-item dropdown me-0">
                 <a class="nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center"
                     id="notificationDropdown" href="#" data-bs-toggle="dropdown">

@@ -19,6 +19,7 @@ class CommuneSeeder extends Seeder
             ['nom' => 'Akoupé', 'region' => 'La Mé'],
             ['nom' => 'Alépé', 'region' => 'La Mé'],
             ['nom' => 'Anyama', 'region' => 'Abidjan'],
+            ['nom' => 'Adjamé', 'region' => 'Abidjan'],
             ['nom' => 'Arrah', 'region' => 'Moronou'],
             ['nom' => 'Assinie', 'region' => 'Sud-Comoé'],
             ['nom' => 'Attécoubé', 'region' => 'Abidjan'],

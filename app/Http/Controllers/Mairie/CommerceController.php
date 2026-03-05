@@ -93,18 +93,23 @@ class CommerceController extends Controller
             ->pluck('mairie_ref');
 
         $commercants = Commercant::whereIn('mairie_ref', $mairie_ref)
+            ->with('agent')
             ->select([
                 'id',
                 'nom',
                 'num_commerce',
                 'email',
                 'telephone',
+                'agent_id',
                 'created_at',
             ]);
 
         return datatables()->of($commercants)
             ->addColumn('checkbox', function ($row) {
                 return '<input type="checkbox" class="contribuable-checkbox form-check-input" value="'.$row->id.'">';
+            })
+            ->addColumn('recenseur', function ($commercant) {
+                return $commercant->agent ? $commercant->agent->name : 'N/A';
             })
             ->addColumn('action', function ($commercant) {
                 $editUrl = route('mairie.commerce.edit', $commercant->id);

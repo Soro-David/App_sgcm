@@ -33,6 +33,6 @@ class MairieAgentInvitationNotification extends Notification
             ->line('Utilisez ce code OTP pour finaliser votre inscription :')
             ->line(new \Illuminate\Support\HtmlString('<strong style="font-size: 1.5em;">'.$this->otp.'</strong>'))
             ->action('Finaliser mon inscription', $completionUrl)
-            ->line('Ce code expirera dans 30 minutes.');
+            ->line('Ce code expirera dans 48 heures.');
     }
 }

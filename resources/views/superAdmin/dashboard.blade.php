@@ -167,7 +167,6 @@
                         <table class="table table-hover align-middle">
                             <thead>
                                 <tr>
-                                    <th>Logo</th>
                                     <th>Nom de la Mairie</th>
                                     <th>Région</th>
                                     <th>Contact</th>
@@ -178,12 +177,6 @@
                             <tbody>
                                 @forelse($recentMairies as $mairie)
                                     <tr>
-                                        <td>
-                                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center"
-                                                style="width: 40px; height: 40px;">
-                                                <i class="fas fa-building text-muted"></i>
-                                            </div>
-                                        </td>
                                         <td class="fw-bold">{{ $mairie->name }}</td>
                                         <td>{{ $mairie->region }}</td>
                                         <td>

@@ -43,6 +43,7 @@
 
     <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end"
         style="margin-left: 0px; box-shadow: 0 2px 15px rgba(0,0,0,0.1);">
+
         <div class="d-flex flex-column ms-3 me-auto">
             <h4 class="fw-bold mb-0" style="color: #2c3e50; font-size: 1.1rem;">{{ Auth::user()->name }}</h4>
             <span class="badge rounded-pill d-flex align-items-center"

@@ -63,24 +63,27 @@ class AgentController extends Controller
     public function storeProgramme(Request $request)
     {
         $request->validate([
+            'id' => 'nullable|exists:agents,id',
             'agent_id' => 'required|exists:agents,id',
             'taxe_ids' => 'required|array',
             'taxe_ids.*' => 'exists:taxes,id',
             'secteur_id' => 'required|exists:secteurs,id',
         ]);
 
-        $agent = Agent::findOrFail($request->agent_id);
+        $agentId = $request->id ?: $request->agent_id;
+        $agent = Agent::findOrFail($agentId);
 
         // On stocke taxe_ids comme tableau JSON (champ taxe_id)
         $agent->taxe_id = $request->taxe_ids;
 
-        // secteur_id est une valeur unique, donc on peut stocker en tableau avec 1 seul élément ou en string
-        // je te conseille d'être cohérent, donc en tableau
+        // secteur_id est une valeur unique, donc on peut stocker en tableau avec 1 seul élément
         $agent->secteur_id = [$request->secteur_id];
 
         $agent->save();
 
-        return redirect()->back()->with('success', 'Taxes assignées avec succès à l\'agent.');
+        $message = $request->id ? 'Programme de l\'agent mis à jour avec succès.' : 'Taxes assignées avec succès à l\'agent.';
+
+        return redirect()->route('mairie.agents.programme_agent')->with('success', $message);
     }
 
     public function get_list_programmes(Request $request)
@@ -118,8 +121,8 @@ class AgentController extends Controller
                     $deleteUrl = route('mairie.agents.destroy_programme', $row->id);
 
                     return '<div class="action-buttons">
-                                <button class="btn-table-action delete delete-programme" data-url="'.$deleteUrl.'" title="Supprimer"><i class="fa-solid fa-trash"></i></button>
-                                <a href="'.$editUrl.'" class="btn-table-action edit" title="Modifier"><i class="fa-regular fa-pen-to-square"></i></a>
+                                <button class="btn-table-action edit-programme" data-url="'.$editUrl.'" style="background-color: #ff8c00 !important;" title="Modifier"><i class="fa-regular fa-pen-to-square"></i></button>
+                                <button class="btn-table-action delete delete-programme" data-url="'.$deleteUrl.'" style="background-color: #dc3545 !important;" title="Supprimer"><i class="fa-solid fa-trash"></i></button>
                             </div>';
                 })
                 ->rawColumns(['action'])
@@ -157,7 +160,7 @@ class AgentController extends Controller
             'region' => 'required|string',
             'commune' => 'required|string',
         ], [
-            'date_naissance.before' => "il Doit avoir au moins 16 ans",
+            'date_naissance.before' => 'il Doit avoir au moins 16 ans',
         ]);
 
         if ($validator->fails()) {
@@ -190,7 +193,7 @@ class AgentController extends Controller
                     'email' => $request->email,
                     'filiation' => $request->filiation,
                     'otp_code' => $otp,
-                    'otp_expires_at' => now()->addMinutes(30),
+                    'otp_expires_at' => now()->addHours(48),
                     'mairie_ref' => $request->mairie_ref,
                     'region' => $request->region,
                     'commune' => $request->commune,
@@ -212,7 +215,7 @@ class AgentController extends Controller
                     'email' => $request->email,
                     'filiation' => $request->filiation,
                     'otp_code' => $otp,
-                    'otp_expires_at' => now()->addMinutes(30),
+                    'otp_expires_at' => now()->addHours(48),
                     'mairie_ref' => $request->mairie_ref,
                     'region' => $request->region,
                     'commune' => $request->commune,
@@ -235,7 +238,7 @@ class AgentController extends Controller
                     'filiation' => $request->filiation,
                     'remember_token' => $request->_token,
                     'otp_code' => $otp,
-                    'otp_expires_at' => now()->addMinutes(30),
+                    'otp_expires_at' => now()->addHours(48),
                     'mairie_ref' => $request->mairie_ref,
                     'region' => $request->region,
                     'commune' => $request->commune,
@@ -303,7 +306,7 @@ class AgentController extends Controller
             'mairie_ref' => 'required|exists:mairies,mairie_ref',
 
         ], [
-            'date_naissance.before' => "il Doit avoir au moins 16 ans",
+            'date_naissance.before' => 'il Doit avoir au moins 16 ans',
         ]);
 
         if ($validator->fails()) {
@@ -331,7 +334,7 @@ class AgentController extends Controller
                 'filiation' => $request->filiation,
                 'remember_token' => $request->_token,
                 'otp_code' => $otp,
-                'otp_expires_at' => now()->addMinutes(30),
+                'otp_expires_at' => now()->addHours(48),
                 'mairie_ref' => $request->mairie_ref,
                 'added_by' => $added_by,
             ]);
@@ -381,7 +384,7 @@ class AgentController extends Controller
         }
 
         // Vérifier dans Finance
-        if (!$personnel) {
+        if (! $personnel) {
             $finance = Finance::find($id);
             if ($finance) {
                 $personnel = $finance;
@@ -390,7 +393,7 @@ class AgentController extends Controller
         }
 
         // Vérifier dans Financier
-        if (!$personnel) {
+        if (! $personnel) {
             $financier = Financier::find($id);
             if ($financier) {
                 $personnel = $financier;
@@ -398,7 +401,7 @@ class AgentController extends Controller
             }
         }
 
-        if (!$personnel) {
+        if (! $personnel) {
             return redirect()->route('mairie.agents.index')
                 ->with('error', 'Personnel non trouvé.');
         }
@@ -422,7 +425,7 @@ class AgentController extends Controller
             'telephone2' => 'nullable|string|max:20',
             'email' => 'required|email|max:255',
         ], [
-            'date_naissance.before' => "il Doit avoir au moins 16 ans",
+            'date_naissance.before' => 'il Doit avoir au moins 16 ans',
         ]);
 
         try {
@@ -448,7 +451,7 @@ class AgentController extends Controller
             }
 
             // Chercher dans Finance
-            if (!$updated) {
+            if (! $updated) {
                 $finance = Finance::find($id);
                 if ($finance) {
                     $finance->update([
@@ -470,7 +473,7 @@ class AgentController extends Controller
             }
 
             // Chercher dans Financier
-            if (!$updated) {
+            if (! $updated) {
                 $financier = Financier::find($id);
                 if ($financier) {
                     $financier->update([
@@ -528,7 +531,7 @@ class AgentController extends Controller
     public function update(Request $request, string $id)
     {
         $agent = Agent::findOrFail($id);
-        
+
         $request->validate([
             'name' => 'required|string|max:255',
             'genre' => 'required|in:masculin,féminin',
@@ -541,7 +544,7 @@ class AgentController extends Controller
             'email' => 'required|email|max:255',
             'filiation' => 'required|string|max:255',
         ], [
-            'date_naissance.before' => "il Doit avoir au moins 16 ans",
+            'date_naissance.before' => 'il Doit avoir au moins 16 ans',
         ]);
 
         $agent->update([
@@ -641,48 +644,48 @@ class AgentController extends Controller
         try {
             // Supprimer un agent de type Mairie/Finance/Financier
             $deleted = false;
-            
+
             $mairie = Mairie::find($id);
             if ($mairie) {
                 $mairie->delete();
                 $deleted = true;
             }
-            
-            if (!$deleted) {
+
+            if (! $deleted) {
                 $finance = Finance::find($id);
                 if ($finance) {
                     $finance->delete();
                     $deleted = true;
                 }
             }
-            
-            if (!$deleted) {
+
+            if (! $deleted) {
                 $financier = Financier::find($id);
                 if ($financier) {
                     $financier->delete();
                     $deleted = true;
                 }
             }
-            
+
             if ($deleted) {
                 return response()->json(['success' => 'Agent supprimé avec succès.']);
             }
-            
+
             return response()->json(['error' => 'Agent non trouvé.'], 404);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Erreur lors de la suppression : ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Erreur lors de la suppression : '.$e->getMessage()], 500);
         }
     }
-    
+
     public function destroy_agent(string $id)
     {
         try {
             $agent = Agent::findOrFail($id);
             $agent->delete();
-            
+
             return response()->json(['success' => 'Agent supprimé avec succès.']);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Erreur lors de la suppression : ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Erreur lors de la suppression : '.$e->getMessage()], 500);
         }
     }
 
@@ -730,8 +733,8 @@ class AgentController extends Controller
                     $deleteUrl = route('mairie.agents.destroy', $agent->id);
 
                     return '<div class="action-buttons">
-                                <a href="'.$editUrl.'" class="btn-table-action edit btn-warning" title="Modifier"><i class="fa fa-edit"></i></a>
-                                <button class="btn-table-action delete btn-delete btn-danger" data-url="'.$deleteUrl.'" title="Supprimer"><i class="fa fa-trash"></i></button>
+                                <a href="'.$editUrl.'" style="background-color: #ffc107 !important;" class="btn-table-action edit btn-warning" title="Modifier"><i class="fa fa-edit"></i></a>
+                                <button class="btn-table-action delete btn-danger" data-url="'.$deleteUrl.'" style="background-color: #dc3545 !important;" title="Supprimer"><i class="fa fa-trash"></i></button>
                             </div>';
                 })
                 ->rawColumns(['action'])
@@ -775,8 +778,8 @@ class AgentController extends Controller
                     $deleteUrl = route('mairie.agents.destroy_agent', $agent->id);
 
                     return '<div class="action-buttons">
-                                <button class="btn-table-action delete btn-delete btn-danger" data-url="'.$deleteUrl.'" title="Supprimer"><i class="fa fa-trash"></i></button>
-                                <a href="'.$editUrl.'" class="btn-table-action edit btn-warning" title="Modifier"><i class="fa fa-edit"></i></a>
+                                <a href="'.$editUrl.'" style="background-color: #ffc107 !important;" class="btn-table-action edit btn-warning" title="Modifier"><i class="fa fa-edit"></i></a>
+                                <button class="btn-table-action delete btn-delete btn-danger" data-url="'.$deleteUrl.'" style="background-color: #dc3545 !important;" title="Supprimer"><i class="fa fa-trash"></i></button>
                             </div>';
                 })
                 ->rawColumns(['action'])

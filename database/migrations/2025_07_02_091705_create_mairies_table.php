@@ -76,7 +76,7 @@ return new class extends Migration
             $table->string('matricule', 100)->nullable();
             $table->string('filiation', 150)->nullable();
             $table->string('photo_profil', 255)->nullable();
-
+            $table->string('logo')->nullable();
             $table->string('email', 191)->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password', 255)->nullable();

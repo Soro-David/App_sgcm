@@ -63,8 +63,6 @@ Route::get('/mentions-legales', function () {
 // Authentification
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
-// Route::match(['get', 'post'], '/logout', fn (Request $request) => app(AuthController::class)->logout($request, 'web')
-// )->name('logout');
 
 Route::get('/logout', function (Request $request) {
     return app(AuthController::class)->logout($request, 'web');
@@ -77,13 +75,13 @@ Route::post('/logout', function (Request $request) {
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 
-Route::get('/login-mairie', [AuthController::class, 'showLoginMairie'])->name('login.mairie');
-Route::post('/login-mairie', [AuthController::class, 'login_mairie']);
+Route::get('/mairie', [AuthController::class, 'showLoginMairie'])->name('login.mairie');
+Route::post('/mairie', [AuthController::class, 'login_mairie']);
 Route::match(['get', 'post'], '/mairie-logout', fn (Request $request) => app(AuthController::class)->logout($request, 'mairie')
 )->name('logout.mairie');
 
-Route::get('/login-commercant', [AuthController::class, 'showLoginFinancier'])->name('login.commercant');
-Route::post('/login-commercant', [AuthController::class, 'login_commercant']);
+Route::get('/contribuable', [AuthController::class, 'showLoginFinancier'])->name('login.commercant');
+Route::post('/contribuable', [AuthController::class, 'login_commercant']);
 
 Route::get('/commercant-logout', function (Request $request) {
     return app(AuthController::class)->logout($request, 'commercant');
@@ -93,8 +91,8 @@ Route::post('/commercant-logout', function (Request $request) {
     return app(AuthController::class)->logout($request, 'commercant');
 })->name('logout.commercant');
 
-Route::get('/login-agent', [AuthController::class, 'showLoginAgent'])->name('login.agent');
-Route::post('/login-agent', [AuthController::class, 'login_agent']);
+Route::get('/agent', [AuthController::class, 'showLoginAgent'])->name('login.agent');
+Route::post('/agent', [AuthController::class, 'login_agent']);
 Route::match(['get', 'post'], '/agent-logout', fn (Request $request) => app(AuthController::class)->logout($request, 'agent')
 )->name('logout.agent');
 
@@ -143,30 +141,13 @@ Route::get('/dashboard', function () {
     return redirect('/login')->withErrors('Vous devez être connecté.');
 });
 
-// Utilisateur simple (guard: web)
-/*
-Route::middleware(['auth:web', 'role:user'])->prefix('user')->name('user.')->group(function () {
-    Route::get('/dashboard', fn () => view('user.dashboard'))->name('dashboard');
-
-    Route::prefix('profile')->name('profile.')->group(function () {
-        Route::get('/', [ProfileController::class, 'show'])->name('show');
-        Route::post('/update', [ProfileController::class, 'update'])->name('update');
-    });
-
-    Route::prefix('orders')->name('orders.')->group(function () {
-        Route::get('/', // [OrderController::class, 'index'])->name('index');
-        Route::get('/{id}', // [OrderController::class, 'show'])->name('show');
-    });
-});
-*/
-
 // On garde le groupe principal qui vérifie que l'utilisateur est authentifié
 Route::middleware(['auth:mairie,finance,financier', 'mairie_finance_bridge'])->prefix('mairie')->name('mairie.')->group(function () {
 
     /*
-    |--------------------------------------------------------------------------
-    | 1. Routes communes (Accessibles à tous les connectés)
-    |--------------------------------------------------------------------------
+        |--------------------------------------------------------------------------
+        | 1. Routes communes (Accessibles à tous les connectés)
+        |--------------------------------------------------------------------------
     */
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('index');
@@ -203,9 +184,9 @@ Route::middleware(['auth:mairie,finance,financier', 'mairie_finance_bridge'])->p
     Route::get('/get-communes-by-region/{region}', [AgentController::class, 'get_communes'])->name('agents.get_communes');
 
     /*
-    |--------------------------------------------------------------------------
-    | 2. Routes réservées au rôle 'ADMIN'
-    |--------------------------------------------------------------------------
+        |--------------------------------------------------------------------------
+            | 2. Routes réservées au rôle 'ADMIN'
+        |--------------------------------------------------------------------------
     */
     Route::middleware(['role:admin'])->group(function () {
         Route::prefix('agents')->name('agents.')->group(function () {
@@ -225,22 +206,12 @@ Route::middleware(['auth:mairie,finance,financier', 'mairie_finance_bridge'])->p
             Route::get('/liste/data', [AgentController::class, 'get_list_mairie'])->name('get_list_mairie');
         });
 
-        /*
-        Route::prefix('users')->name('users.')->group(function () {
-            Route::get('/', // [UserController::class, 'index'])->name('index');
-            Route::get('/create', // [UserController::class, 'create'])->name('create');
-            Route::post('/', // [UserController::class, 'store'])->name('store');
-        });
-
-        Route::prefix('roles')->name('roles.')->group(function () {
-            Route::get('/', // [RoleController::class, 'index'])->name('index');
-            Route::post('/assign', // [RoleController::class, 'assign'])->name('assign');
-        });
-        */
-
         // Gestion des secteurs
         Route::get('secteurs/liste-ajax', [SecteurController::class, 'get_list_secteurs'])->name('secteurs.list');
         Route::get('secteurs/generer-code', [SecteurController::class, 'genererCodeSecteurAjax'])->name('secteurs.genererCode');
+        Route::post('secteurs/import', [SecteurController::class, 'import'])->name('secteurs.import');
+        Route::get('secteurs/export/excel', [SecteurController::class, 'exportExcel'])->name('secteurs.export.excel');
+        Route::get('secteurs/export/pdf', [SecteurController::class, 'exportPdf'])->name('secteurs.export.pdf');
         Route::resource('secteurs', SecteurController::class)->except(['index']);
         Route::get('secteurs', [SecteurController::class, 'index'])->name('secteurs.index');
 
@@ -251,7 +222,17 @@ Route::middleware(['auth:mairie,finance,financier', 'mairie_finance_bridge'])->p
     | 3. Routes PARTAGÉES (Accessibles par 'financiers' ET 'finance/mairie_finance_bridge')
     |--------------------------------------------------------------------------
     | Ici, on met tout ce qui concerne la gestion quotidienne (Recettes, Dépenses, Taxes)
+    |--------------------------------------------------------------------------
+    | 4. Routes réservées au rôle 'FINANCIERS'
+    |--------------------------------------------------------------------------
+    | 5. Routes réservées au rôle 'FINANCE'
+    |--------------------------------------------------------------------------
+    | 6. Routes réservées au rôle 'MAIRIE_FINANCE_BRIDGE'
+    |--------------------------------------------------------------------------
+    | 7. Routes réservées au rôle 'MAIRIE'
+    |--------------------------------------------------------------------------
     */
+
     // On autorise si l'utilisateur a l'un OU l'autre rôle
     Route::middleware(['role:admin,financiers,finance,mairie_finance_bridge'])->group(function () {
 
@@ -274,6 +255,9 @@ Route::middleware(['auth:mairie,finance,financier', 'mairie_finance_bridge'])->p
 
         Route::prefix('taxe')->name('taxe.')->group(function () {
             Route::get('/liste/data', [TaxeController::class, 'get_list_taxes'])->name('get_list_taxes');
+            Route::post('/import', [TaxeController::class, 'import'])->name('import');
+            Route::get('/export/excel', [TaxeController::class, 'exportExcel'])->name('export.excel');
+            Route::get('/export/pdf', [TaxeController::class, 'exportPdf'])->name('export.pdf');
             // Routes explicites pour éviter lse problèmes avec resource('/')
             Route::get('/', [TaxeController::class, 'index'])->name('index');
             Route::post('/', [TaxeController::class, 'store'])->name('store');
@@ -316,7 +300,7 @@ Route::middleware(['auth:mairie,finance,financier', 'mairie_finance_bridge'])->p
     |--------------------------------------------------------------------------
     | 4. Routes EXCLUSIVES au rôle 'FINANCIÉ'
     |--------------------------------------------------------------------------
-    | Ces routes ne sont PAS accessibles par l'agent finance simple.
+    |
     | (Gestion des secteurs, Création des agents finances, Programmation)
     */
     Route::middleware(['role:financiers'])->group(function () {
@@ -376,7 +360,6 @@ Route::middleware(['auth:mairie,finance,financier', 'mairie_finance_bridge'])->p
 
 // financier
 Route::middleware(['auth:commercant'])->prefix('commercant')->name('commercant.')->group(function () {
-    // Route::get('/dashboard', fn() => view('commercant.dashboard'))->name('dashboard');
     Route::get('/dashboard', [AuthController::class, 'showDashboard'])->name('dashboard');
     Route::get('/ma-carte', [AuthController::class, 'showVirtualCard'])->name('virtual_card');
 
@@ -571,6 +554,7 @@ Route::middleware(['auth:agent'])->prefix('agent')->name('agent.')->group(functi
 Route::middleware(['auth:web', 'role:superadmin'])->prefix('super/admin')->name('superadmin.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'index'])->name('dashboard');
     Route::get('/bilan', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'bilan'])->name('bilan');
+    Route::get('/recapitulatif', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'recapitulatif'])->name('recapitulatif');
 
     // Profil SuperAdmin
     Route::get('/mon-profil', [ProfileController::class, 'index'])->name('profile.show');

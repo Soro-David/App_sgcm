@@ -17,10 +17,17 @@
                 </a>
             </li>
 
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a class="nav-link" href="{{ route('superadmin.bilan') }}">
                     <i class="typcn typcn-chart-line menu-icon"></i>
                     <span class="menu-title">Bilan</span>
+                </a>
+            </li> --}}
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('superadmin.recapitulatif') }}">
+                    <i class="typcn typcn-document-text menu-icon"></i>
+                    <span class="menu-title">Récapitulatif</span>
                 </a>
             </li>
 

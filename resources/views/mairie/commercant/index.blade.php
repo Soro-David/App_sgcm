@@ -46,6 +46,7 @@
                                 <th>Nom et Prénom</th>
                                 <th>Email</th>
                                 <th>Téléphone</th>
+                                <th>Recenseur</th>
                                 <th>Action</th>
                             </tr>
                         </thead>

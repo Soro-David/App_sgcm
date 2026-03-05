@@ -14,7 +14,8 @@
                 <h6 class="m-0 font-weight-bold text-primary">Programmer un agent à des taxes</h6>
             </div>
             <div class="card-body">
-                <form action="{{ route('mairie.agents.store_programme_agent') }}" method="POST">
+                <form action="{{ route('mairie.agents.store_programme_agent') }}" method="POST" id="programmeForm">
+                    <input type="hidden" name="id" id="programme_id">
                     @csrf
                     <div class="row">
                         {{-- Agent --}}
@@ -69,7 +70,9 @@
                     </div>
 
                     <div class="d-flex justify-content-end mt-3">
-                        <button type="submit" class="btn btn-success">Enregistrer</button>
+                        <button type="button" id="cancelEdit" class="btn btn-secondary mr-2"
+                            style="display: none;">Annuler</button>
+                        <button type="submit" id="submitBtn" class="btn btn-success">Enregistrer</button>
                     </div>
                 </form>
             </div>
@@ -109,4 +112,14 @@
 
 @push('css')
     <link href="{{ asset('css/style_page.css') }}" rel="stylesheet">
+    <style>
+        #programmes-table tbody tr {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        #programmes-table tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.05) !important;
+        }
+    </style>
 @endpush

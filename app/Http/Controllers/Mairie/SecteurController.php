@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Mairie;
 
 use App\Http\Controllers\Controller;
 use App\Models\Secteur;
+use App\Exports\SecteursExport;
+use App\Imports\SecteursImport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -107,11 +111,11 @@ class SecteurController extends Controller
                 ->addColumn('action', function ($row) {
                     return '
                         <div class="d-flex justify-content-center gap-2">
-                            <button type="button" class="btn btn-sm btn-primary btn-edit" data-id="'.$row->id.'">
+                            <button type="button" style="background-color: #ffc107 !important;" class="btn btn-sm btn-warning btn-edit" data-id="'.$row->id.'">
                                 <i class="fas fa-edit"></i>
                             </button>
 
-                            <button type="button" class="btn btn-sm btn-danger btn-delete" data-id="'.$row->id.'">
+                            <button type="button" style="background-color: #dc3545 !important;" class="btn btn-sm btn-danger btn-delete" data-id="'.$row->id.'">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -197,5 +201,48 @@ class SecteurController extends Controller
 
             return back()->with('error', 'Une erreur est survenue : '.$e->getMessage());
         }
+    }
+
+    /**
+     * Importe des secteurs depuis un fichier Excel ou CSV.
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:2048',
+        ]);
+
+        try {
+            Excel::import(new SecteursImport, $request->file('file'));
+
+            return redirect()->route('mairie.secteurs.index')->with('success', 'Secteurs importés avec succès.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Une erreur est survenue lors de l\'importation : '.$e->getMessage());
+        }
+    }
+
+    /**
+     * Exporte les secteurs en format Excel.
+     */
+    public function exportExcel()
+    {
+        return Excel::download(new SecteursExport, 'secteurs-'.now()->format('Y-m-d').'.xlsx');
+    }
+
+    /**
+     * Exporte les secteurs en format PDF.
+     */
+    public function exportPdf()
+    {
+        $user = Auth::guard('mairie')->user() ?: Auth::guard('finance')->user();
+        if (! $user) {
+            return redirect()->route('login.mairie');
+        }
+
+        $secteurs = Secteur::where('mairie_ref', $user->mairie_ref)->orderBy('nom')->get();
+
+        $pdf = Pdf::loadView('mairie.pdfExport.secteurs_pdf', compact('secteurs'));
+
+        return $pdf->download('liste-secteurs-'.now()->format('Y-m-d').'.pdf');
     }
 }

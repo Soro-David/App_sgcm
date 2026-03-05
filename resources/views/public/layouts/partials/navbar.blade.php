@@ -22,8 +22,8 @@
 
             <div class="nav-actions">
                 <a href="#connexion" class="btn btn-primary">Se connecter</a>
-                <a href="#" class="btn btn-secondary"
-                    style="background-color: var(--secondary-orange); color: white;">S'inscrire</a>
+                {{-- <a href="#" class="btn btn-secondary"
+                    style="background-color: var(--secondary-orange); color: white;">Parcourir</a> --}}
             </div>
         </div>
     </div>

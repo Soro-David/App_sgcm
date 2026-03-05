@@ -94,8 +94,13 @@
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3"
-                                            style="width: 40px; height: 40px;">
-                                            <i class="fas fa-building text-primary"></i>
+                                            style="width: 40px; height: 40px; overflow: hidden; border: 1px solid #eee;">
+                                            @if ($mairie->logo)
+                                                <img src="{{ asset('storage/' . $mairie->logo) }}" alt="Logo"
+                                                    style="width: 100%; height: 100%; object-fit: cover;">
+                                            @else
+                                                <i class="fas fa-building text-primary"></i>
+                                            @endif
                                         </div>
                                         <div>
                                             <div class="mairie-name">{{ $mairie->municipality_name }}</div>

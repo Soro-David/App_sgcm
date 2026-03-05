@@ -53,6 +53,15 @@
                             <i class="fas fa-user-shield mr-1"></i> {{ strtoupper($user->role ?? $guard) }}
                         </div>
 
+                        @if ($user instanceof \App\Models\Mairie && $user->logo)
+                            <div class="mt-3">
+                                <small class="text-muted d-block mb-2 text-uppercase font-weight-bold">Logo de la
+                                    Mairie</small>
+                                <img src="{{ asset('storage/' . $user->logo) }}" alt="Logo Mairie"
+                                    class="img-fluid rounded border p-2 bg-white" style="max-height: 80px;">
+                            </div>
+                        @endif
+
                         <hr class="my-4 opacity-10">
 
                         <div class="text-start">
@@ -191,10 +200,20 @@
                             <div class="mb-4">
                                 <label class="form-label text-muted small text-uppercase font-weight-bold">Photo de
                                     profil</label>
-                                <input type="file" name="photo_profil" class="form-control">
-                                <small class="text-muted">Laissez vide pour conserver la photo actuelle (Format: JPG, PNG,
-                                    Max: 2Mo)</small>
+                                <input type="file" name="photo_profil" class="form-control mb-1">
+                                <small class="text-muted d-block mb-3">Laissez vide pour conserver la photo actuelle
+                                    (Format: JPG, PNG, Max: 2Mo)</small>
                             </div>
+
+                            @if ($user instanceof \App\Models\Mairie)
+                                <div class="mb-4">
+                                    <label class="form-label text-muted small text-uppercase font-weight-bold">Logo de la
+                                        Mairie</label>
+                                    <input type="file" name="logo" class="form-control mb-1">
+                                    <small class="text-muted d-block">Laissez vide pour conserver le logo actuel (Format:
+                                        JPG, PNG, SVG, Max: 2Mo)</small>
+                                </div>
+                            @endif
 
                             <h5 class="card-title font-weight-bold text-dark mt-5 mb-4 border-top pt-4">Sécurité
                                 (Changement de mot de passe)</h5>

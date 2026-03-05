@@ -56,6 +56,7 @@ class ProfileController extends Controller
             'current_password' => 'nullable|required_with:new_password',
             'new_password' => 'nullable|min:8|confirmed',
             'photo_profil' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:2048',
         ];
 
         $request->validate($rules);
@@ -100,6 +101,14 @@ class ProfileController extends Controller
                 Storage::disk('public')->delete($user->photo_profil);
             }
             $user->photo_profil = $request->file('photo_profil')->store('profiles', 'public');
+        }
+
+        // Update Mairie Logo
+        if ($user instanceof \App\Models\Mairie && $request->hasFile('logo')) {
+            if ($user->logo && Storage::disk('public')->exists($user->logo)) {
+                Storage::disk('public')->delete($user->logo);
+            }
+            $user->logo = $request->file('logo')->store('mairie_logos', 'public');
         }
 
         $user->save();

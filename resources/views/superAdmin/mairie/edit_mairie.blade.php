@@ -21,7 +21,8 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('superadmin.mairies.update', $mairie->id) }}">
+                <form method="POST" action="{{ route('superadmin.mairies.update', $mairie->id) }}"
+                    enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -57,10 +58,10 @@
                         </div>
                         <div class="col-md-6">
                             <label for="edit-commune" class="form-label">Commune <span class="text-danger">*</span></label>
-                            <select class="form-select" id="edit-commune" name="commune_id" required>
+                            <select class="form-select" id="edit-commune" name="commune" required>
                                 @forelse($communesDeLaRegion as $commune)
                                     <option value="{{ $commune->id }}"
-                                        {{ old('commune_id', $mairie->commune_id) == $commune->id ? 'selected' : '' }}>
+                                        {{ old('commune', $mairie->commune_id) == $commune->id ? 'selected' : '' }}>
                                         {{ $commune->nom }}
                                     </option>
                                 @empty
@@ -70,7 +71,7 @@
                         </div>
                     </div>
 
-                    <div class="row g-3">
+                    <div class="row g-3 mb-3">
                         <div class="col-12">
                             <label for="edit-adresse" class="form-label">Adresse</label>
                             <input type="text" class="form-control" id="edit-adresse" name="adresse"
@@ -89,6 +90,22 @@
                             <input type="text" class="form-control" id="edit-telephone2" name="telephone2" maxlength="10"
                                 value="{{ old('telephone2', $mairie->telephone2) }}"
                                 oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-12">
+                            <label for="logo" class="form-label">Logo de la mairie</label>
+                            <input type="file" class="form-control" id="logo" name="logo" accept="image/*">
+                            @if ($mairie->logo)
+                                <div class="mt-2">
+                                    <img src="{{ asset('storage/' . $mairie->logo) }}" alt="Logo actuel"
+                                        style="max-height: 100px;">
+                                    <p class="small text-muted">Logo actuel</p>
+                                </div>
+                            @endif
+                            <div class="form-text">Format accepté : JPG, PNG. Max 2Mo. Laissez vide pour conserver le logo
+                                actuel.</div>
                         </div>
                     </div>
 
