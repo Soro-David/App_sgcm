@@ -1,10 +1,19 @@
 @php
     $agent = Auth::guard('agent')->user();
+    $mairieLogo = null;
+    if ($agent && isset($agent->mairie_ref)) {
+        $mairieRecord = \App\Models\Mairie::where('mairie_ref', $agent->mairie_ref)->first();
+        $mairieLogo = $mairieRecord ? $mairieRecord->logo : null;
+    }
 @endphp
 
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <div class="d-flex flex-column justify-content-between h-100">
         <ul class="nav flex-column">
+            <!-- Logo mobile/tablette sur le sidebar -->
+            <li class="nav-item d-lg-none sidebar-logo-container bg-agent">
+                <img src="{{ asset('assets/images/logo_navbar.png') }}" alt="Logo SGTC">
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('agent.dashboard') }}">
                     <i class="typcn typcn-device-desktop menu-icon"></i>
@@ -65,16 +74,26 @@
             @endif
         </ul>
 
-        <!-- Bouton Déconnexion en bas -->
-        <div class="mt-auto mb-3 px-2 logout-container">
-            <form method="POST" action="{{ route('agent.logout') }}">
-                @csrf
-                <button type="submit"
-                    class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center logout-btn">
-                    <i class="fas fa-sign-out-alt logout-icon"></i>
-                    <span class="logout-text ms-2">Déconnexion</span>
-                </button>
-            </form>
+        <!-- Zone bas de Sidebar : Logo Mairie + Déconnexion -->
+        <div class="mt-auto mb-3 px-2 text-center w-100">
+            @if ($mairieLogo)
+                <div class="mb-3">
+                    <img src="{{ asset('storage/' . $mairieLogo) }}" alt="Logo Mairie"
+                        style="max-height: 120px; width: auto; object-fit: contain;">
+                </div>
+            @endif
+
+            <!-- Bouton Déconnexion en bas -->
+            {{-- <div class="logout-container">
+                <form method="POST" action="{{ route('agent.logout') }}">
+                    @csrf
+                    <button type="submit"
+                        class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center logout-btn">
+                        <i class="fas fa-sign-out-alt logout-icon"></i>
+                        <span class="logout-text ms-2">Déconnexion</span>
+                    </button>
+                </form>
+            </div> --}}
         </div>
     </div>
 </nav>

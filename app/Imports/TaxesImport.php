@@ -25,7 +25,8 @@ class TaxesImport implements ToCollection, WithHeadingRow
             $frequence = $row['frequence'] ?? $row['periodicite'] ?? null;
             $montantRaw = $row['montant'] ?? $row['montant_fcfa'] ?? $row['prix'] ?? 0;
 
-            // Sanitize amount: remove spaces, replace comma with dot
+
+            // Sanitize amount: remove spaces, replace comma with dot 
             $montant = str_replace(' ', '', (string)$montantRaw);
             $montant = str_replace(',', '.', $montant);
             $montant = (float) $montant;

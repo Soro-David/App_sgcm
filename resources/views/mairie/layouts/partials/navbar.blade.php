@@ -83,7 +83,8 @@
         <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100 px-3">
             <a class="navbar-brand d-flex justify-content-center align-items-center brand-logo"
                 href="{{ route('mairie.dashboard.index') }}">
-                <img src="{{ asset('assets/images/logo_navbar.png') }}" alt="Logo SGTC" style="max-height: 45px;">
+                <img src="{{ asset('assets/images/logo_navbar.png') }}" alt="Logo SGTC"
+                    style="max-height: 180px !important;">
             </a>
             <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                 <i class="fas fa-bars text-white"></i>
@@ -92,14 +93,7 @@
     </div>
     <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end"
         style="margin-left: 0px; box-shadow: 0 2px 15px rgba(0,0,0,0.1);">
-            @if ($mairieLogo)
-                <li class="nav-item me-3 d-none d-md-block">
-                    <div class="mairie-logo-nav" style="border-right: 1px solid #eee; padding-right: 15px;">
-                        <img src="{{ asset('storage/' . $mairieLogo) }}" alt="Logo Mairie"
-                            style="max-height: 40px; width: auto; object-fit: contain;">
-                    </div>
-                </li>
-            @endif
+
         <div class="d-flex flex-column ms-3 me-auto">
             <h4 class="fw-bold mb-0" style="color: #2c3e50; font-size: 1.1rem;">{{ Auth::user()->name }}</h4>
             <span class="badge rounded-pill d-flex align-items-center"
@@ -137,11 +131,18 @@
             <li class="nav-item nav-profile dropdown">
                 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-toggle="dropdown"
                     id="profileDropdown">
-                    <div class="profile-img-container" style="position: relative;">
-                        <img src="{{ Auth::user()->photo_profil ? asset('storage/' . Auth::user()->photo_profil) : asset('images/default_avatar.jpg') }}"
-                            alt="Profile" class="img-xs rounded-circle"
-                            style="border: 2px solid {{ $roleColor }}; padding: 2px;" />
-                    </div>
+                    @if ($mairieLogo)
+                        <div class="mairie-logo-nav" style="display: flex; align-items: center;">
+                            <img src="{{ asset('storage/' . $mairieLogo) }}" alt="Logo Mairie"
+                                style="max-height: 40px; width: auto; object-fit: contain; padding: 2px;">
+                        </div>
+                    @else
+                        <div class="profile-img-container" style="position: relative;">
+                            <img src="{{ Auth::user()->photo_profil ? asset('storage/' . Auth::user()->photo_profil) : asset('images/default_avatar.jpg') }}"
+                                alt="Profile" class="img-xs rounded-circle"
+                                style="border: 2px solid {{ $roleColor }}; padding: 2px;" />
+                        </div>
+                    @endif
                 </a>
                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-end navbar-dropdown shadow-sm"
                     aria-labelledby="profileDropdown" style="border-radius: 12px; border: none; padding: 10px;">

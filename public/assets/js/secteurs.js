@@ -11,7 +11,7 @@ $(function () {
             if (!codeInput.val()) {
                 $.get(codeGenUrl, function (response) {
                     codeInput.val(response.code || 'Erreur de génération');
-                }).fail(() => codeInput.val('Erreur réseau'));
+                }).fail(() => codeInput.val('code secteur.'));
             }
         }
 

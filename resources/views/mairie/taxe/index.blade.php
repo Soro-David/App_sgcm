@@ -47,7 +47,7 @@
                     </div>
                     <div class="col-auto">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-upload"></i> Uploder
+                            <i class="fas fa-upload"></i> Importer
                         </button>
                     </div>
                     <div class="col-12">

@@ -1,119 +1,367 @@
-/* Style pour tous les inputs et selects */
+/* ==========================================================================
+   STYLE_PAGE.CSS  —  Layout général + Responsivité
+   Architecture : Desktop sidebar fixe | Tablette sidebar réduite | Mobile off-canvas
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   0. RESET DU CONTAINER BOOTSTRAP (supprime le gutter qui crée la marge)
+   --------------------------------------------------------------------------
+   Bootstrap CDN est chargé en dernier : on neutralise son padding
+   avec !important sur le wrapper principal.
+   -------------------------------------------------------------------------- */
+.page-body-wrapper {
+    padding-left:  0 !important;
+    padding-right: 0 !important;
+    margin-left:   0 !important;
+    margin-right:  0 !important;
+    --bs-gutter-x: 0 !important;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: row;
+}
+
+/* --------------------------------------------------------------------------
+   1. LAYOUT DESKTOP (≥ 992px)
+   Sidebar fixe à gauche, main-panel à droite
+   -------------------------------------------------------------------------- */
+@media (min-width: 992px) {
+
+    /* ---- Sidebar ---- */
+    .sidebar {
+        position: fixed !important;
+        top: 4.625rem; /* hauteur navbar */
+        left: 0 !important;
+        width: 250px;
+        height: calc(100vh - 4.625rem);
+        z-index: 200;
+        overflow-y: auto;
+        overflow-x: hidden;
+        transition: width 0.25s ease;
+        flex-shrink: 0;
+    }
+
+    /* Masquer la scrollbar visible mais garder le scroll */
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
+
+    /* ---- Main panel ---- */
+    .main-panel {
+        margin-left: 250px !important;
+        width: calc(100% - 250px) !important;
+        min-height: calc(100vh - 4.625rem);
+        transition: margin-left 0.25s ease, width 0.25s ease;
+        padding-top: 4.625rem; /* espace pour le navbar fixe */
+    }
+
+    /* ---- Navbar brand-wrapper aligne sa largeur avec la sidebar ---- */
+    .navbar .navbar-brand-wrapper {
+        width: 250px !important;
+        flex-shrink: 0;
+        transition: width 0.25s ease;
+    }
+
+    /* ---- Navbar menu-wrapper prend le reste ---- */
+    .navbar .navbar-menu-wrapper {
+        flex: 1;
+        margin-left: 0 !important;
+    }
+
+    /* ---- Smooth transitions ---- */
+    .sidebar,
+    .navbar .navbar-brand-wrapper,
+    .main-panel {
+        transition: all 0.25s ease !important;
+    }
+
+    /* ----------------------------------------------------------------
+       MODE ICON-ONLY (sidebar réduite à 70px, bouton minimize)
+       ---------------------------------------------------------------- */
+    .sidebar-icon-only .sidebar {
+        width: 70px !important;
+    }
+
+    .sidebar-icon-only .main-panel {
+        margin-left: 70px !important;
+        width: calc(100% - 70px) !important;
+    }
+
+    .sidebar-icon-only .navbar .navbar-brand-wrapper {
+        width: 70px !important;
+    }
+
+    /* Masquer le logo texte, centrer le bouton minimize */
+    .sidebar-icon-only .brand-logo {
+        display: none !important;
+    }
+    .sidebar-icon-only .navbar-brand-inner-wrapper {
+        justify-content: center !important;
+        padding: 0 !important;
+    }
+
+    /* Masquer les textes du menu, centrer les icônes */
+    .sidebar-icon-only .sidebar .menu-title,
+    .sidebar-icon-only .sidebar .menu-arrow,
+    .sidebar-icon-only .sidebar .nav-category {
+        display: none !important;
+    }
+    .sidebar-icon-only .sidebar .nav-item .nav-link {
+        justify-content: center !important;
+        padding: 10px 0 !important;
+    }
+    .sidebar-icon-only .sidebar .nav-item .nav-link i.menu-icon {
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+        font-size: 1.4rem !important;
+    }
+    .sidebar-icon-only .sidebar .nav-item .nav-link i.menu-icon.me-1,
+    .sidebar-icon-only .sidebar .nav-item .nav-link i.menu-icon.me-2,
+    .sidebar-icon-only .sidebar .nav-item .nav-link i.menu-icon.me-3 {
+        margin-right: 0 !important;
+    }
+
+    /* Logout bouton en mode icon-only */
+    .sidebar-icon-only .logout-text  { display: none !important; }
+    .sidebar-icon-only .logout-icon  { font-size: 1.5rem !important; margin: 0 !important; }
+    .sidebar-icon-only .logout-btn   {
+        padding: 12px 0 !important;
+        border: none !important;
+        background: transparent !important;
+        color: #dc3545 !important;
+    }
+    .sidebar-icon-only .logout-container {
+        padding: 0 !important;
+        display: flex;
+        justify-content: center;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   2. LAYOUT TABLETTE (768px → 991px)
+   Sidebar en off-canvas, navbar sur toute la largeur
+   -------------------------------------------------------------------------- */
+@media (min-width: 768px) and (max-width: 991px) {
+
+    /* ---- Navbar pleine largeur ---- */
+    .navbar {
+        display: flex !important;
+        flex-direction: row !important;
+        height: 70px;
+        width: 100%;
+    }
+
+    .navbar .navbar-brand-wrapper {
+        width: 120px !important;
+        min-width: 120px;
+        flex-shrink: 0;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;           /* indique que c'est cliquable */
+    }
+
+    .navbar .navbar-menu-wrapper {
+        flex: 1;
+        height: 70px;
+        padding: 0 15px;
+        margin-left: 0 !important;
+        display: flex !important;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    /* ---- Layout corps ---- */
+    .page-body-wrapper {
+        padding-top: 70px;
+    }
+
+    .main-panel {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 15px !important;
+    }
+
+    /* ---- Sidebar off-canvas (tablette) ---- */
+    .sidebar-offcanvas {
+        position: fixed !important;
+        top: 70px;
+        left: -270px;
+        bottom: 0;
+        width: 260px !important;
+        z-index: 1035;
+        overflow-y: auto;
+        transition: left 0.3s ease-in-out;
+        box-shadow: 3px 0 15px rgba(0,0,0,0.15);
+    }
+
+    .sidebar-offcanvas.active {
+        left: 0 !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   3. LAYOUT MOBILE (< 768px)
+   Navbar compacte, sidebar off-canvas plein écran
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+
+    /* ---- Navbar mobile ---- */
+    .navbar {
+        display: flex !important;
+        flex-direction: row !important;
+        height: 60px;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .navbar .navbar-brand-wrapper {
+        width: 70px !important;
+        min-width: 70px;
+        flex-shrink: 0;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: relative;
+    }
+
+    /* Petit icône menu sous le logo */
+    .navbar .navbar-brand-wrapper::after {
+        content: '☰';
+        position: absolute;
+        bottom: 3px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.55rem;
+        opacity: 0.7;
+        color: #fff;
+        letter-spacing: 1px;
+    }
+
+    /* Logo image réduit */
+    .navbar .navbar-brand-wrapper .navbar-brand img {
+        max-height: 32px !important;
+    }
+
+    .navbar .navbar-menu-wrapper {
+        flex: 1;
+        height: 60px;
+        padding: 0 8px;
+        margin-left: 0 !important;
+        display: flex !important;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    /* Masquer le nom de l'utilisateur sur très petit écran */
+    .navbar .navbar-menu-wrapper h4 {
+        display: none !important;
+    }
+
+    /* ---- Layout corps mobile ---- */
+    .page-body-wrapper {
+        padding-top: 60px;
+    }
+
+    .main-panel {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 10px !important;
+        min-height: calc(100vh - 60px);
+    }
+
+    .content-wrapper {
+        padding: 1rem !important;
+    }
+
+    /* ---- Sidebar off-canvas (mobile) ---- */
+    .sidebar-offcanvas {
+        position: fixed !important;
+        top: 60px;
+        left: -275px;
+        bottom: 0;
+        width: 260px !important;
+        z-index: 1035;
+        overflow-y: auto;
+        transition: left 0.3s ease-in-out;
+        box-shadow: 3px 0 15px rgba(0,0,0,0.2);
+    }
+
+    .sidebar-offcanvas.active {
+        left: 0 !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   4. OVERLAY (mobile + tablette) — fond sombre derrière le sidebar ouvert
+   -------------------------------------------------------------------------- */
+@media (max-width: 991px) {
+    body::after {
+        content: '';
+        display: block;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1030; /* entre page et sidebar */
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+    body.sidebar-open::after {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    /* Feedback au tap logo */
+    .navbar .navbar-brand-wrapper:active {
+        opacity: 0.75;
+    }
+
+    /* Bloquer le scroll du body quand sidebar ouvert */
+    body.sidebar-open {
+        overflow: hidden;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   5. NAVBAR — styles communs à tous les breakpoints
+   -------------------------------------------------------------------------- */
+.navbar {
+    position: fixed !important;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.navbar .navbar-brand-wrapper .navbar-brand img {
+    max-height: 80%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+.navbar-toggler:hover {
+    opacity: 0.8;
+}
+
+/* --------------------------------------------------------------------------
+   6. INPUTS & FORMS
+   -------------------------------------------------------------------------- */
 input.form-control,
 select.form-select {
-    background-color: #f1f4f9;           /* Fond légèrement gris-bleu */
-    color: #212529;                      /* Texte foncé */
-    border: 1px solid #ced4da;           /* Bord gris clair */
+    background-color: #f1f4f9;
+    color: #212529;
+    border: 1px solid #ced4da;
     border-radius: 6px;
     font-size: 14px;
     padding: 10px;
     transition: all 0.3s ease-in-out;
 }
 
-@media (min-width: 992px) {
-  .main-panel {
-    margin-left: 250px;
-    transition: margin-left 0.25s ease;
-  }
-}
-
-/* Sidebar Mini / Icon only overrides */
-@media (min-width: 992px) {
-  .sidebar-icon-only .main-panel {
-    margin-left: 70px !important;
-  }
-  
-  .sidebar-icon-only .sidebar {
-    width: 70px !important;
-  }
-  
-  .sidebar-icon-only .navbar-brand-wrapper {
-    width: 70px !important;
-  }
-  
-  .sidebar-icon-only .brand-logo {
-    display: none !important;
-  }
-  
-  .sidebar-icon-only .navbar-brand-inner-wrapper {
-    justify-content: center !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    display: flex !important;
-  }
-  
-  .sidebar-icon-only .navbar-brand-inner-wrapper .navbar-toggler {
-    margin: 0 !important;
-  }
-  
-  .sidebar-icon-only .sidebar .nav-item .menu-title,
-  .sidebar-icon-only .sidebar .nav-item .menu-arrow {
-    display: none !important;
-  }
-  
-  .sidebar-icon-only .sidebar .nav-item .nav-link {
-    justify-content: center !important;
-    padding: 10px 0 !important;
-  }
-  
-  .sidebar-icon-only .sidebar .nav-item .nav-link i.menu-icon {
-    margin-right: 0 !important;
-    margin-left: 0 !important;
-    font-size: 1.5rem !important;
-  }
-  
-  /* Transition for smooth width changes */
-  .sidebar, .navbar-brand-wrapper, .main-panel {
-    transition: all 0.3s ease-in-out !important;
-  }
-
-  /* Resetting Bootstrap margin utilities in icon-only mode */
-  .sidebar-icon-only .sidebar .nav-item .nav-link i.menu-icon.me-1,
-  .sidebar-icon-only .sidebar .nav-item .nav-link i.menu-icon.me-2,
-  .sidebar-icon-only .sidebar .nav-item .nav-link i.menu-icon.me-3 {
-    margin-right: 0 !important;
-  }
-
-  /* Logout button minimization */
-  .sidebar-icon-only .logout-text {
-    display: none !important;
-  }
-  
-  .sidebar-icon-only .logout-btn {
-    padding: 12px 0 !important;
-    border: none !important;
-    background: transparent !important;
-    color: #dc3545 !important;
-  }
-  
-  .sidebar-icon-only .logout-icon {
-    font-size: 1.5rem !important;
-    margin: 0 !important;
-  }
-
-  .sidebar-icon-only .logout-container {
-    padding: 0 !important;
-    display: flex;
-    justify-content: center;
-  }
-}
-
-.navbar .navbar-brand-wrapper .navbar-brand img {
-  max-height: 80% !important;
-  width: auto !important;
-  height: auto !important;
-  object-fit: contain;
-}
-
-.navbar-toggler:hover {
-  opacity: 0.8;
-}
-/* Placeholder gris doux */
 input::placeholder {
     color: #999;
 }
 
-/* Focus : surlignage en bleu foncé */
 input.form-control:focus,
 select.form-select:focus {
     background-color: #ffffff;
@@ -122,7 +370,6 @@ select.form-select:focus {
     color: #000;
 }
 
-/* Input désactivé */
 input:disabled,
 select:disabled {
     background-color: #e9ecef;
@@ -130,44 +377,39 @@ select:disabled {
     cursor: not-allowed;
 }
 
-/* Input valide (si `required`) */
 input.form-control:valid,
 select.form-select:valid {
     border-color: #198754;
 }
 
-/* Input invalide */
 input.form-control:invalid,
 select.form-select:invalid {
     border-color: #dc3545;
 }
 
-/* Labels */
 label.form-label {
     color: #343a40;
     font-weight: 500;
 }
 
-
-/* Agrandir la hauteur de la boîte Select2 */
+/* --------------------------------------------------------------------------
+   7. SELECT2
+   -------------------------------------------------------------------------- */
 .select2-container .select2-selection--single {
     height: 50px !important;
     padding: 10px 14px;
     font-size: 16px;
 }
 
-/* Centrer verticalement le texte */
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     line-height: 30px !important;
     font-size: 16px;
 }
 
-/* Agrandir la flèche (dropdown icon) */
 .select2-container--default .select2-selection--single .select2-selection__arrow {
     height: 50px !important;
 }
 
-/* Pour les champs multiples */
 .select2-container--default .select2-selection--multiple {
     min-height: 50px;
     font-size: 16px;
@@ -179,99 +421,56 @@ label.form-label {
     color: #000;
 }
 
-.btn-success {
-    padding: 15px 50px;      /* Plus de hauteur et largeur */
-    font-size: 1.5rem;       /* Texte plus grand */
-    font-weight: 600;        /* Texte un peu plus épais */
-    border-radius: 8px;      /* Coins légèrement arrondis */
+@media (max-width: 576px) {
+    .select2-container {
+        width: 100% !important;
+    }
 }
+
+/* --------------------------------------------------------------------------
+   8. BOUTONS
+   -------------------------------------------------------------------------- */
+.btn-success,
 .btn-primary {
-    padding: 15px 50px;      /* Plus de hauteur et largeur */
-    font-size: 1.5rem;       /* Texte plus grand */
-    font-weight: 600;        /* Texte un peu plus épais */
-    border-radius: 8px;      /* Coins légèrement arrondis */
+    padding: 15px 50px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    border-radius: 8px;
 }
 
-/* ==========================================================================
-   RESPONSIVENESS FIXES (Tablets & Mobile)
-   ========================================================================== */
-
-/* 1. Global Layout Fixes */
-@media (max-width: 991px) {
-    .container-scroller {
-        overflow: hidden; /* Prevent horizontal scroll on body */
-    }
-
-    .page-body-wrapper {
-        padding-top: 70px; /* Space for fixed navbar */
-        min-height: calc(100vh - 70px);
-    }
-
-    .main-panel {
-        margin-left: 0 !important;
+@media (max-width: 576px) {
+    .btn-success,
+    .btn-primary,
+    .btn-danger,
+    .btn {
         width: 100% !important;
-        padding: 10px !important;
+        margin-bottom: 10px;
+        padding: 10px 20px !important;
+        font-size: 1.1rem !important;
     }
 
-    .content-wrapper {
-        padding: 1.5rem 1rem !important;
+    .modal-footer {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .modal-footer .btn {
+        margin: 0 !important;
     }
 
-    /* Sidebar Off-canvas Logic */
-    .sidebar-offcanvas {
-        position: fixed;
-        top: 70px; /* Match navbar height */
-        bottom: 0;
-        left: -265px; /* Hidden by default */
-        width: 260px !important;
-        z-index: 1030;
-        transition: left 0.3s ease-in-out;
-        background: #fff;
-        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-        display: block !important;
+    .input-group {
+        flex-direction: column;
     }
-
-    .sidebar-offcanvas.active {
-        left: 0;
-    }
-
-    /* Navbar brand adjustments */
-    .navbar .navbar-brand-wrapper {
+    .input-group > .form-control,
+    .input-group > .input-group-text {
         width: 100% !important;
-        display: flex;
-        justify-content: space-between !important;
-        align-items: center;
-        padding: 0 15px;
-    }
-
-    .navbar .navbar-menu-wrapper {
-        width: 100% !important;
-        height: 70px;
-        padding: 0 15px;
-        margin-left: 0 !important;
-    }
-
-    .navbar .navbar-brand.brand-logo {
-        display: flex !important;
-    }
-
-    .navbar .navbar-brand.brand-logo span:first-child {
-        font-size: 1.5rem !important; /* Smaller logo text on mobile */
-    }
-
-    .navbar .navbar-brand.brand-logo span:last-child {
-        display: none; /* Hide subtitle on very small devices */
-    }
-
-    /* Hide text in navbar on small screens if necessary */
-    .navbar .navbar-menu-wrapper h4 {
-        font-size: 0.9rem !important;
-        margin-left: 0.5rem !important;
-        display: none; /* Cache le titre sur mobile pour gagner de la place */
+        border-radius: 8px !important;
+        margin-bottom: 5px;
     }
 }
 
-/* 2. Tables & Cards */
+/* --------------------------------------------------------------------------
+   9. TABLES & CARTES
+   -------------------------------------------------------------------------- */
 .table-responsive {
     border: 0;
     margin-bottom: 0;
@@ -280,22 +479,19 @@ label.form-label {
     -webkit-overflow-scrolling: touch;
 }
 
+.grid-margin {
+    margin-bottom: 1.5rem;
+}
+
 @media (max-width: 767px) {
-    .card-body {
-        padding: 1rem !important;
-    }
+    .card-body  { padding: 1rem !important; }
+    .card-title { font-size: 1rem !important; }
 
-    .card-title {
-        font-size: 1rem !important;
-    }
-
-    /* Stack grid columns more aggressively */
     .row > [class*="col-"] {
         padding-left: 10px;
         padding-right: 10px;
     }
 
-    /* DataTables adjustments */
     .dataTables_wrapper .dataTables_filter,
     .dataTables_wrapper .dataTables_length {
         text-align: center !important;
@@ -311,59 +507,20 @@ label.form-label {
     }
 }
 
-/* 3. Forms & Buttons */
-@media (max-width: 576px) {
-    .btn-success, .btn-primary, .btn-danger, .btn {
-        width: 100% !important; /* Full width buttons on mobile */
-        margin-bottom: 10px;
-        padding: 10px 20px !important;
-        font-size: 1.1rem !important;
-    }
-
-    .modal-footer {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .modal-footer .btn {
-        margin: 0 !important;
-    }
-
-    .input-group {
-        flex-direction: column;
-    }
-
-    .input-group > .form-control,
-    .input-group > .input-group-text {
-        width: 100% !important;
-        border-radius: 8px !important;
-        margin-bottom: 5px;
-    }
-    
-    /* Select2 Mobile Fix */
-    .select2-container {
-        width: 100% !important;
-    }
-}
-
-/* 4. Statistics Cards */
-.grid-margin {
-    margin-bottom: 1.5rem;
-}
-
 @media (max-width: 1200px) {
     .stretch-card {
         display: block !important;
     }
 }
 
-/* Ensure images/canvases don't overflow */
+/* --------------------------------------------------------------------------
+   10. MÉDIAS
+   -------------------------------------------------------------------------- */
 canvas {
     max-width: 100% !important;
-    /* height: auto !important; */
 }
 
 img {
     max-width: 100%;
-    height: auto;
+    /* height: auto; */
 }

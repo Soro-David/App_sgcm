@@ -1,6 +1,10 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <div class="d-flex flex-column justify-content-between h-100">
         <ul class="nav flex-column">
+            <!-- Logo mobile/tablette sur le sidebar -->
+            <li class="nav-item d-lg-none sidebar-logo-container bg-commercant">
+                <img src="{{ asset('assets/images/logo_navbar.png') }}" alt="Logo SGTC">
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('commercant.dashboard') }}">
                     <i class="typcn typcn-device-desktop menu-icon"></i>

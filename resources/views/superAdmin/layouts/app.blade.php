@@ -4,6 +4,17 @@
 
 <head>
     @include('superAdmin.layouts.partials.head')
+    {{-- Override final : supprime le padding-left du container Bootstrap (CDN chargé en dernier) --}}
+    <style>
+        .page-body-wrapper,
+        div.page-body-wrapper,
+        .container-fluid.page-body-wrapper {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+    </style>
 </head>
 
 <body>

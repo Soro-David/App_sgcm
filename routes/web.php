@@ -555,6 +555,7 @@ Route::middleware(['auth:web', 'role:superadmin'])->prefix('super/admin')->name(
     Route::get('/dashboard', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'index'])->name('dashboard');
     Route::get('/bilan', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'bilan'])->name('bilan');
     Route::get('/recapitulatif', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'recapitulatif'])->name('recapitulatif');
+    Route::get('/recapitulatif/{id}', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'recapitulatifDetails'])->name('recapitulatif.details');
 
     // Profil SuperAdmin
     Route::get('/mon-profil', [ProfileController::class, 'index'])->name('profile.show');

@@ -135,252 +135,37 @@
 
         <div class="recap-container">
             @forelse($mairies as $mairie)
-                <div class="mairie-card">
-                    <div class="mairie-header" data-bs-toggle="collapse" data-bs-target="#mairie-{{ $mairie->id }}">
-                        <div class="d-flex align-items-center">
-                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3"
-                                style="width: 45px; height: 45px; overflow: hidden; border: 1px solid #eee;">
-                                @if ($mairie->logo)
-                                    <img src="{{ asset('storage/' . $mairie->logo) }}" alt="Logo" class="rounded-circle"
-                                        style="width: 40px; height: 40px; object-fit: cover;">
-                                @else
-                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
-                                        style="width: 100%; height: 100%;">
-                                        <i class="fas fa-city"></i>
-                                    </div>
-                                @endif
+                <a href="{{ route('superadmin.recapitulatif.details', $mairie->id) }}" class="text-decoration-none">
+                    <div class="mairie-card">
+                        <div class="mairie-header">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3"
+                                    style="width: 45px; height: 45px; overflow: hidden; border: 1px solid #eee;">
+                                    @if ($mairie->logo)
+                                        <img src="{{ asset('storage/' . $mairie->logo) }}" alt="Logo"
+                                            class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                    @else
+                                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                                            style="width: 100%; height: 100%;">
+                                            <i class="fas fa-city"></i>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div>
+                                    <h5 class="text-dark">{{ $mairie->name }}</h5>
+                                    <small class="text-muted">{{ $mairie->region }} - {{ $mairie->commune }}</small>
+                                </div>
                             </div>
-                            <div>
-                                <h5>{{ $mairie->name }}</h5>
-                                <small class="text-muted">{{ $mairie->region }} - {{ $mairie->commune }}</small>
-                            </div>
-                        </div>
-                        <i class="fas fa-chevron-down text-muted"></i>
-                    </div>
-
-                    <div id="mairie-{{ $mairie->id }}" class="collapse">
-                        <div class="card-body bg-white border-top">
-                            <!-- Onglets internes -->
-                            <ul class="nav nav-pills nav-pills-custom mb-4" id="pills-tab-{{ $mairie->id }}"
-                                role="tablist">
-                                <li class="nav-item">
-                                    <button class="nav-link active" id="pills-contrib-tab-{{ $mairie->id }}"
-                                        data-bs-toggle="pill" data-bs-target="#pills-contrib-{{ $mairie->id }}"
-                                        type="button">Contribuables</button>
-                                </li>
-                                <li class="nav-item">
-                                    <button class="nav-link" id="pills-staff-tab-{{ $mairie->id }}" data-bs-toggle="pill"
-                                        data-bs-target="#pills-staff-{{ $mairie->id }}" type="button">Personnel
-                                        Mairie</button>
-                                </li>
-                                <li class="nav-item">
-                                    <button class="nav-link" id="pills-fin-tab-{{ $mairie->id }}" data-bs-toggle="pill"
-                                        data-bs-target="#pills-fin-{{ $mairie->id }}" type="button">Agents
-                                        Financiers</button>
-                                </li>
-                                <li class="nav-item">
-                                    <button class="nav-link" id="pills-logs-tab-{{ $mairie->id }}" data-bs-toggle="pill"
-                                        data-bs-target="#pills-logs-{{ $mairie->id }}" type="button">Audit / Qui a fait
-                                        quoi</button>
-                                </li>
-                            </ul>
-
-                            <div class="tab-content" id="pills-tabContent-{{ $mairie->id }}">
-                                <!-- Onglet Contribuables -->
-                                <div class="tab-pane fade show active" id="pills-contrib-{{ $mairie->id }}">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover table-custom">
-                                            <thead>
-                                                <tr>
-                                                    <th>Contribuable</th>
-                                                    <th>Contact</th>
-                                                    <th>Agent Recenseur</th>
-                                                    <th>Date Ajout</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @forelse($mairie->contribuables as $contrib)
-                                                    <tr>
-                                                        <td class="fw-bold">{{ $contrib->nom }}</td>
-                                                        <td>{{ $contrib->telephone }}</td>
-                                                        <td>
-                                                            @if ($contrib->agent)
-                                                                <span class="badge badge-agent">
-                                                                    <i class="fas fa-user-tie me-1"></i>
-                                                                    {{ $contrib->agent->name }}
-                                                                </span>
-                                                            @else
-                                                                <span class="text-muted">Inconnu</span>
-                                                            @endif
-                                                        </td>
-                                                        <td>{{ $contrib->created_at->format('d/m/Y H:i') }}</td>
-                                                    </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="4" class="text-center py-3 text-muted">Aucun
-                                                            contribuable trouvé.</td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-
-                                <!-- Onglet Personnel -->
-                                <div class="tab-pane fade" id="pills-staff-{{ $mairie->id }}">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover table-custom">
-                                            <thead>
-                                                <tr>
-                                                    <th>Nom</th>
-                                                    <th>Rôle</th>
-                                                    <th>Email</th>
-                                                    <th>Statut</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @forelse($mairie->personnel as $staff)
-                                                    <tr>
-                                                        <td class="fw-bold">{{ $staff->name }}</td>
-                                                        <td><span
-                                                                class="badge bg-info text-white badge-role">{{ ucfirst($staff->role) }}</span>
-                                                        </td>
-                                                        <td>{{ $staff->email }}</td>
-                                                        <td>
-                                                            <span
-                                                                class="badge bg-{{ $staff->status == 'active' ? 'success' : 'warning' }} badge-role">{{ ucfirst($staff->status) }}</span>
-                                                        </td>
-                                                    </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="4" class="text-center py-3 text-muted">Aucun
-                                                            personnel supplémentaire.</td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-
-                                <!-- Onglet Agents Financiers -->
-                                <div class="tab-pane fade" id="pills-fin-{{ $mairie->id }}">
-                                    <div class="section-title mt-0">Financiers</div>
-                                    <div class="table-responsive mb-4">
-                                        <table class="table table-hover table-custom">
-                                            <thead>
-                                                <tr>
-                                                    <th>Nom</th>
-                                                    <th>Email</th>
-                                                    <th>Contact</th>
-                                                    <th>Date Ajout</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @forelse($mairie->agents_financiers as $fin)
-                                                    <tr>
-                                                        <td class="fw-bold">{{ $fin->name }}</td>
-                                                        <td>{{ $fin->email }}</td>
-                                                        <td>{{ $fin->telephone1 }}</td>
-                                                        <td>{{ $fin->created_at->format('d/m/Y') }}</td>
-                                                    </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="4" class="text-center py-2 text-muted">Aucun
-                                                            financier trouvé.</td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                    <div class="section-title">Agents Finances</div>
-                                    <div class="table-responsive">
-                                        <table class="table table-hover table-custom">
-                                            <thead>
-                                                <tr>
-                                                    <th>Nom</th>
-                                                    <th>Email</th>
-                                                    <th>Rôle</th>
-                                                    <th>Date Ajout</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @forelse($mairie->ag_finances as $agf)
-                                                    <tr>
-                                                        <td class="fw-bold">{{ $agf->name }}</td>
-                                                        <td>{{ $agf->email }}</td>
-                                                        <td>{{ $agf->role }}</td>
-                                                        <td>{{ $agf->created_at->format('d/m/Y') }}</td>
-                                                    </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="4" class="text-center py-2 text-muted">Aucun agent
-                                                            finance trouvé.</td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-
-                                <!-- Onglet Logs -->
-                                <div class="tab-pane fade" id="pills-logs-{{ $mairie->id }}">
-                                    <div class="logs-wrapper"
-                                        style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
-                                        @forelse($mairie->logs as $log)
-                                            <div class="log-item event-{{ strtolower($log->event) }}">
-                                                <div class="d-flex justify-content-between align-items-start">
-                                                    <div>
-                                                        <span class="log-user">
-                                                            @if ($log->user)
-                                                                {{ $log->user->name }}
-                                                                <small
-                                                                    class="text-muted">({{ class_basename($log->user_type) }})</small>
-                                                            @else
-                                                                Utilisateur inconnu
-                                                            @endif
-                                                        </span>
-                                                        <span class="mx-2 text-muted">•</span>
-                                                        <span class="log-event">{{ $log->event }}</span>
-                                                    </div>
-                                                    <div class="log-time">
-                                                        {{ $log->created_at->diffForHumans() }}
-                                                    </div>
-                                                </div>
-                                                @if ($log->ip_address)
-                                                    <div class="mt-1" style="font-size: 0.7rem; color: #a0aec0;">
-                                                        IP: {{ $log->ip_address }} | Agent:
-                                                        {{ Str::limit($log->user_agent, 50) }}
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        @empty
-                                            <div class="text-center py-4 text-muted">
-                                                <i class="fas fa-history fa-2x mb-3"></i>
-                                                <p>Aucun journal d'activité disponible.</p>
-                                            </div>
-                                        @endforelse
-                                    </div>
-                                </div>
+                            <div class="text-primary">
+                                Voir les détails <i class="fas fa-chevron-right ms-2"></i>
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
+
             @empty
                 <div class="alert alert-info">Aucune mairie trouvée.</div>
             @endforelse
         </div>
     </div>
 @endsection
-
-@push('js')
-    <script>
-        // Optionnel : Animation pour le chevron
-        document.querySelectorAll('.mairie-header').forEach(header => {
-            header.addEventListener('click', function() {
-                const chevron = this.querySelector('.fa-chevron-down');
-                chevron.classList.toggle('fa-rotate-180');
-            });
-        });
-    </script>
-@endpush

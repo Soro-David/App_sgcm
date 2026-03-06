@@ -4,7 +4,7 @@
 {{-- CORRECTION : Le token CSRF doit être ici, une seule fois. --}}
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
-<title>@yield('title', 'Gestion Foncière de Mairie')</title>
+<title>@yield('title', 'Système de Gestion des Taxes communale')</title>
 
 {{-- Styles CSS --}}
 

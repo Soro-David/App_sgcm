@@ -6,7 +6,7 @@
                     Développé par <strong>KKS-Technologie</strong> © {{ date('Y') }} – Tous droits réservés.
                 </span>
                 <span class="text-muted d-block">
-                    SGCM à votre service
+                    SGTC à votre service
                 </span>
             </div>
         </div>

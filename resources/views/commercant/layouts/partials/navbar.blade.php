@@ -4,7 +4,8 @@
         <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100 px-3">
             <a class="navbar-brand d-flex justify-content-center align-items-center brand-logo"
                 href="{{ route('commercant.dashboard') }}">
-                <img src="{{ asset('assets/images/logo_navbar.png') }}" alt="Logo SGTC">
+                <img src="{{ asset('assets/images/logo_navbar.png') }}" alt="Logo SGTC"
+                    style="max-height: 180px !important;">
             </a>
             <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                 <i class="fas fa-bars text-white"></i>
