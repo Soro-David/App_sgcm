@@ -23855,6 +23855,7 @@ dl li {
   display: flex;
   -webkit-flex-direction: column;
   flex-direction: column;
+  margin-top: 0px !important;
 }
 @media (max-width: 991px) {
   .main-panel {

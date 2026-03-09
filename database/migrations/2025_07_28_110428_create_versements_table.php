@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('versements', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('taxe_id')->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('taxe_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('agent_id')->constrained()->onDelete('cascade')->nullable();
             $table->string('mairie_ref')->nullable();
             // Ajout

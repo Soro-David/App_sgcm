@@ -77,8 +77,7 @@ class DashboardController extends Controller
             ->get();
 
         // Personnel de la mairie (Comptes mairie qui ne sont pas l'admin principal)
-        $mairie->personnel = Mairie::where('mairie_ref', $mairie->mairie_ref)
-            ->where('role', '!=', 'admin')
+        $mairie->personnel = Agent::where('mairie_ref', $mairie->mairie_ref)
             ->get();
 
         // Agents financiers (de la table financiers et finances)

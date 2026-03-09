@@ -50,7 +50,7 @@
         width: calc(100% - 250px) !important;
         min-height: calc(100vh - 4.625rem);
         transition: margin-left 0.25s ease, width 0.25s ease;
-        padding-top: 4.625rem; /* espace pour le navbar fixe */
+        padding-top: 0;
     }
 
     /* ---- Navbar brand-wrapper aligne sa largeur avec la sidebar ---- */
@@ -171,7 +171,7 @@
 
     /* ---- Layout corps ---- */
     .page-body-wrapper {
-        padding-top: 70px;
+        padding-top: 70px !important;
     }
 
     .main-panel {
@@ -259,7 +259,7 @@
 
     /* ---- Layout corps mobile ---- */
     .page-body-wrapper {
-        padding-top: 60px;
+        padding-top: 60px !important;
     }
 
     .main-panel {

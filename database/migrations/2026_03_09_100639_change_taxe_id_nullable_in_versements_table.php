@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('mairies', function (Blueprint $table) {
-            $table->string('mairie_ref')->nullable()->after('id');
+        Schema::table('versements', function (Blueprint $table) {
+            $table->unsignedBigInteger('taxe_id')->nullable()->change();
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('mairies', function (Blueprint $table) {
-            $table->dropColumn('mairie_ref');
+        Schema::table('versements', function (Blueprint $table) {
+            $table->unsignedBigInteger('taxe_id')->nullable(false)->change();
         });
     }
 };

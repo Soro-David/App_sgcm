@@ -11,40 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::create('agents', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->string('mairie_ref')->nullable();
-        //     $table->string('name');
-        //     $table->string('type')->default('recouvrement');
-        //     $table->string('email', 191)->nullable();
-        //     $table->timestamp('email_verified_at')->nullable();
-        //     $table->string('password')->nullable();
-        //     $table->timestamp('last_activity')->nullable();
-        //     $table->string('otp_code')->nullable();
-        //     $table->timestamp('otp_expires_at')->nullable();
-        //     $table->string('status')->default('pending');
-
-        //     // Ajout
-        //     $table->string('added_by')->nullable();
-        //     $table->string('type_piece')->nullable();
-        //     $table->string('numero_piece')->nullable();
-        //     $table->string('genre')->nullable();
-        //     $table->date('date_naissance')->nullable();
-        //     $table->string('adresse')->nullable();
-        //     $table->string('telephone1')->nullable();
-        //     $table->string('telephone2')->nullable();
-
-        //     // Ajout
-        //     $table->string('matricule')->nullable();
-        //     $table->string('filiation')->nullable();
-        //     $table->string('photo_profil')->nullable();
-
-        //     $table->json('taxe_id')->nullable();
-        //     $table->json('secteur_id')->nullable();
-
-        //     $table->rememberToken();
-        //     $table->timestamps();
-        // });
 
         Schema::create('agents', function (Blueprint $table) {
             $table->id();

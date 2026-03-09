@@ -153,7 +153,7 @@
                     <li class="nav-item">
                         <button class="nav-link" id="pills-staff-tab-{{ $mairie->id }}" data-bs-toggle="pill"
                             data-bs-target="#pills-staff-{{ $mairie->id }}" type="button"><i
-                                class="fas fa-user-tie me-2"></i>Personnel Mairie</button>
+                                class="fas fa-user-tie me-2"></i>Agent Mairie</button>
                     </li>
                     <li class="nav-item">
                         <button class="nav-link" id="pills-fin-tab-{{ $mairie->id }}" data-bs-toggle="pill"
@@ -225,7 +225,7 @@
                                         <tr>
                                             <td class="fw-bold">{{ $staff->name }}</td>
                                             <td><span
-                                                    class="badge bg-info text-white badge-role">{{ ucfirst($staff->role) }}</span>
+                                                    class="badge bg-info text-white badge-role">{{ ucfirst($staff->type) }}</span>
                                             </td>
                                             <td>{{ $staff->email }}</td>
                                             <td>

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('encaissements', function (Blueprint $table) {
             $table->id();
             $table->foreignId('taxe_id')->constrained()->onDelete('cascade');
-            $table->foreignId('agent_id')->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('agent_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('mairie_ref')->nullable();
             // Ajout
             $table->unsignedBigInteger('recorded_by')->nullable();
