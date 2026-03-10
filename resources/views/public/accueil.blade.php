@@ -283,11 +283,11 @@
         }
 
         /* =========================================
-                                               FEATURE TABS — Logique de couleur claire
-                                               Par défaut  : fond blanc, bordure verte, texte vert, icône gradient vert
-                                               Hover       : fond orange légère, bordure orange, texte orange foncé, icône blanche/orange
-                                               Active      : fond orange plein, bordure orange, texte blanc, icône blanche
-                                            ========================================= */
+                                                   FEATURE TABS — Logique de couleur claire
+                                                   Par défaut  : fond blanc, bordure verte, texte vert, icône gradient vert
+                                                   Hover       : fond orange légère, bordure orange, texte orange foncé, icône blanche/orange
+                                                   Active      : fond orange plein, bordure orange, texte blanc, icône blanche
+                                                ========================================= */
 
         .feature-tabs {
             display: flex;
@@ -948,7 +948,7 @@
                 </div>
                 <div class="feature-img-col">
                     <div class="feature-img-box">
-                        <img src="{{ asset('assets/images/site/securite.png') }}" alt="Sécurité SGTC">
+                        <img src="{{ asset('assets/images/site/security.png') }}" alt="Sécurité SGTC">
                     </div>
                 </div>
             </div>
@@ -986,7 +986,7 @@
                 </div>
                 <div class="feature-img-col">
                     <div class="feature-img-box">
-                        <img src="{{ asset('assets/images/site/suivi_temps.png') }}" alt="Écologique SGTC">
+                        <img src="{{ asset('assets/images/site/suivi_time.png') }}" alt="Écologique SGTC">
                     </div>
                 </div>
             </div>
