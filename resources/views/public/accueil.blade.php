@@ -283,11 +283,11 @@
         }
 
         /* =========================================
-                                           FEATURE TABS — Logique de couleur claire
-                                           Par défaut  : fond blanc, bordure verte, texte vert, icône gradient vert
-                                           Hover       : fond orange légère, bordure orange, texte orange foncé, icône blanche/orange
-                                           Active      : fond orange plein, bordure orange, texte blanc, icône blanche
-                                        ========================================= */
+                                               FEATURE TABS — Logique de couleur claire
+                                               Par défaut  : fond blanc, bordure verte, texte vert, icône gradient vert
+                                               Hover       : fond orange légère, bordure orange, texte orange foncé, icône blanche/orange
+                                               Active      : fond orange plein, bordure orange, texte blanc, icône blanche
+                                            ========================================= */
 
         .feature-tabs {
             display: flex;
@@ -784,7 +784,7 @@
             <!-- Image -->
             <div class="about-img-col">
                 <div class="about-img-box">
-                    <img src="{{ asset('assets/images/hero_slider_bg.png') }}" alt="Calculatrice et monnaie">
+                    <img src="{{ asset('assets/images/site/hero_slider_bg.png') }}" alt="Calculatrice et monnaie">
                 </div>
             </div>
 

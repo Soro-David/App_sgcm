@@ -2,15 +2,18 @@
 
 use App\Http\Controllers\Api\AgentMairieController;
 use App\Http\Controllers\Api\AgentRecouvrementController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CommercantController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/agent-mairie/login', [AgentMairieController::class, 'login']);
-Route::post('/agent-recouvrement/login', [AgentRecouvrementController::class, 'login']);
-Route::post('/commercant/login', [CommercantController::class, 'login']);
+// Authentification unifiée
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::post('/commercant/register', [CommercantController::class, 'definePassword'])->name('commercant.register');
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/profile', [AuthController::class, 'profile']);
 
     // Routes pour les Agents de Mairie
     Route::middleware('abilities:agent-mairie')->prefix('agent-mairie')->name('agent.mairie.')->group(function () {
