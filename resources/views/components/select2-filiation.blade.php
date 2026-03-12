@@ -38,7 +38,7 @@
 
 <div class="s2-filiation">
     <label for="{{ $fieldId }}" class="{{ $labelClass }}">
-        Filiation
+        Lien de parenté
         @if ($required)
             <span class="text-danger">*</span>
         @endif

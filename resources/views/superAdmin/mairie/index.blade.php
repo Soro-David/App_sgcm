@@ -19,7 +19,7 @@
         <div class="row mb-3">
             <div class="col d-flex justify-content-between align-items-center flex-wrap">
                 <h1 class="h3 mb-2">Liste des mairies</h1>
-                <button class="btn btn-primar" data-bs-toggle="modal" data-bs-target="#addMairieModal">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMairieModal">
                     <i class="fas fa-plus"></i> Ajouter une mairie
                 </button>
             </div>

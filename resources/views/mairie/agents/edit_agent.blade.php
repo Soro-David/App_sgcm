@@ -75,9 +75,9 @@
                             <input type="text" class="form-control" id="adresse" name="adresse" required
                                 value="{{ old('adresse', $agent->adresse) }}">
                         </div>
-                        {{-- Contact 1 --}}
+                        {{-- Contact --}}
                         <div class="col-md-6 mb-4">
-                            <label for="telephone1" class="form-label">Contact 1 <span class="text-danger">*</span></label>
+                            <label for="telephone1" class="form-label">Contact <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="telephone1" name="telephone1" maxlength="10"
                                 required value="{{ old('telephone1', $agent->telephone1) }}"
                                 oninput="this.value = this.value.replace(/[^0-9]/g, '')">
@@ -112,7 +112,7 @@
                         <div class="col-md-6 mb-4">
                             <x-select2-filiation :current-value="old('filiation', $agent->filiation)" />
                         </div>
-                        {{-- Contact 2 --}}
+                        {{-- Contact --}}
                         <div class="col-md-6 mb-4">
                             <label for="telephone2" class="form-label">Contact <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="telephone2" maxlength="10" name="telephone2"

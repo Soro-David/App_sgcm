@@ -14,13 +14,15 @@
     </div>
 
     <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end" style="margin-left: 0px;">
-        <h4 class="fw-bold mb-0 me-auto ms-3" style="color: #1000f7;">CONTRIBUABLE : {{ Auth::user()->nom }}</h4>
+        <h4 class="fw-bold mb-0 me-auto ms-3" style="color: #1000f7;">CONTRIBUABLE : {{ strtoupper(Auth::user()->nom) }}
+        </h4>
         <ul class="navbar-nav navbar-nav-right">
             <li class="nav-item dropdown me-0">
-                <a class="nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center"
-                    id="notificationDropdown" href="#" data-bs-toggle="dropdown">
-                    <i class="fas fa-bell" style="color: #1000f7; font-size: 1.5rem;"></i>
-                    <span class="count"></span>
+                <a class="nav me-2 count-indicator d-flex align-items-center justify-content-center"
+                    id="notificationDropdown" href="#" data-bs-toggle="dropdown"
+                    style="text-decoration: none !important; border: none !important; outline: none !important; box-shadow: none !important;">
+                    <i class="fas fa-bell" style="color: #1000f7; font-size: 1.8rem;"></i>
+                    <span class="count" style="background: #e8030fff; border: none !important;"></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
                     aria-labelledby="notificationDropdown">
@@ -67,9 +69,10 @@
                 </div>
             </li>
             <li class="nav-item nav-profile dropdown">
-                <a class="nav-link" href="#" data-bs-toggle="dropdown" id="profileDropdown">
+                <a class="nav me-2" href="#" data-bs-toggle="dropdown" id="profileDropdown">
                     <img src="{{ Auth::user()->photo_profil ? asset('storage/' . Auth::user()->photo_profil) : asset('images/default_avatar.jpg') }}"
-                        alt="Profile" class="img-xs rounded-circle" style="margin-top: -11px;" />
+                        alt="Profile" class="img-xs"
+                        style="max-height: 50px; height: 60px; width: 60px; object-fit: contain; padding: 2px; border: 1px solid #eee; border-radius: 8px;" />
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                     <a class="dropdown-item" href="{{ route('commercant.profile.show') }}">

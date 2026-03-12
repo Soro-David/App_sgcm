@@ -8,7 +8,6 @@ use App\Models\Commercant;
 use App\Notifications\PasswordResetNotification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -229,42 +228,84 @@ class AuthController extends Controller
      */
     public function profile(Request $request)
     {
-        Log::info('Profile request received', [
-            'headers' => $request->headers->all(),
-            'token' => $request->bearerToken(),
-        ]);
-
         try {
-            $user = Auth::guard('sanctum')->user();
+            $user = auth()->user();
 
             if (! $user) {
-                Log::warning('Profile request: User not authenticated');
-
                 return response()->json([
                     'success' => false,
                     'message' => 'Utilisateur non authentifié.',
                 ], 401);
             }
 
-            Log::info('Profile request: User authenticated', [
-                'user_id' => $user->id,
-                'class' => get_class($user),
-            ]);
-
             $role = 'unknown';
-            $userData = [
-                'id' => $user->id,
-                'nom' => $user->name ?? $user->nom ?? null,
-                'email' => $user->email,
-            ];
+            $userData = [];
 
             if ($user instanceof Agent) {
                 $role = 'agent_'.$user->type;
-                $userData['matricule'] = $user->matricule;
-                $userData['type'] = $user->type;
+
+                // Charger les relations utiles pour un agent
+                $user->load(['mairie', 'commune']);
+
+                $userData = [
+                    'id' => $user->id,
+                    'matricule' => $user->matricule,
+                    'nom' => $user->name,
+                    'email' => $user->email,
+                    'telephone' => $user->telephone1,
+                    'type' => $user->type,
+                    'status' => $user->status,
+                    'genre' => $user->genre,
+                    'adresse' => $user->adresse,
+                    'photo_profil' => $user->photo_profil ? asset('storage/'.$user->photo_profil) : null,
+                    'mairie' => $user->mairie ? [
+                        'nom' => $user->mairie->nom_mairie,
+                        'code' => $user->mairie->mairie_ref,
+                    ] : null,
+                    'commune' => $user->commune ? $user->commune->nom : null,
+                ];
+
+                // Ajouter les taxes et secteurs si c'est un agent de recouvrement ou recensement
+                if (in_array($user->type, ['recouvrement', 'recensement'])) {
+                    // Les taxes et secteurs sont stockés dans des colonnes JSON (taxe_id, secteur_id)
+                    // On récupère les IDs et on fait une requête manuelle car la relation belongsToMany n'a pas de table pivot
+
+                    $taxeIds = is_array($user->taxe_id) ? $user->taxe_id : json_decode($user->taxe_id ?? '[]', true);
+                    if (! empty($taxeIds)) {
+                        $userData['taxes'] = \App\Models\Taxe::whereIn('id', $taxeIds)->get(['id', 'nom']);
+                    } else {
+                        $userData['taxes'] = [];
+                    }
+
+                    $secteurIds = is_array($user->secteur_id) ? $user->secteur_id : json_decode($user->secteur_id ?? '[]', true);
+                    if (! empty($secteurIds)) {
+                        $userData['secteurs'] = \App\Models\Secteur::whereIn('id', $secteurIds)->get(['id', 'nom']);
+                    } else {
+                        $userData['secteurs'] = [];
+                    }
+                }
+
             } elseif ($user instanceof Commercant) {
                 $role = 'commercant';
-                $userData['num_commerce'] = $user->num_commerce;
+
+                // Charger les relations utiles pour un commerçant
+                $user->load(['mairie', 'secteur', 'typeContribuable']);
+
+                $userData = [
+                    'id' => $user->id,
+                    'num_commerce' => $user->num_commerce,
+                    'nom' => $user->nom,
+                    'email' => $user->email,
+                    'telephone' => $user->telephone,
+                    'adresse' => $user->adresse,
+                    'photo_profil' => $user->photo_profil ? asset('storage/'.$user->photo_profil) : null,
+                    'type_contribuable' => $user->typeContribuable ? $user->typeContribuable->libelle : null,
+                    'secteur' => $user->secteur ? $user->secteur->nom : null,
+                    'mairie' => $user->mairie ? [
+                        'nom' => $user->mairie->nom_mairie,
+                        'code' => $user->mairie->mairie_ref,
+                    ] : null,
+                ];
             }
 
             return response()->json([
@@ -275,14 +316,47 @@ class AuthController extends Controller
                     'user' => $userData,
                 ],
             ], 200);
+
         } catch (\Exception $e) {
-            Log::error('Profile error: '.$e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-            ]);
+            Log::error('Profile error: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur interne : '.$e->getMessage(),
+                'message' => 'Erreur lors de la récupération du profil.',
+                'error' => config('app.debug') ? $e->getMessage() : null,
+            ], 500);
+        }
+    }
+
+    /**
+     * Déconnecte l'utilisateur en révoquant son token actuel.
+     */
+    public function logout(Request $request)
+    {
+        try {
+            $user = $request->user();
+
+            if ($user) {
+                // Révoquer le token actuel
+                $user->currentAccessToken()->delete();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Déconnexion réussie.',
+                ], 200);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Utilisateur non trouvé ou non connecté.',
+            ], 401);
+
+        } catch (\Exception $e) {
+            Log::error('Logout error: '.$e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la déconnexion.',
             ], 500);
         }
     }

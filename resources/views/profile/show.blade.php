@@ -39,7 +39,7 @@
                 <div class="card shadow-sm border-0 mb-4" style="border-radius: 15px;">
                     <div class="card-body text-center p-5">
                         <div class="position-relative d-inline-block mb-4">
-                            <img src="{{ $user->photo_profil ? asset('storage/' . $user->photo_profil) : asset('assets/images/faces/face1.jpg') }}"
+                            <img src="{{ $user->photo_profil ? asset('storage/' . $user->photo_profil) : asset('images/default_avatar.jpg') }}"
                                 alt="Avatar" class="rounded-circle shadow-sm"
                                 style="width: 150px; height: 150px; object-fit: cover; border: 5px solid #fff;">
                             <span

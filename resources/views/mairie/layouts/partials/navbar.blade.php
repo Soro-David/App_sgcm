@@ -95,7 +95,8 @@
         style="margin-left: 0px; box-shadow: 0 2px 15px rgba(0,0,0,0.1);">
 
         <div class="d-flex flex-column ms-3 me-auto">
-            <h4 class="fw-bold mb-0" style="color: #2c3e50; font-size: 1.1rem;">{{ Auth::user()->name }}</h4>
+            <h4 class="fw-bold mb-0" style="color: #2c3e50; font-size: 1.1rem;">{{ strtoupper(Auth::user()->name) }}
+            </h4>
             <span class="badge rounded-pill d-flex align-items-center"
                 style="background-color: {{ $roleColor }}; font-size: 0.7rem; width: fit-content; margin-top: 4px; padding: 4px 10px;">
                 <i class="{{ $roleIcon }} me-1" style="font-size: 0.8rem;"></i> {{ $roleLabel }}
@@ -103,57 +104,74 @@
         </div>
         <ul class="navbar-nav navbar-nav-right">
 
-            <li class="nav-item dropdown me-0">
-                <a class="nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center"
-                    id="notificationDropdown" href="#" data-bs-toggle="dropdown">
-                    <i class="fas fa-bell" style="color: {{ $roleColor }}; font-size: 1.4rem;"></i>
-                    <span class="count" style="background: {{ $roleColor2 }};"></span>
+            <li class="nav-item dropdown me-2">
+                <a class="nav count-indicator d-flex align-items-center justify-content-center"
+                    id="notificationDropdown" href="#" data-bs-toggle="dropdown"
+                    style="text-decoration: none !important; border: none !important; outline: none !important; box-shadow: none !important;">
+                    <i class="fas fa-bell" style="color: {{ $roleColor }}; font-size: 1.8rem;"></i>
+                    <span class="count" style="background: {{ $roleColor2 }}; border: none !important;"></span>
                 </a>
-                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list shadow-sm"
-                    aria-labelledby="notificationDropdown" style="border-radius: 12px; border: none;">
-                    <p class="mb-0 fw-bold float-start dropdown-header" style="color: #2c3e50;">Notifications</p>
-                    <a class="dropdown-item preview-item">
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list shadow-lg"
+                    aria-labelledby="notificationDropdown" style="border-radius: 12px; border: none; width: 300px;">
+                    <div class="dropdown-header d-flex align-items-center justify-content-between py-3">
+                        <p class="mb-0 fw-bold" style="color: #2c3e50;">Notifications</p>
+                        <span class="badge bg-soft-danger text-danger" style="font-size: 0.7rem;">Nouveau</span>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item preview-item py-3">
                         <div class="preview-thumbnail">
-                            <div class="preview-icon bg-success" style="border-radius: 8px;">
-                                <i class="typcn typcn-info mx-0"></i>
+                            <div class="preview-icon bg-success"
+                                style="border-radius: 8px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-info-circle text-white"></i>
                             </div>
                         </div>
-                        <div class="preview-item-content">
-                            <h6 class="preview-subject fw-normal">Système opérationnel</h6>
-                            <p class="fw-light small-text mb-0 text-muted">
+                        <div class="preview-item-content ms-2">
+                            <h6 class="preview-subject fw-normal mb-1" style="font-size: 0.9rem;">Système opérationnel
+                            </h6>
+                            <p class="fw-light small-text mb-0 text-muted" style="font-size: 0.75rem;">
                                 Tout fonctionne correctement
                             </p>
                         </div>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item text-center py-2" style="font-size: 0.8rem; color: {{ $roleColor }};">
+                        Voir toutes les notifications
                     </a>
                 </div>
             </li>
 
             <li class="nav-item nav-profile dropdown">
-                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-toggle="dropdown"
-                    id="profileDropdown">
+                <a class="nav d-flex align-items-center" href="#" data-bs-toggle="dropdown" id="profileDropdown">
                     @if ($mairieLogo)
                         <div class="mairie-logo-nav" style="display: flex; align-items: center;">
                             <img src="{{ asset('storage/' . $mairieLogo) }}" alt="Logo Mairie"
-                                style="max-height: 40px; width: auto; object-fit: contain; padding: 2px;">
+                                style="max-height: 50px; height: 60px; width: 60px; object-fit: contain; padding: 2px; border: 1px solid #eee; border-radius: 8px;">
                         </div>
                     @else
                         <div class="profile-img-container" style="position: relative;">
-                            <img src="{{ Auth::user()->photo_profil ? asset('storage/' . Auth::user()->photo_profil) : asset('images/default_avatar.jpg') }}"
+                            <img src="{{ $user->photo_profil ? asset('storage/' . $user->photo_profil) : asset('images/default_avatar.jpg') }}"
                                 alt="Profile" class="img-xs rounded-circle"
-                                style="border: 2px solid {{ $roleColor }}; padding: 2px;" />
+                                style="border: 2px solid {{ $roleColor }}; padding: 2px; width: 40px; height: 40px;" />
+                            <span class="availability-status online"
+                                style="position: absolute; bottom: 0; right: 0; width: 10px; height: 10px; background: #27ae60; border: 2px solid white; border-radius: 50%;"></span>
                         </div>
                     @endif
                 </a>
-                <div class="dropdown-menu dropdown-menu-right dropdown-menu-end navbar-dropdown shadow-sm"
-                    aria-labelledby="profileDropdown" style="border-radius: 12px; border: none; padding: 10px;">
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown shadow-lg"
+                    aria-labelledby="profileDropdown"
+                    style="border-radius: 12px; border: none; padding: 10px; min-width: 200px;">
+                    <div class="dropdown-item-text border-bottom mb-2 pb-2">
+                        <p class="fw-bold mb-0">{{ Auth::user()->name }}</p>
+                        <p class="text-muted mb-0 small">{{ $roleLabel }}</p>
+                    </div>
                     <a class="dropdown-item py-2" href="{{ route('mairie.profile.show') }}">
-                        <i class="typcn typcn-user text-primary me-2"></i>
+                        <i class="fas fa-user-circle text-primary me-2"></i>
                         Mon Profil
                     </a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item py-2" href="#"
                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        <i class="typcn typcn-power text-danger me-2"></i>
+                        <i class="fas fa-power-off text-danger me-2"></i>
                         Déconnexion
                     </a>
                 </div>

@@ -33,7 +33,8 @@
         <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100 px-3">
             <a class="navbar-brand d-flex justify-content-center align-items-center brand-logo"
                 href="{{ route('agent.dashboard') }}">
-                <img src="{{ asset('assets/images/logo_navbar.png') }}" alt="Logo SGTC" style="max-height: 180px !important;">
+                <img src="{{ asset('assets/images/logo_navbar.png') }}" alt="Logo SGTC"
+                    style="max-height: 180px !important;">
             </a>
             <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                 <i class="fas fa-bars text-white"></i>
@@ -45,7 +46,8 @@
         style="margin-left: 0px; box-shadow: 0 2px 15px rgba(0,0,0,0.1);">
 
         <div class="d-flex flex-column ms-3 me-auto">
-            <h4 class="fw-bold mb-0" style="color: #2c3e50; font-size: 1.1rem;">{{ Auth::user()->name }}</h4>
+            <h4 class="fw-bold mb-0" style="color: #2c3e50; font-size: 1.1rem;">{{ strtoupper(Auth::user()->name) }}
+            </h4>
             <span class="badge rounded-pill d-flex align-items-center"
                 style="background-color: {{ $roleColor }}; font-size: 0.7rem; width: fit-content; margin-top: 4px; padding: 4px 10px;">
                 <i class="{{ $roleIcon }} me-1" style="font-size: 0.8rem;"></i> {{ $roleLabel }}

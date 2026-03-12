@@ -6,10 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Commercant;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Taxe; 
-use App\Models\PaiementTaxe;
 use Illuminate\Support\Facades\Validator;
-
+use Carbon\Carbon;
 
 class CommercantController extends Controller
 {
@@ -26,7 +24,6 @@ class CommercantController extends Controller
             return response()->json(['message' => 'Identifiants incorrects'], 401);
         }
 
-        // Création du token avec la bonne "ability"
         $token = $commercant->createToken('commercant-token', ['commercant'])->plainTextToken;
 
         $commercant->update(['last_activity' => now()]);
@@ -36,85 +33,48 @@ class CommercantController extends Controller
             'commercant' => $commercant
         ]);
     }
-    
 
-    public function list_taxes_a_payer(Request $request)
+    public function definePassword(Request $request)
     {
-        $commercant = $request->user();
-
-        $taxeIds = is_array($commercant->taxe_id) ? $commercant->taxe_id : json_decode($commercant->taxe_id, true);
-
-        if (empty($taxeIds) || !is_array($taxeIds)) {
-            return response()->json([
-                'message' => 'Aucune taxe n\'est actuellement assignée à votre commerce.',
-                'taxes' => []
-            ]);
-        }
-
-        // Requête pour récupérer les taxes concernées
-        $taxes = Taxe::whereIn('id', $taxeIds)->get(['id', 'nom', 'montant']);
-
-        return response()->json([
-            'message' => 'Liste des taxes à payer.',
-            'taxes' => $taxes
-        ]);
-    }
-
-
-
-    public function effectuer_paiement(Request $request)
-    {
-        $commercant = $request->user();
-
         $validator = Validator::make($request->all(), [
-            'taxe_id' => 'required|integer|exists:taxes,id',
-            'montant' => 'required|numeric|min:0',
+            'email' => 'required|email|exists:commercants,email',
+            'otp_code' => 'required|numeric',
+            'password' => 'required|string|min:6|confirmed',
         ]);
-
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
-        $validatedData = $validator->validated();
+        $commercant = Commercant::where('email', $request->email)->first();
 
-
-        // On s'assure que c'est bien un tableau
-        $assignedTaxeIds = json_decode($commercant->taxe_id, true) ?? [];
-
-
-
-        if (!in_array($validatedData['taxe_id'], $assignedTaxeIds)) {
-            return response()->json(['message' => 'Vous n\'êtes pas autorisé à payer cette taxe.'], 403);
+        if (!$commercant || $commercant->otp_code != $request->otp_code) {
+            return response()->json(['success' => false, 'message' => 'Le code OTP est incorrect.'], 422);
         }
 
-        $paiement = PaiementTaxe::create([
-            'mairie_ref' => $commercant->mairie_ref,
-            'secteur_id' => $commercant->secteur_id,
-            'taxe_id' => $validatedData['taxe_id'],
-            'num_commerce' => $commercant->num_commerce,
-            'montant' => $validatedData['montant'],
-            'statut' => 'payé',
-        ]);
+        if (Carbon::now()->isAfter($commercant->otp_expires_at)) {
+            return response()->json(['success' => false, 'message' => 'Ce code OTP a expiré.'], 422);
+        }
 
+        $commercant->password = Hash::make($request->password);
+        $commercant->otp_code = null;
+        $commercant->otp_expires_at = null;
+        $commercant->save();
+
+        $token = $commercant->createToken('commercant-token', ['commercant'])->plainTextToken;
+        $commercant->update(['last_activity' => now()]);
 
         return response()->json([
-            'message' => 'Paiement effectué avec succès !',
-            'paiement' => $paiement
-        ], 201);
-    }
-
-    
-    public function historique_paiements(Request $request)
-    {
-        $commercant = $request->user();
-
-        $historique = PaiementTaxe::where('num_commerce', $commercant->num_commerce)
-            ->with('taxe:id,nom') 
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
-
-        return response()->json($historique);
+            'success' => true,
+            'message' => 'Votre mot de passe a été défini avec succès. Vous êtes maintenant connecté.',
+            'token' => $token,
+            'data' => [
+                'id' => $commercant->id,
+                'num_commerce' => $commercant->num_commerce,
+                'nom' => $commercant->nom,
+                'email' => $commercant->email,
+            ]
+        ], 200);
     }
     
     public function me(Request $request)

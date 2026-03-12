@@ -524,6 +524,7 @@ Route::middleware(['auth:agent'])->prefix('agent')->name('agent.')->group(functi
     */
 
     Route::prefix('encaissement')->name('encaissement.')->group(function () {
+        Route::get('/scan', [EncaissementController::class, 'scan'])->name('scan');
         Route::get('/liste-commercants', [EncaissementController::class, 'get_list_commercant'])->name('get_list_commercant');
         Route::get('/details-taxe/{commercantId}/{taxeId}', [EncaissementController::class, 'getTaxeDetails'])->name('get_taxe_details');
 

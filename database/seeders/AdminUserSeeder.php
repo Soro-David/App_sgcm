@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Carbon\Carbon;
 
 class AdminUserSeeder extends Seeder
 {
@@ -17,7 +16,7 @@ class AdminUserSeeder extends Seeder
     {
         DB::table('users')->insert([
             'id' => 1,
-            'name' => 'KKS-TECHNOLOGIE',
+            'name' => 'KKS-TECHNOLOGIES',
             'role' => 'superadmin',
             'email' => 'admin@gmail.com',
             'email_verified_at' => null,

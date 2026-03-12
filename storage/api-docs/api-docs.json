@@ -411,6 +411,989 @@
                     }
                 }
             }
+        },
+        "/api/commercant/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Définition du mot de passe Contribuable (OTP)",
+                "description": "Permet à un nouveau contribuable de définir son mot de passe en utilisant le code OTP reçu par email après son recensement.",
+                "operationId": "52e0ed17466983c7692829f0f44a9b5d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "otp_code",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "commercant@example.com"
+                                    },
+                                    "otp_code": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123",
+                                        "minLength": 6
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Mot de passe défini et utilisateur connecté",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "1|abcdfgh..."
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Votre mot de passe a été défini avec succès. Vous êtes maintenant connecté."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erreur de validation ou OTP invalide"
+                    }
+                }
+            }
+        },
+        "/api/contribuable/me": {
+            "get": {
+                "tags": [
+                    "Contribuable"
+                ],
+                "summary": "Informations sur le contribuable connecté",
+                "description": "Retourne les détails du commerçant actuellement authentifié.",
+                "operationId": "db21094a2181aae2d3e9846bf8939e8a",
+                "responses": {
+                    "200": {
+                        "description": "Détails du contribuable",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non authentifié"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/contribuable/solde": {
+            "get": {
+                "tags": [
+                    "Contribuable - Recharge"
+                ],
+                "summary": "Consulter le solde du compte",
+                "description": "Retourne le montant actuel disponible sur le compte du contribuable.",
+                "operationId": "a5a258569dd27bcf7c8c1fb1c64b1a8c",
+                "responses": {
+                    "200": {
+                        "description": "Solde récupéré",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "solde": {
+                                            "type": "number",
+                                            "example": 5000
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/contribuable/recharger": {
+            "post": {
+                "tags": [
+                    "Contribuable - Recharge"
+                ],
+                "summary": "Recharger le compte (Simulation)",
+                "description": "Permet de créditer le compte du contribuable. Actuellement en mode simulation.",
+                "operationId": "876abb0fd345dcc3d3b8ee8c119a5033",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "montant"
+                                ],
+                                "properties": {
+                                    "montant": {
+                                        "type": "number",
+                                        "example": 1000,
+                                        "minimum": 100
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Compte rechargé avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "nouveau_solde": {
+                                            "type": "number"
+                                        },
+                                        "recharge": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Données invalides"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/contribuable/rechargements": {
+            "get": {
+                "tags": [
+                    "Contribuable - Recharge"
+                ],
+                "summary": "Historique des rechargements",
+                "description": "Liste paginée des derniers rechargements effectués.",
+                "operationId": "773b767e3d1b80f24893a9329a2b70bd",
+                "responses": {
+                    "200": {
+                        "description": "Liste des rechargements"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/contribuable/taxes": {
+            "get": {
+                "tags": [
+                    "Contribuable - Paiement"
+                ],
+                "summary": "Liste des taxes assignées",
+                "description": "Retourne les taxes que le commerçant doit payer pour son établissement.",
+                "operationId": "0aeef0ae2f9af130b3cead75b7082f54",
+                "responses": {
+                    "200": {
+                        "description": "Liste des taxes"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/contribuable/taxes/{taxeId}/periodes": {
+            "get": {
+                "tags": [
+                    "Contribuable - Paiement"
+                ],
+                "summary": "Calculer les périodes impayées pour une taxe",
+                "description": "Retourne la liste des périodes (mois, jours ou ans) dues pour une taxe spécifique.",
+                "operationId": "273e5fa9cff5b7eb16ea6c83457e0a71",
+                "parameters": [
+                    {
+                        "name": "taxeId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "nombre_periodes",
+                        "in": "query",
+                        "description": "Limiter le nombre de périodes à calculer",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Périodes calculées avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer"
+                                        },
+                                        "unite": {
+                                            "type": "string"
+                                        },
+                                        "periods_list": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "montant_par_periode": {
+                                            "type": "number"
+                                        },
+                                        "total_a_payer": {
+                                            "type": "number"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/contribuable/paiement": {
+            "post": {
+                "tags": [
+                    "Contribuable - Paiement"
+                ],
+                "summary": "Effectuer le paiement des taxes",
+                "description": "Débite le solde du compte pour payer un certain nombre de périodes d'une taxe.",
+                "operationId": "3df837dbabda6c69f5d8cb7ce0d3ad58",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "taxe_id",
+                                    "nombre_periodes"
+                                ],
+                                "properties": {
+                                    "taxe_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "nombre_periodes": {
+                                        "type": "integer",
+                                        "example": 1,
+                                        "minimum": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Paiement réussi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "nouveau_solde": {
+                                            "type": "number"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Solde insuffisant"
+                    },
+                    "403": {
+                        "description": "Taxe non assignée"
+                    },
+                    "422": {
+                        "description": "Données invalides"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/contribuable/paiements": {
+            "get": {
+                "tags": [
+                    "Contribuable - Paiement"
+                ],
+                "summary": "Historique des paiements de taxes",
+                "description": "Liste paginée de tous les paiements de taxes effectués par le commerçant.",
+                "operationId": "b4b58b97cde1f98b85e60d84c342d7bf",
+                "responses": {
+                    "200": {
+                        "description": "Historique des paiements"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/recensement/contribuable": {
+            "get": {
+                "tags": [
+                    "Recensement"
+                ],
+                "summary": "Liste des contribuables (commerçants) recensés par l'agent",
+                "description": "Retourne la liste paginée des contribuables enregistrés par l'agent de recensement actuellement connecté.",
+                "operationId": "1be51ec09ec2889046c6b7f314b7601c",
+                "responses": {
+                    "200": {
+                        "description": "Liste des contribuables récupérée avec succès"
+                    },
+                    "403": {
+                        "description": "Accès refusé"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Recensement"
+                ],
+                "summary": "Ajouter un nouveau contribuable (Commerçant)",
+                "description": "Enregistre un nouveau commerçant. Si le secteur_id n'est pas fourni, celui de l'agent est utilisé par défaut.",
+                "operationId": "55b2ba2444855816edd7ce34d971b48f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "nom",
+                                    "type_contribuable_id",
+                                    "taxe_ids",
+                                    "type_piece"
+                                ],
+                                "properties": {
+                                    "nom": {
+                                        "description": "Nom complet du commerçant",
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "telephone": {
+                                        "type": "string"
+                                    },
+                                    "adresse": {
+                                        "type": "string"
+                                    },
+                                    "secteur_id": {
+                                        "description": "ID du secteur (Optionnel si l'agent a un secteur)",
+                                        "type": "integer"
+                                    },
+                                    "type_contribuable_id": {
+                                        "description": "ID du type de contribuable",
+                                        "type": "integer"
+                                    },
+                                    "taxe_ids[]": {
+                                        "description": "Tableau des IDs de taxes",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type_piece": {
+                                        "type": "string",
+                                        "enum": [
+                                            "cni",
+                                            "attestation",
+                                            "passeport",
+                                            "consulaire",
+                                            "autre"
+                                        ]
+                                    },
+                                    "numero_piece": {
+                                        "type": "string"
+                                    },
+                                    "autre_type_piece": {
+                                        "description": "Requis si type_piece est 'autre'",
+                                        "type": "string"
+                                    },
+                                    "photo_profil": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "photo_recto": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "photo_verso": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Commerçant ajouté avec succès"
+                    },
+                    "422": {
+                        "description": "Erreur de validation ou secteur manquant"
+                    },
+                    "403": {
+                        "description": "Accès refusé"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/recensement/generate-num-commerce": {
+            "get": {
+                "tags": [
+                    "Recensement"
+                ],
+                "summary": "Générer un numéro de commerce automatique",
+                "description": "Génère un nouveau numéro de commerce basé sur le préfixe de la mairie de l'agent et le dernier numéro utilisé.",
+                "operationId": "82931d0285fb959e9edd776f5bfb8dd3",
+                "responses": {
+                    "200": {
+                        "description": "Numéro de commerce généré",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "num_commerce": {
+                                            "type": "string",
+                                            "example": "MAIR0001"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Mairie non trouvée"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/recensement/contribuable/{id}": {
+            "get": {
+                "tags": [
+                    "Recensement"
+                ],
+                "summary": "Détails d'un commerçant",
+                "operationId": "31f8159a4783dd3eba70efa82a5a7519",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Détails du commerçant"
+                    },
+                    "404": {
+                        "description": "Non trouvé"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Recensement"
+                ],
+                "summary": "Modifier un contribuable existant",
+                "description": "Met à jour les informations d'un commerçant. Les champs sont optionnels (via multipart/form-data ou JSON).",
+                "operationId": "c9b40cc82434335325d2c09091a7178b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "nom": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "telephone": {
+                                        "type": "string"
+                                    },
+                                    "adresse": {
+                                        "type": "string"
+                                    },
+                                    "secteur_id": {
+                                        "type": "integer"
+                                    },
+                                    "type_contribuable_id": {
+                                        "type": "integer"
+                                    },
+                                    "taxe_ids[]": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type_piece": {
+                                        "type": "string",
+                                        "enum": [
+                                            "cni",
+                                            "attestation",
+                                            "passeport",
+                                            "consulaire",
+                                            "autre"
+                                        ]
+                                    },
+                                    "numero_piece": {
+                                        "type": "string"
+                                    },
+                                    "autre_type_piece": {
+                                        "type": "string"
+                                    },
+                                    "photo_profil": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "photo_recto": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "photo_verso": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Contribuable mis à jour avec succès"
+                    },
+                    "404": {
+                        "description": "Non trouvé"
+                    },
+                    "422": {
+                        "description": "Erreur de validation"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/recensement/contribuables-liste": {
+            "get": {
+                "tags": [
+                    "Recensement"
+                ],
+                "summary": "Liste de tous les contribuables de la mairie",
+                "description": "Retourne la liste paginée de tous les contribuables appartenant à la même mairie que l'agent de recensement connecté.",
+                "operationId": "30efb70cc40a61af45c5d930ea276c4d",
+                "responses": {
+                    "200": {
+                        "description": "Liste des contribuables récupérée avec succès"
+                    },
+                    "403": {
+                        "description": "Accès refusé"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/recouvrement/me": {
+            "get": {
+                "tags": [
+                    "Recouvrement"
+                ],
+                "summary": "Informations sur l'agent de recouvrement connecté",
+                "operationId": "4bdc332f84616d2355d0a65b4c949752",
+                "responses": {
+                    "200": {
+                        "description": "Détails de l'agent"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/recouvrement/encaissement": {
+            "post": {
+                "tags": [
+                    "Recouvrement"
+                ],
+                "summary": "Encaisser le paiement d'une taxe",
+                "description": "Permet à l'agent d'enregistrer un paiement pour un commerçant.",
+                "operationId": "2c32bbc8dcfc61c7385474dc8b7d1169",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "num_commerce",
+                                    "taxe_id",
+                                    "nombre"
+                                ],
+                                "properties": {
+                                    "num_commerce": {
+                                        "type": "string",
+                                        "example": "CONT0001"
+                                    },
+                                    "taxe_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "nombre": {
+                                        "type": "integer",
+                                        "example": 1,
+                                        "minimum": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Paiement encaissé"
+                    },
+                    "422": {
+                        "description": "Données invalides"
+                    },
+                    "403": {
+                        "description": "Taxe non assignée"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/recouvrement/paiement/periodes-dues": {
+            "post": {
+                "tags": [
+                    "Recouvrement"
+                ],
+                "summary": "Récupérer les périodes dues pour une taxe",
+                "operationId": "1778ece7e6895474a810c4ad39b3d0ba",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "num_commerce",
+                                    "taxe_id"
+                                ],
+                                "properties": {
+                                    "num_commerce": {
+                                        "type": "string",
+                                        "example": "CONT0001"
+                                    },
+                                    "taxe_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Périodes récupérées"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/recouvrement/contribuable/{id}": {
+            "get": {
+                "tags": [
+                    "Recouvrement"
+                ],
+                "summary": "Détails d'un contribuable pour l'agent de recouvrement",
+                "operationId": "c7c01525187667659e57d9676a02fdf5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Détails du contribuable"
+                    },
+                    "404": {
+                        "description": "Non trouvé"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Recouvrement"
+                ],
+                "summary": "Modifier un contribuable (Agent de Recouvrement)",
+                "description": "Permet à l'agent de recouvrement de mettre à jour les informations d'un commerçant.",
+                "operationId": "6e6fa9482b2b7adecbe9ceb703177a0d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "nom": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "telephone": {
+                                        "type": "string"
+                                    },
+                                    "adresse": {
+                                        "type": "string"
+                                    },
+                                    "secteur_id": {
+                                        "type": "integer"
+                                    },
+                                    "type_contribuable_id": {
+                                        "type": "integer"
+                                    },
+                                    "taxe_ids[]": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type_piece": {
+                                        "type": "string",
+                                        "enum": [
+                                            "cni",
+                                            "attestation",
+                                            "passeport",
+                                            "consulaire",
+                                            "autre"
+                                        ]
+                                    },
+                                    "numero_piece": {
+                                        "type": "string"
+                                    },
+                                    "autre_type_piece": {
+                                        "type": "string"
+                                    },
+                                    "photo_profil": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "photo_recto": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "photo_verso": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Mis à jour avec succès"
+                    },
+                    "404": {
+                        "description": "Non trouvé"
+                    },
+                    "422": {
+                        "description": "Erreur de validation"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/recouvrement/logout": {
+            "post": {
+                "tags": [
+                    "Recouvrement"
+                ],
+                "summary": "Déconnexion",
+                "operationId": "9c2ea1ee4ea2ac80be93882193a59260",
+                "responses": {
+                    "200": {
+                        "description": "Déconnecté"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -426,6 +1409,26 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Contribuable",
+            "description": "Contribuable"
+        },
+        {
+            "name": "Contribuable - Recharge",
+            "description": "Contribuable - Recharge"
+        },
+        {
+            "name": "Contribuable - Paiement",
+            "description": "Contribuable - Paiement"
+        },
+        {
+            "name": "Recensement",
+            "description": "Recensement"
+        },
+        {
+            "name": "Recouvrement",
+            "description": "Recouvrement"
         }
     ]
 }

@@ -1,9 +1,12 @@
 <?php
 
 use App\Http\Controllers\Api\AgentMairieController;
-use App\Http\Controllers\Api\AgentRecouvrementController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CommercantController;
+use App\Http\Controllers\Api\Contribuable\PaiementController;
+use App\Http\Controllers\Api\Contribuable\RechargeController;
+use App\Http\Controllers\Api\Recensement\RecensementController;
+use App\Http\Controllers\Api\Recouvrement\RecouvrementController;
 use Illuminate\Support\Facades\Route;
 
 // Authentification unifiée
@@ -13,7 +16,7 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::post('/commercant/register', [CommercantController::class, 'definePassword'])->name('commercant.register');
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/profile', [AuthController::class, 'profile']);
+    // Les routes de profil et logout sont maintenant gérées à l'intérieur de chaque groupe par type d'utilisateur
 
     // Routes pour les Agents de Mairie
     Route::middleware('abilities:agent-mairie')->prefix('agent-mairie')->name('agent.mairie.')->group(function () {
@@ -31,21 +34,43 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     // Routes pour les Agents de Recouvrement
-    Route::middleware('abilities:agent-recouvrement')->prefix('agent-recouvrement')->name('agent.recouvrement.')->group(function () {
-        Route::get('/me', [AgentRecouvrementController::class, 'me']);
+    Route::middleware('abilities:agent-recouvrement')->prefix('recouvrement')->name('recouvrement.')->group(function () {
+        Route::get('/me', [RecouvrementController::class, 'me']);
+        // Route scan QR code : l'agent scanne le QR du contribuable et récupère ses infos + taxes dues
+        Route::post('/scan-qrcode', [RecouvrementController::class, 'scanQrCode'])->name('scan_qrcode');
         // Route pour encaisser le paiement
-        Route::post('/encaissement', [AgentRecouvrementController::class, 'encaisserPaiement'])->name('encaisser');
+        Route::post('/encaissement', [RecouvrementController::class, 'encaisserPaiement'])->name('encaisser');
         // route pour récupérer les périodes dues
-        Route::post('/paiement/periodes-dues', [AgentRecouvrementController::class, 'dernierPaiementEtDues'])->name('periodes_dues');
-        Route::post('/logout', [AgentRecouvrementController::class, 'logout']);
+        Route::post('/paiement/periodes-dues', [RecouvrementController::class, 'dernierPaiementEtDues'])->name('periodes_dues');
+        Route::get('/profile', [AuthController::class, 'profile']);
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/contribuable/{id}', [RecouvrementController::class, 'showContribuable']);
+        Route::post('/contribuable/{id}', [RecouvrementController::class, 'updateContribuable']);
+    });
+
+    // Routes pour les Agents de Recensement
+    Route::middleware('abilities:agent-recensement')->prefix('recensement')->name('recensement.')->group(function () {
+        Route::get('/contribuable', [RecensementController::class, 'index']);
+        Route::get('/contribuables-liste', [RecensementController::class, 'listContribuables']);
+        Route::post('/contribuable', [RecensementController::class, 'store']);
+        Route::get('/contribuable/{id}', [RecensementController::class, 'show']);
+        Route::post('/contribuable/{id}', [RecensementController::class, 'update']);
+        Route::get('/generate-num-commerce', [RecensementController::class, 'generateNumCommerce']);
+        Route::get('/profile', [AuthController::class, 'profile']);
+        Route::post('/logout', [AuthController::class, 'logout']);
     });
 
     // Routes pour les Commerçants
-    Route::middleware('abilities:commercant')->prefix('commercant')->name('api.commercant.')->group(function () {
+    Route::middleware('abilities:commercant')->prefix('contribuable')->name('contribuable.')->group(function () {
         Route::get('/me', [CommercantController::class, 'me'])->name('me');
-        Route::get('/taxes', [CommercantController::class, 'list_taxes_a_payer'])->name('taxes');
-        Route::post('/paiement', [CommercantController::class, 'effectuer_paiement'])->name('paiement');
-        Route::get('/paiements', [CommercantController::class, 'historique_paiements'])->name('paiements');
-        Route::post('/logout', [CommercantController::class, 'logout'])->name('logout');
+        Route::get('/solde', [RechargeController::class, 'get_solde'])->name('solde');
+        Route::post('/recharger', [RechargeController::class, 'recharger_compte'])->name('recharger');
+        Route::get('/rechargements', [RechargeController::class, 'historique_recharges'])->name('rechargements');
+        Route::get('/taxes', [PaiementController::class, 'list_taxes_a_payer'])->name('taxes');
+        Route::get('/taxes/{taxeId}/periodes', [PaiementController::class, 'periodes_impayees'])->name('taxes.periodes');
+        Route::post('/paiement', [PaiementController::class, 'effectuer_paiement'])->name('paiement');
+        Route::get('/paiements', [PaiementController::class, 'historique_paiements'])->name('paiements');
+        Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
+        Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     });
 });

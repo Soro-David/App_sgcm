@@ -222,4 +222,41 @@ class Auth
         ]
     )]
     public function resetPassword() {}
+
+    #[OA\Post(
+        path: "/api/commercant/register",
+        summary: "Définition du mot de passe Contribuable (OTP)",
+        description: "Permet à un nouveau contribuable de définir son mot de passe en utilisant le code OTP reçu par email après son recensement.",
+        tags: ["Auth"],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["email", "otp_code", "password", "password_confirmation"],
+                properties: [
+                    new OA\Property(property: "email", type: "string", format: "email", example: "commercant@example.com"),
+                    new OA\Property(property: "otp_code", type: "string", example: "123456"),
+                    new OA\Property(property: "password", type: "string", minLength: 6, example: "password123"),
+                    new OA\Property(property: "password_confirmation", type: "string", example: "password123")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Mot de passe défini et utilisateur connecté",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "token", type: "string", example: "1|abcdfgh..."),
+                        new OA\Property(property: "message", type: "string", example: "Votre mot de passe a été défini avec succès. Vous êtes maintenant connecté.")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Erreur de validation ou OTP invalide"
+            )
+        ]
+    )]
+    public function definePassword() {}
 }

@@ -734,7 +734,7 @@
 @include('public.layouts.partials.slider')
 
 <!-- Section Connexions -->
-<section id="connexion" class="section-padding bg-light-green">
+{{-- <section id="connexion" class="section-padding bg-light-green">
     <div class="container">
         <div class="section-title-center">
             <h2>Connectez-vous</h2>
@@ -775,7 +775,7 @@
             </div>
         </div>
     </div>
-</section>
+</section> --}}
 
 <!-- Section À propos -->
 <section id="a-propos" class="section-padding section-white">

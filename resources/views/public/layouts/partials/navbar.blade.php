@@ -13,7 +13,7 @@
         <div class="nav-content" id="nav-content">
             <nav class="nav-links">
                 <a href="#hero">Accueil</a>
-                <a href="#connexion">Connexions</a>
+                {{-- <a href="#connexion">Connexions</a> --}}
                 <a href="#a-propos">À propos</a>
                 <a href="#caracteristiques">Caractéristiques</a>
                 <a href="#partenaires">Partenaires</a>

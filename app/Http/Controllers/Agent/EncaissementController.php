@@ -52,6 +52,11 @@ class EncaissementController extends Controller implements HasMiddleware
         return view('agent.encaissement.history');
     }
 
+    public function scan()
+    {
+        return view('agent.encaissement.scan');
+    }
+
     public function get_list_encaissement()
     {
         $agent = Auth::guard('agent')->user();
