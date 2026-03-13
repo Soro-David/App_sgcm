@@ -8,19 +8,41 @@ class Recouvrement
 {
     #[OA\Get(
         path: '/api/recouvrement/me',
-        summary: 'Informations sur l\'agent de recouvrement connecté',
+        summary: 'Profil de l\'agent de recouvrement',
         tags: ['Recouvrement'],
         security: [['sanctum' => []]],
         responses: [
-            new OA\Response(response: 200, description: 'Détails de l\'agent')
+            new OA\Response(response: 200, description: 'Informations du profil récupérées')
         ]
     )]
     public function me() {}
 
     #[OA\Post(
+        path: '/api/recouvrement/scan-qrcode',
+        summary: 'Scan du QR code d\'un contribuable',
+        tags: ['Recouvrement'],
+        security: [['sanctum' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['num_commerce'],
+                properties: [
+                    new OA\Property(property: 'num_commerce', type: 'string', example: 'C-12345'),
+                    new OA\Property(property: 'qr_data', type: 'string', nullable: true, example: 'Numéro commerce: C-12345')
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Contribuable trouvé'),
+            new OA\Response(response: 404, description: 'Non trouvé'),
+            new OA\Response(response: 422, description: 'Erreur de validation')
+        ]
+    )]
+    public function scanQrCode() {}
+
+    #[OA\Post(
         path: '/api/recouvrement/encaissement',
         summary: 'Encaisser le paiement d\'une taxe',
-        description: 'Permet à l\'agent d\'enregistrer un paiement pour un commerçant.',
         tags: ['Recouvrement'],
         security: [['sanctum' => []]],
         requestBody: new OA\RequestBody(
@@ -28,9 +50,9 @@ class Recouvrement
             content: new OA\JsonContent(
                 required: ['num_commerce', 'taxe_id', 'nombre'],
                 properties: [
-                    new OA\Property(property: 'num_commerce', type: 'string', example: 'CONT0001'),
+                    new OA\Property(property: 'num_commerce', type: 'string', example: 'C-12345'),
                     new OA\Property(property: 'taxe_id', type: 'integer', example: 1),
-                    new OA\Property(property: 'nombre', type: 'integer', minimum: 1, example: 1)
+                    new OA\Property(property: 'nombre', type: 'integer', minimum: 1, example: 2)
                 ]
             )
         ),
@@ -44,7 +66,7 @@ class Recouvrement
 
     #[OA\Post(
         path: '/api/recouvrement/paiement/periodes-dues',
-        summary: 'Récupérer les périodes dues pour une taxe',
+        summary: 'Récupérer le dernier paiement et les périodes dues',
         tags: ['Recouvrement'],
         security: [['sanctum' => []]],
         requestBody: new OA\RequestBody(
@@ -52,7 +74,7 @@ class Recouvrement
             content: new OA\JsonContent(
                 required: ['num_commerce', 'taxe_id'],
                 properties: [
-                    new OA\Property(property: 'num_commerce', type: 'string', example: 'CONT0001'),
+                    new OA\Property(property: 'num_commerce', type: 'string', example: 'C-12345'),
                     new OA\Property(property: 'taxe_id', type: 'integer', example: 1)
                 ]
             )
@@ -64,8 +86,45 @@ class Recouvrement
     public function periodesDues() {}
 
     #[OA\Get(
+        path: '/api/recouvrement/encaissements/non-verses',
+        summary: 'Liste des encaissements non versés',
+        tags: ['Recouvrement'],
+        security: [['sanctum' => []]],
+        responses: [
+            new OA\Response(response: 200, description: 'Liste récupérée')
+        ]
+    )]
+    public function listEncaissementsNonVerses() {}
+
+    #[OA\Get(
+        path: '/api/recouvrement/encaissements/verses',
+        summary: 'Liste des encaissements versés',
+        tags: ['Recouvrement'],
+        security: [['sanctum' => []]],
+        responses: [
+            new OA\Response(response: 200, description: 'Liste récupérée')
+        ]
+    )]
+    public function listEncaissementsVerses() {}
+
+    #[OA\Get(
+        path: '/api/recouvrement/encaissements/{id}',
+        summary: 'Détails d\'un encaissement',
+        tags: ['Recouvrement'],
+        security: [['sanctum' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Détails de l\'encaissement'),
+            new OA\Response(response: 404, description: 'Non trouvé')
+        ]
+    )]
+    public function showEncaissement() {}
+
+    #[OA\Get(
         path: '/api/recouvrement/contribuable/{id}',
-        summary: 'Détails d\'un contribuable pour l\'agent de recouvrement',
+        summary: 'Détails d\'un contribuable',
         tags: ['Recouvrement'],
         security: [['sanctum' => []]],
         parameters: [
@@ -78,10 +137,9 @@ class Recouvrement
     )]
     public function showContribuable() {}
 
-    #[OA\Put(
+    #[OA\Post(
         path: '/api/recouvrement/contribuable/{id}',
-        summary: 'Modifier un contribuable (Agent de Recouvrement)',
-        description: 'Permet à l\'agent de recouvrement de mettre à jour les informations d\'un commerçant.',
+        summary: 'Modifier un contribuable',
         tags: ['Recouvrement'],
         security: [['sanctum' => []]],
         parameters: [
@@ -128,4 +186,5 @@ class Recouvrement
         ]
     )]
     public function logout() {}
+
 }

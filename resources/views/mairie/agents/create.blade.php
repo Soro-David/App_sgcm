@@ -110,11 +110,11 @@
                                 <option value="" disabled selected>-- Sélectionnez un type d'agent --</option>
                                 <option value="responsable_financier"
                                     {{ old('type_agent') == 'responsable_financier' ? 'selected' : '' }}>
-                                    Responsable financier</option>
+                                    Responsable de la régie</option>
                                 <option value="caissier" {{ old('type_agent') == 'caissier' ? 'selected' : '' }}>
                                     Caissier</option>
                                 <option value="finance" {{ old('type_agent') == 'finance' ? 'selected' : '' }}>
-                                    Agent financier</option>
+                                    Agent de la régie</option>
                             </select>
                         </div>
                         <div class="col-12 mt-4 mb-3">

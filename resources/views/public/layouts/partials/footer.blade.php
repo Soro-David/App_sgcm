@@ -42,7 +42,7 @@
                     <li><a href="{{ route('accueil') }}#connexion">Suivi des paiements</a></li>
                     <li><a href="{{ route('accueil') }}#connexion">Gestion des agents</a></li>
                     <li><a href="{{ route('accueil') }}#caracteristiques">Dashboard analytique</a></li>
-                    <li><a href="{{ route('accueil') }}#caracteristiques">Rapports financiers</a></li>
+                    <li><a href="{{ route('accueil') }}#caracteristiques">Rapports de la régie</a></li>
                     <li><a href="{{ route('accueil') }}#caracteristiques">Sécurité & protection des données</a></li>
                 </ul>
             </div>

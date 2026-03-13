@@ -97,10 +97,10 @@
                     <div class="collapse" id="menu-agents-finance">
                         <ul class="nav flex-column sub-menu">
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('mairie.finance.create') }}">Ajouter Financier</a>
+                                <a class="nav-link" href="{{ route('mairie.finance.create') }}">Ajouter régie</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('mairie.finance.index') }}">Liste Financiers</a>
+                                <a class="nav-link" href="{{ route('mairie.finance.index') }}">Liste régie</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('mairie.agents.programme_agent') }}">Programmer
@@ -122,7 +122,7 @@
                         href="#menu-paiement" aria-expanded="false" aria-controls="menu-paiement">
                         <div>
                             <i class="fas fa-coins menu-icon"></i>
-                            <span class="menu-title">Flux Financiers</span>
+                            <span class="menu-title">Flux de la régie</span>
                         </div>
                         <i class="menu-arrow fas fa-angle-down rotate-icon"></i>
                     </a>

@@ -18,7 +18,7 @@
                 $roleColor2 = '#e74c3c';
                 $roleIcon = 'fas fa-user-cog';
             } elseif ($user->role === 'financiers') {
-                $roleLabel = 'Admin Financier';
+                $roleLabel = 'Admin de la régie';
                 $roleSubtitle = 'Gestion des Finances';
                 $roleColor = '#f39c12'; // Orange/Jaune
                 $roleColor2 = '#e74c3c';
@@ -32,13 +32,13 @@
             }
         } elseif ($user instanceof \App\Models\Finance) {
             if ($user->role === 'admin') {
-                $roleLabel = 'Admin Financier';
+                $roleLabel = 'Admin de la régie';
                 $roleSubtitle = 'Direction Financière';
                 $roleColor = '#f39c12';
                 $roleColor2 = '#e74c3c';
                 $roleIcon = 'fas fa-chart-line';
             } elseif ($user->role === 'finance') {
-                $roleLabel = 'Agent Financier';
+                $roleLabel = 'Agent de la régie';
                 $roleSubtitle = 'Trésorerie & Comptabilité';
                 $roleColor = '#2980b9'; // Bleu
                 $roleColor2 = '#e74c3c';
@@ -51,7 +51,7 @@
                 $roleIcon = 'fas fa-money-bill-wave';
             }
         } elseif ($user instanceof \App\Models\Financier) {
-            $roleLabel = 'Responsable financier';
+            $roleLabel = 'Responsable de la régie';
             $roleSubtitle = 'Direction Financière';
             $roleColor = '#f39c12';
             $roleColor2 = '#e74c3c';

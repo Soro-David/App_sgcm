@@ -1132,11 +1132,60 @@
                 "tags": [
                     "Recouvrement"
                 ],
-                "summary": "Informations sur l'agent de recouvrement connecté",
+                "summary": "Profil de l'agent de recouvrement",
                 "operationId": "4bdc332f84616d2355d0a65b4c949752",
                 "responses": {
                     "200": {
-                        "description": "Détails de l'agent"
+                        "description": "Informations du profil récupérées"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/recouvrement/scan-qrcode": {
+            "post": {
+                "tags": [
+                    "Recouvrement"
+                ],
+                "summary": "Scan du QR code d'un contribuable",
+                "operationId": "7716c4aeee21170103040bcdd33b5a1a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "num_commerce"
+                                ],
+                                "properties": {
+                                    "num_commerce": {
+                                        "type": "string",
+                                        "example": "C-12345"
+                                    },
+                                    "qr_data": {
+                                        "type": "string",
+                                        "example": "Numéro commerce: C-12345",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Contribuable trouvé"
+                    },
+                    "404": {
+                        "description": "Non trouvé"
+                    },
+                    "422": {
+                        "description": "Erreur de validation"
                     }
                 },
                 "security": [
@@ -1152,7 +1201,6 @@
                     "Recouvrement"
                 ],
                 "summary": "Encaisser le paiement d'une taxe",
-                "description": "Permet à l'agent d'enregistrer un paiement pour un commerçant.",
                 "operationId": "2c32bbc8dcfc61c7385474dc8b7d1169",
                 "requestBody": {
                     "required": true,
@@ -1167,7 +1215,7 @@
                                 "properties": {
                                     "num_commerce": {
                                         "type": "string",
-                                        "example": "CONT0001"
+                                        "example": "C-12345"
                                     },
                                     "taxe_id": {
                                         "type": "integer",
@@ -1175,7 +1223,7 @@
                                     },
                                     "nombre": {
                                         "type": "integer",
-                                        "example": 1,
+                                        "example": 2,
                                         "minimum": 1
                                     }
                                 },
@@ -1207,7 +1255,7 @@
                 "tags": [
                     "Recouvrement"
                 ],
-                "summary": "Récupérer les périodes dues pour une taxe",
+                "summary": "Récupérer le dernier paiement et les périodes dues",
                 "operationId": "1778ece7e6895474a810c4ad39b3d0ba",
                 "requestBody": {
                     "required": true,
@@ -1221,7 +1269,7 @@
                                 "properties": {
                                     "num_commerce": {
                                         "type": "string",
-                                        "example": "CONT0001"
+                                        "example": "C-12345"
                                     },
                                     "taxe_id": {
                                         "type": "integer",
@@ -1245,12 +1293,82 @@
                 ]
             }
         },
+        "/api/recouvrement/encaissements/non-verses": {
+            "get": {
+                "tags": [
+                    "Recouvrement"
+                ],
+                "summary": "Liste des encaissements non versés",
+                "operationId": "530098ed94aefb16fd140507c84c64ec",
+                "responses": {
+                    "200": {
+                        "description": "Liste récupérée"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/recouvrement/encaissements/verses": {
+            "get": {
+                "tags": [
+                    "Recouvrement"
+                ],
+                "summary": "Liste des encaissements versés",
+                "operationId": "0a94efa4552a6b6b648bfef4b7719885",
+                "responses": {
+                    "200": {
+                        "description": "Liste récupérée"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/recouvrement/encaissements/{id}": {
+            "get": {
+                "tags": [
+                    "Recouvrement"
+                ],
+                "summary": "Détails d'un encaissement",
+                "operationId": "79781da3f05cff691bfd923e66b6ca4b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Détails de l'encaissement"
+                    },
+                    "404": {
+                        "description": "Non trouvé"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/recouvrement/contribuable/{id}": {
             "get": {
                 "tags": [
                     "Recouvrement"
                 ],
-                "summary": "Détails d'un contribuable pour l'agent de recouvrement",
+                "summary": "Détails d'un contribuable",
                 "operationId": "c7c01525187667659e57d9676a02fdf5",
                 "parameters": [
                     {
@@ -1276,13 +1394,12 @@
                     }
                 ]
             },
-            "put": {
+            "post": {
                 "tags": [
                     "Recouvrement"
                 ],
-                "summary": "Modifier un contribuable (Agent de Recouvrement)",
-                "description": "Permet à l'agent de recouvrement de mettre à jour les informations d'un commerçant.",
-                "operationId": "6e6fa9482b2b7adecbe9ceb703177a0d",
+                "summary": "Modifier un contribuable",
+                "operationId": "94ec8bbe1dbd8f805d7a16534ddebcaa",
                 "parameters": [
                     {
                         "name": "id",

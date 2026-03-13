@@ -305,6 +305,8 @@ class AuthController extends Controller
                         'nom' => $user->mairie->nom_mairie,
                         'code' => $user->mairie->mairie_ref,
                     ] : null,
+                    'taxes' => $user->taxes,
+                    'secteurs' => $user->secteurs,
                 ];
             }
 

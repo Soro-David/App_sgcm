@@ -39,10 +39,6 @@ class RecouvrementController extends Controller
 
     /**
      * Scan du QR code d'un contribuable par l'agent de recouvrement.
-     * Retourne les informations du contribuable + taxes assignées + périodes dues.
-     *
-     * Le QR code contient plusieurs champs. L'application mobile doit extraire
-     * le champ "Numéro commerce" ou envoyer directement le num_commerce.
      */
     public function scanQrCode(Request $request)
     {
@@ -98,7 +94,7 @@ class RecouvrementController extends Controller
 
             if ($dernierPaiement) {
                 try {
-                    $lastPeriod = Carbon::createFromFormat('Y-m', $dernierPaiement->periode)->startOfMonth();
+                    $lastPeriod = Carbon::createFromFormat('Y-m-d H:i:s', $dernierPaiement->periode)->startOfMonth();
                 } catch (\Exception $e) {
                     try {
                         $lastPeriod = Carbon::createFromFormat('d/m/Y', $dernierPaiement->periode)->startOfDay();
@@ -187,6 +183,9 @@ class RecouvrementController extends Controller
         ]);
     }
 
+    /**
+     * Encaisser le paiement d'une taxe.
+     */
     public function encaisserPaiement(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -202,8 +201,10 @@ class RecouvrementController extends Controller
         $commercant = Commercant::where('num_commerce', $request->num_commerce)->first();
         $taxe = Taxe::findOrFail($request->taxe_id);
 
-        // dd($commercant->taxe_id);
-        $assignedTaxes = json_decode($commercant->taxe_id, true) ?? [];
+        
+        // Vérification des taxes assignées
+        $assignedTaxes = $commercant->taxes->pluck('id')->toArray();
+        
         if (! in_array($taxe->id, $assignedTaxes)) {
             return response()->json(['message' => "Cette taxe n'est pas assignée à ce commerçant."], 403);
         }
@@ -212,11 +213,20 @@ class RecouvrementController extends Controller
             ->where('taxe_id', $taxe->id)
             ->orderByDesc('periode')
             ->first();
+        // Parsing robuste du dernier paiement pour toutes les fréquences
         if ($dernierPaiement) {
             try {
-                $lastPeriod = Carbon::createFromFormat('Y-m', $dernierPaiement->periode)->startOfMonth();
+                $lastPeriod = Carbon::createFromFormat('Y-m-d H:i:s', $dernierPaiement->periode);
             } catch (\Exception $e) {
-                $lastPeriod = Carbon::createFromFormat('d/m/Y', $dernierPaiement->periode);
+                try {
+                    $lastPeriod = Carbon::createFromFormat('d/m/Y', $dernierPaiement->periode);
+                } catch (\Exception $e2) {
+                    try {
+                        $lastPeriod = Carbon::createFromFormat('m/Y', $dernierPaiement->periode)->startOfMonth();
+                    } catch (\Exception $e3) {
+                        $lastPeriod = Carbon::createFromFormat('Y', $dernierPaiement->periode)->startOfYear();
+                    }
+                }
             }
         } else {
             // Le paiement commence à la date de création du contribuable,
@@ -295,12 +305,12 @@ class RecouvrementController extends Controller
                 ]);
 
                 Encaissement::create([
-                    'mairie_ref' => $commercant->mairie_ref,
+                    'mairie_ref' => $agent->mairie_ref,
                     'agent_id' => $agent->id,
                     'taxe_id' => $taxe->id,
                     'num_commerce' => $commercant->num_commerce,
-                    'montant_verse' => $taxe->montant,
-                    'statut' => 'versé',
+                    'montant_percu' => $taxe->montant,
+                    'statut' => 'non versé',    
                 ]);
 
                 $encaissementsEffectues[] = $periode;
@@ -322,6 +332,9 @@ class RecouvrementController extends Controller
         }
     }
 
+    /**
+     * Récupérer le dernier paiement et les périodes dues.
+     */
     public function dernierPaiementEtDues(Request $request)
     {
         $request->validate([
@@ -335,14 +348,17 @@ class RecouvrementController extends Controller
         $taxe = Taxe::findOrFail($taxeId);
         $frequence = $taxe->frequence;
 
-        $commercant = $request->user();
-        $encaissements = $commercant->encaissements;
+        $agent = $request->user();
+        
+        // Rechercher le contribuable dans la mairie de l'agent
+        $commercant = Commercant::where('num_commerce', $numCommerce)
+            ->where('mairie_ref', $agent->mairie_ref)
+            ->first();
 
-        $match = $encaissements->firstWhere('num_commerce', $numCommerce);
-        if (! $match) {
+        if (! $commercant) {
             return response()->json([
-                'message' => 'Ce numéro de commerce ne vous appartient pas.',
-            ], 403);
+                'message' => 'Contribuable non trouvé ou n\'appartient pas à votre mairie.',
+            ], 404);
         }
 
         $dernierPaiement = PaiementTaxe::where('num_commerce', $numCommerce)
@@ -351,15 +367,37 @@ class RecouvrementController extends Controller
             ->first();
 
         if (! $dernierPaiement) {
-            return response()->json([
-                'message' => 'Aucun paiement trouvé pour ce commerçant pour cette taxe.',
-                'dernier_paiement' => null,
-                'periodes_dues' => [],
-            ], 200);
+            // Si pas de paiement, on commence à la date de création
+            $dateDebut = ($commercant->created_at && $taxe->created_at && $commercant->created_at->gt($taxe->created_at))
+                ? $commercant->created_at
+                : ($taxe->created_at ?? Carbon::today());
+            
+            $lastPeriod = Carbon::parse($dateDebut)->startOfDay();
+            
+            // Reculer d'une période pour commencer le calcul à la date de début
+            switch ($frequence) {
+                case 'jour': $lastPeriod->subDay(); break;
+                case 'mois': $lastPeriod->subMonth(); break;
+                case 'an':   $lastPeriod->subYear(); break;
+            }
+        } else {
+            // Parsing robuste du dernier paiement
+            try {
+                $lastPeriod = Carbon::createFromFormat('Y-m-d H:i:s', $dernierPaiement->periode);
+            } catch (\Exception $e) {
+                try {
+                    $lastPeriod = Carbon::createFromFormat('d/m/Y', $dernierPaiement->periode);
+                } catch (\Exception $e2) {
+                    try {
+                        $lastPeriod = Carbon::createFromFormat('m/Y', $dernierPaiement->periode)->startOfMonth();
+                    } catch (\Exception $e3) {
+                        $lastPeriod = Carbon::createFromFormat('Y', $dernierPaiement->periode)->startOfYear();
+                    }
+                }
+            }
         }
 
-        $lastPeriod = Carbon::createFromFormat('Y-m', $dernierPaiement->periode)->startOfMonth();
-        $today = Carbon::today()->startOfMonth();
+        $today = Carbon::today()->startOfDay();
         $periodesDue = [];
 
         switch ($frequence) {
@@ -371,14 +409,14 @@ class RecouvrementController extends Controller
                 break;
 
             case 'mois':
-                $period = CarbonPeriod::create($lastPeriod->copy()->addMonth(), '1 month', $today);
+                $period = CarbonPeriod::create($lastPeriod->copy()->startOfMonth()->addMonth(), '1 month', $today->copy()->startOfMonth());
                 foreach ($period as $date) {
                     $periodesDue[] = $date->format('m/Y');
                 }
                 break;
 
             case 'an':
-                $period = CarbonPeriod::create($lastPeriod->copy()->addYear(), '1 year', $today);
+                $period = CarbonPeriod::create($lastPeriod->copy()->startOfYear()->addYear(), '1 year', $today->copy()->startOfYear());
                 foreach ($period as $date) {
                     $periodesDue[] = $date->format('Y');
                 }
@@ -387,18 +425,21 @@ class RecouvrementController extends Controller
             default:
                 return response()->json([
                     'message' => 'Fréquence inconnue pour cette taxe.',
-                    'dernier_paiement' => $lastPeriod->format('m/Y'),
+                    'dernier_paiement' => $dernierPaiement ? $dernierPaiement->periode : null,
                     'periodes_dues' => [],
-                ]);
+                ], 400);
         }
 
         return response()->json([
-            'dernier_paiement' => $lastPeriod->format('m/Y'),
+            'dernier_paiement' => $dernierPaiement ? $dernierPaiement->periode : null,
             'frequence' => $frequence,
             'periodes_dues' => $periodesDue,
         ]);
     }
 
+    /**
+     * Déconnexion.
+     */
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
@@ -499,5 +540,65 @@ class RecouvrementController extends Controller
                 'error' => config('app.debug') ? $e->getMessage() : null,
             ], 500);
         }
+    }
+
+    /**
+     * Liste des encaissements non versés.
+     */
+    public function listEncaissementsNonVerses(Request $request)
+    {
+        $agent = $request->user();
+        $encaissements = Encaissement::where('agent_id', $agent->id)
+            ->where('statut', 'non versé')
+            ->with(['taxe', 'commercant'])
+            ->orderByDesc('created_at')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data'    => $encaissements,
+        ]);
+    }
+
+    /**
+     * Liste des encaissements versés.
+     */
+    public function listEncaissementsVerses(Request $request)
+    {
+        $agent = $request->user();
+        $encaissements = Encaissement::where('agent_id', $agent->id)
+            ->where('statut', 'versé')
+            ->with(['taxe', 'commercant'])
+            ->orderByDesc('created_at')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data'    => $encaissements,
+        ]);
+    }
+
+    /**
+     * Détails d'un encaissement spécifique par son ID.
+     */
+    public function showEncaissement(Request $request, $id)
+    {
+        $agent = $request->user();
+        $encaissement = Encaissement::where('id', $id)
+            ->where('agent_id', $agent->id)
+            ->with(['taxe', 'commercant'])
+            ->first();
+
+        if (!$encaissement) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Encaissement non trouvé ou vous n\'en êtes pas l\'auteur.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data'    => $encaissement,
+        ]);
     }
 }

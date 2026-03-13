@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container py-5">
-        <h3 class="fw-bold mb-4">Modifier l'Agent Financier</h3>
+        <h3 class="fw-bold mb-4">Modifier l'Agent de la régie</h3>
         <div class="card shadow-sm w-100 border-0">
             <div class="card-body">
                 {{-- Messages de session --}}
@@ -98,13 +98,13 @@
                                 <option value="" disabled>-- Sélectionnez un type d'agent --</option>
                                 <option value="responsable_financier"
                                     {{ old('type_agent', $agent->role) == 'financiers' || old('type_agent', $agent->role) == 'responsable_financier' ? 'selected' : '' }}>
-                                    Responsable financier</option>
+                                    Responsable de la régie</option>
                                 <option value="caissier"
                                     {{ old('type_agent', $agent->role) == 'caissier' ? 'selected' : '' }}>
                                     Caissier</option>
                                 <option value="finance"
                                     {{ old('type_agent', $agent->role) == 'finance' ? 'selected' : '' }}>
-                                    Agent financier</option>
+                                    Agent de la régie</option>
                             </select>
                             @if ($source === 'financier')
                                 <input type="hidden" name="type_agent" value="responsable_financier">

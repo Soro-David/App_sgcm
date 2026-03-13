@@ -1,6 +1,6 @@
 @extends('mairie.layouts.app')
 
-@section('title', 'Tableau de Bord - Admin Financier')
+@section('title', 'Tableau de Bord - Admin de la régie')
 
 @push('css')
     <link rel="stylesheet" href="{{ asset('css/premium_dashboard.css') }}">
@@ -10,7 +10,7 @@
     <div class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-5">
             <div>
-                <h2 class="fw-bold text-dark mb-1">Espace Admin Financier</h2>
+                <h2 class="fw-bold text-dark mb-1">Espace Admin de la régie</h2>
                 <p class="text-muted">Aperçu global des performances financières et des agents.</p>
             </div>
             <div class="text-end">
@@ -115,7 +115,7 @@
                     <div class="icon-box bg-info-soft">
                         <i class="fas fa-user-check"></i>
                     </div>
-                    <div class="stat-label">Agents Financiers</div>
+                    <div class="stat-label">Agents de la régie</div>
                     <div class="stat-value">{{ $stats['countAgentFinancier'] }}</div>
                     <div class="mt-2 text-muted small">Actifs dans la mairie</div>
                 </div>

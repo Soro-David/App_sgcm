@@ -46,6 +46,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/contribuable/{id}', [RecouvrementController::class, 'showContribuable']);
         Route::post('/contribuable/{id}', [RecouvrementController::class, 'updateContribuable']);
+
+        // Routes pour les encaissements
+        Route::prefix('encaissements')->group(function () {
+            Route::get('/non-verses', [RecouvrementController::class, 'listEncaissementsNonVerses']);
+            Route::get('/verses', [RecouvrementController::class, 'listEncaissementsVerses']);
+            Route::get('/{id}', [RecouvrementController::class, 'showEncaissement']);
+        });
     });
 
     // Routes pour les Agents de Recensement

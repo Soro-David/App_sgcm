@@ -1,6 +1,6 @@
 @extends('mairie.layouts.app')
 
-@section('title', 'Tableau de Bord - Agent Financier')
+@section('title', 'Tableau de Bord - Agent de la régie')
 
 @push('css')
     <link rel="stylesheet" href="{{ asset('css/premium_dashboard.css') }}">
@@ -10,7 +10,7 @@
     <div class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-5">
             <div>
-                <h2 class="fw-bold text-dark mb-1">Espace Agent Financier</h2>
+                <h2 class="fw-bold text-dark mb-1">Espace Agent de la régie</h2>
                 <p class="text-muted">Suivi de vos versements et vue d'ensemble de la mairie.</p>
             </div>
             <div class="text-end">

@@ -158,7 +158,7 @@
                     <li class="nav-item">
                         <button class="nav-link" id="pills-fin-tab-{{ $mairie->id }}" data-bs-toggle="pill"
                             data-bs-target="#pills-fin-{{ $mairie->id }}" type="button"><i
-                                class="fas fa-money-check-alt me-2"></i>Agents Financiers</button>
+                                class="fas fa-money-check-alt me-2"></i>Agents de la régie</button>
                     </li>
                     <li class="nav-item">
                         <button class="nav-link" id="pills-logs-tab-{{ $mairie->id }}" data-bs-toggle="pill"
@@ -268,7 +268,7 @@
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td colspan="3" class="text-center py-3 text-muted">Aucun financier
+                                                    <td colspan="3" class="text-center py-3 text-muted">Aucun régisseur
                                                         trouvé.</td>
                                                 </tr>
                                             @endforelse
@@ -278,7 +278,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="section-title mt-0 text-success"><i class="fas fa-coins me-2"></i>Agents
-                                    Finances</div>
+                                    de la régie</div>
                                 <div class="table-responsive">
                                     <table class="table table-hover table-custom">
                                         <thead>

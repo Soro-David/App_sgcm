@@ -42,7 +42,7 @@
                 <div class="left-content">
                     <h1>Gérez votre commune avec efficacité.</h1>
                     <p>Accédez à l'administration municipale pour piloter les taxes, les contribuables et les rapports
-                        financiers.</p>
+                        de la régie.</p>
                 </div>
 
                 <div class="left-footer">

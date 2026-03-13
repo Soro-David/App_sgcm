@@ -377,7 +377,7 @@
                     <ul>
                         <li>La gestion et le suivi des taxes communales</li>
                         <li>Le traitement sécurisé des paiements électroniques</li>
-                        <li>La génération de rapports financiers et statistiques</li>
+                        <li>La génération de rapports de la régie et statistiques</li>
                         <li>La gestion des agents de terrain et leurs encaissements</li>
                         <li>L'émission de reçus et attestations numériques</li>
                     </ul>
