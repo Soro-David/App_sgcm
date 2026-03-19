@@ -49,10 +49,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         // Routes pour les encaissements
         Route::prefix('encaissements')->group(function () {
+            Route::get('/', [RecouvrementController::class, 'listAllEncaissements']);
             Route::get('/non-verses', [RecouvrementController::class, 'listEncaissementsNonVerses']);
             Route::get('/verses', [RecouvrementController::class, 'listEncaissementsVerses']);
             Route::get('/{id}', [RecouvrementController::class, 'showEncaissement']);
         });
+
+        // Route pour les dettes de l'agent
+        Route::get('/dettes', [RecouvrementController::class, 'getDettes'])->name('dettes');
+
+        // Route pour les versements effectués par l'agent à la mairie
+        Route::get('/versements', [RecouvrementController::class, 'listVersements'])->name('versements');
     });
 
     // Routes pour les Agents de Recensement

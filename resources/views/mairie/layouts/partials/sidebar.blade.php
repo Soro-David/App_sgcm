@@ -23,6 +23,7 @@
                 </a>
             </li>
 
+
             {{-- Pour les admins de la mairie --}}
             @if ($agent && $agent->role === 'admin')
                 {{-- <li class="nav-item nav-category">Gestion personnel</li> --}}
@@ -68,6 +69,8 @@
                         </ul>
                     </div>
                 </li>
+
+
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('mairie.secteurs.index') }}">
                         <i class="fas fa-layer-group menu-icon"></i>
@@ -83,6 +86,7 @@
                 </li>
             @endif
 
+
             {{-- Pour l'Admin Financier (ou rôle "financiers") --}}
             @if ($agent && ($agent->role === 'financiers' || ($agent instanceof \App\Models\Finance && $agent->role === 'admin')))
                 <li class="nav-item">
@@ -97,10 +101,10 @@
                     <div class="collapse" id="menu-agents-finance">
                         <ul class="nav flex-column sub-menu">
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('mairie.finance.create') }}">Ajouter régie</a>
+                                <a class="nav-link" href="{{ route('mairie.finance.create') }}">Ajouter agent</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('mairie.finance.index') }}">Liste régie</a>
+                                <a class="nav-link" href="{{ route('mairie.finance.index') }}">Liste agent</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('mairie.agents.programme_agent') }}">Programmer
@@ -280,6 +284,26 @@
                 </li> --}}
             @endif
 
+                        {{-- Menu commun Agents en attente (Visible pour Admin et Financiers) --}}
+            @if ($agent && in_array($agent->role, ['admin', 'financiers', 'finance']))
+                @php
+                    $isPending = isset($pendingAgentsCount) && $pendingAgentsCount > 0;
+                @endphp
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center justify-content-between"
+                        href="{{ route('mairie.agents.pending') }}" style="position:relative;">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-user-clock menu-icon" style="{{ $isPending ? 'color:#ff8c00;' : '' }}"></i>
+                            <span class="menu-title" style="{{ $isPending ? 'color:#ff8c00;font-weight:600;' : '' }}">Agents en attente</span>
+                        </div>
+                        @if($isPending)
+                            <span class="pending-badge-sidebar">{{ $pendingAgentsCount }}</span>
+                        @else
+                            <span class="badge badge-light" style="font-size: 0.75rem; border-radius: 5px; background-color: #27ae60;">0</span>
+                        @endif
+                    </a>
+                </li>
+            @endif
             <!-- Liste des Commerçants -->
             {{-- <li class="nav-item nav-category">Contribuable</li> --}}
             <li class="nav-item">

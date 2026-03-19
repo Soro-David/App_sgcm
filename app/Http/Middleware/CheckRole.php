@@ -29,6 +29,6 @@ class CheckRole
         }
 
         
-        abort(403, 'Accès non autorisé.');
+        abort(403, 'Accès interdit (rôle non autorisé)');
     }
 }

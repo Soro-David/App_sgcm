@@ -187,4 +187,40 @@ class Recouvrement
     )]
     public function logout() {}
 
+    #[OA\Get(
+        path: '/api/recouvrement/encaissements',
+        summary: 'Liste unifiée des encaissements',
+        tags: ['Recouvrement'],
+        security: [['sanctum' => []]],
+        parameters: [
+            new OA\Parameter(name: 'statut', in: 'query', required: false, schema: new OA\Schema(type: 'string', enum: ['versé', 'non versé'])),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Liste récupérée')
+        ]
+    )]
+    public function listAllEncaissements() {}
+
+    #[OA\Get(
+        path: '/api/recouvrement/dettes',
+        summary: 'État des dettes de l\'agent',
+        tags: ['Recouvrement'],
+        security: [['sanctum' => []]],
+        responses: [
+            new OA\Response(response: 200, description: 'Dettes récupérées')
+        ]
+    )]
+    public function dettes() {}
+
+    #[OA\Get(
+        path: '/api/recouvrement/versements',
+        summary: 'Historique des versements',
+        tags: ['Recouvrement'],
+        security: [['sanctum' => []]],
+        responses: [
+            new OA\Response(response: 200, description: 'Liste des versements récupérée')
+        ]
+    )]
+    public function versements() {}
+
 }

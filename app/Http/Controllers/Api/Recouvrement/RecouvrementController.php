@@ -7,6 +7,7 @@ use App\Models\Commercant;
 use App\Models\Encaissement;
 use App\Models\PaiementTaxe;
 use App\Models\Taxe;
+use App\Models\Versement;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
@@ -599,6 +600,79 @@ class RecouvrementController extends Controller
         return response()->json([
             'success' => true,
             'data'    => $encaissement,
+        ]);
+    }
+
+    /**
+     * Liste de tous les encaissements de l'agent (avec filtrage optionnel par statut).
+     */
+    public function listAllEncaissements(Request $request)
+    {
+        $agent = $request->user();
+        $statut = $request->query('statut'); // 'versé' ou 'non versé'
+
+        $query = Encaissement::where('agent_id', $agent->id)
+            ->with(['taxe', 'commercant'])
+            ->orderByDesc('created_at');
+
+        if ($statut) {
+            $query->where('statut', $statut);
+        }
+
+        $encaissements = $query->get();
+
+        return response()->json([
+            'success' => true,
+            'data'    => $encaissements,
+        ]);
+    }
+
+    /**
+     * Récupérer les dettes de l'agent de recouvrement (reste des versements cumulés + encaissements non versés).
+     */
+    public function getDettes(Request $request)
+    {
+        $agent = $request->user();
+
+        // Récupérer le dernier versement pour avoir la dette cumulée (le reste)
+        $dernierVersement = Versement::where('agent_id', $agent->id)
+            ->where('mairie_ref', $agent->mairie_ref)
+            ->orderByDesc('created_at')
+            ->first();
+
+        $detteAnterieure = $dernierVersement ? $dernierVersement->reste : 0;
+
+        // Récupérer le montant total des encaissements non encore versés
+        $montantCollecteNonVerse = Encaissement::where('agent_id', $agent->id)
+            ->where('mairie_ref', $agent->mairie_ref)
+            ->where('statut', 'non versé')
+            ->sum('montant_percu');
+
+        return response()->json([
+            'success' => true,
+            'data'    => [
+                'dette_anterieure'           => $detteAnterieure,
+                'montant_collecte_non_verse' => (float)$montantCollecteNonVerse,
+                'total_dette'                => $detteAnterieure + (float)$montantCollecteNonVerse,
+            ],
+        ]);
+    }
+
+    /**
+     * Liste des versements effectués par l'agent à la mairie.
+     */
+    public function listVersements(Request $request)
+    {
+        $agent = $request->user();
+
+        $versements = Versement::where('agent_id', $agent->id)
+            ->where('mairie_ref', $agent->mairie_ref)
+            ->orderByDesc('created_at')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data'    => $versements,
         ]);
     }
 }

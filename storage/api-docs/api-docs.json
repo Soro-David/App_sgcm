@@ -1511,6 +1511,77 @@
                     }
                 ]
             }
+        },
+        "/api/recouvrement/encaissements": {
+            "get": {
+                "tags": [
+                    "Recouvrement"
+                ],
+                "summary": "Liste unifiée des encaissements",
+                "operationId": "5c163f3babdc640f65cb9337946e5edd",
+                "parameters": [
+                    {
+                        "name": "statut",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "versé",
+                                "non versé"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste récupérée"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/recouvrement/dettes": {
+            "get": {
+                "tags": [
+                    "Recouvrement"
+                ],
+                "summary": "État des dettes de l'agent",
+                "operationId": "db5221512ec1a387c1c8cc4195585891",
+                "responses": {
+                    "200": {
+                        "description": "Dettes récupérées"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/recouvrement/versements": {
+            "get": {
+                "tags": [
+                    "Recouvrement"
+                ],
+                "summary": "Historique des versements",
+                "operationId": "c9b8c23214947631d06ce215eb7c82fe",
+                "responses": {
+                    "200": {
+                        "description": "Liste des versements récupérée"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "components": {

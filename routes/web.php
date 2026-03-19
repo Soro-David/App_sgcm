@@ -188,6 +188,13 @@ Route::middleware(['auth:mairie,finance,financier', 'mairie_finance_bridge'])->p
             | 2. Routes réservées au rôle 'ADMIN'
         |--------------------------------------------------------------------------
     */
+    // Routes agents en attente (pending) - Accessibles par Admin, financiers et finance
+    Route::middleware(['role:admin,financiers,finance'])->prefix('agents')->name('agents.')->group(function () {
+        Route::get('/pending', [AgentController::class, 'pending_agents'])->name('pending');
+        Route::post('/pending/resend/{type}/{id}', [AgentController::class, 'resend_invitation'])->name('resend_invitation');
+        Route::put('/pending/update/{type}/{id}', [AgentController::class, 'update_pending'])->name('update_pending');
+    });
+
     Route::middleware(['role:admin'])->group(function () {
         Route::prefix('agents')->name('agents.')->group(function () {
             Route::get('/index', [AgentController::class, 'index'])->name('index');

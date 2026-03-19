@@ -153,6 +153,7 @@ class AgentFinanceController extends Controller
 
             $current_user = Auth::guard('mairie')->user() ?? Auth::guard('finance')->user();
             $mairie_ref = $current_user->mairie_ref;
+            $currentUserId = auth()->id();
 
             if (! $mairie_ref) {
                 return response()->json(['error' => 'Mairie non authentifiée.'], 401);
@@ -161,8 +162,18 @@ class AgentFinanceController extends Controller
             $financeQuery = Finance::where('mairie_ref', $mairie_ref)
                 ->select(['id', 'name', 'email', 'role', 'added_by', 'created_at', \DB::raw("'finance' as source_table")]);
 
+
             $financierQuery = Financier::where('mairie_ref', $mairie_ref)
-                ->select(['id', 'name', 'email', 'role', 'added_by', 'created_at', \DB::raw("'financier' as source_table")]);
+                ->where('id', '!=', $currentUserId)
+                ->select(   [
+                    'id',
+                    'name',
+                    'email',
+                    'role',
+                    'added_by',
+                    'created_at',
+                    \DB::raw("'financier' as source_table")
+                ]);
 
             $query = $financeQuery->union($financierQuery);
 

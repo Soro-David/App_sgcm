@@ -704,8 +704,16 @@ class AgentController extends Controller
             $mairie_ref = $user->mairie_ref;
 
             $mairieQuery = Mairie::where('mairie_ref', $mairie_ref)
-                ->select(['id', 'name', 'email', 'role', 'added_by', 'created_at', \DB::raw("'mairies' as source")]);
-
+                ->where('id', '!=', auth()->id()) // exclure la mairie connectée
+                ->select([
+                    'id',
+                    'name',
+                    'email',
+                    'role',
+                    'added_by',
+                    'created_at',
+                    \DB::raw("'mairies' as source")
+                ]);
             $financesQuery = Finance::where('mairie_ref', $mairie_ref)
                 ->select(['id', 'name', 'email', 'role', 'added_by', 'created_at', \DB::raw("'finances' as source")]);
 
@@ -799,5 +807,195 @@ class AgentController extends Controller
             ->get(['id', 'nom']);
 
         return response()->json($communes);
+    }
+
+    /**
+     * Affiche la liste des agents en attente (n'ont pas encore défini leur mot de passe).
+     */
+    public function pending_agents(Request $request)
+    {
+        $user = Auth::guard('mairie')->user();
+        if (! $user) {
+            return redirect()->route('login.mairie');
+        }
+        $mairie_ref = $user->mairie_ref;
+        $currentId  = $user->id;
+
+        // Agents terrain sans mot de passe
+        $agentsPending = Agent::where('mairie_ref', $mairie_ref)
+            ->whereNull('password')
+            ->get()
+            ->map(fn ($a) => (object) [
+                'id'         => $a->id,
+                'name'       => $a->name,
+                'email'      => $a->email,
+                'phone'      => $a->telephone1,
+                'role'       => $a->type ?? 'Agent terrain',
+                'type_model' => 'agent',
+                'created_at' => $a->created_at,
+                'added_by'   => $a->added_by,
+            ]);
+
+        // Personnel mairie (hors l'admin connecté)
+        $mairiePending = Mairie::where('mairie_ref', $mairie_ref)
+            ->where('id', '!=', $currentId)
+            ->where(function ($q) {
+                $q->where('status', 'pending')->orWhereNull('password');
+            })
+            ->get()
+            ->map(fn ($m) => (object) [
+                'id'         => $m->id,
+                'name'       => $m->name,
+                'email'      => $m->email,
+                'phone'      => $m->telephone1,
+                'role'       => ucfirst($m->role ?? 'Mairie'),
+                'type_model' => 'mairie',
+                'created_at' => $m->created_at,
+                'added_by'   => $m->added_by,
+            ]);
+
+        // Personnel Finance
+        $financePending = Finance::where('mairie_ref', $mairie_ref)
+            ->where(function ($q) {
+                $q->where('status', 'pending')->orWhereNull('password');
+            })
+            ->get()
+            ->map(fn ($f) => (object) [
+                'id'         => $f->id,
+                'name'       => $f->name,
+                'email'      => $f->email,
+                'phone'      => $f->telephone1,
+                'role'       => $f->role === 'caissier' ? 'Caissier' : 'Agent financier',
+                'type_model' => 'finance',
+                'created_at' => $f->created_at,
+                'added_by'   => $f->added_by,
+            ]);
+
+        // Personnel Financier (Responsable financier)
+        $financierPending = Financier::where('mairie_ref', $mairie_ref)
+            ->where(function ($q) {
+                $q->where('status', 'pending')->orWhereNull('password');
+            })
+            ->get()
+            ->map(fn ($fi) => (object) [
+                'id'         => $fi->id,
+                'name'       => $fi->name,
+                'email'      => $fi->email,
+                'phone'      => $fi->telephone1,
+                'role'       => 'Responsable financier',
+                'type_model' => 'financier',
+                'created_at' => $fi->created_at,
+                'added_by'   => $fi->added_by,
+            ]);
+
+        // Fusionner et trier par date de création décroissante
+        $pendingAgents = collect()
+            ->merge($agentsPending)
+            ->merge($mairiePending)
+            ->merge($financePending)
+            ->merge($financierPending)
+            ->sortByDesc('created_at')
+            ->values();
+
+        return view('mairie.agents.pending_agents', compact('pendingAgents'));
+    }
+
+    /**
+     * Mettre à jour les informations d'un agent en attente via modal.
+     */
+    public function update_pending(Request $request, string $type, int $id)
+    {
+        $request->validate([
+            'name'  => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',
+        ]);
+
+        try {
+            switch ($type) {
+                case 'agent':
+                    $agent = Agent::findOrFail($id);
+                    break;
+                case 'mairie':
+                    $agent = Mairie::findOrFail($id);
+                    break;
+                case 'finance':
+                    $agent = Finance::findOrFail($id);
+                    break;
+                case 'financier':
+                    $agent = Financier::findOrFail($id);
+                    break;
+                default:
+                    return back()->with('error', "Type de personnel inconnu.");
+            }
+
+            $agent->update([
+                'name'       => $request->name,
+                'email'      => $request->email,
+                'telephone1' => $request->phone,
+            ]);
+
+            return back()->with('success', "Informations de {$agent->name} mises à jour avec succès.");
+        } catch (\Exception $e) {
+            return back()->with('error', "Erreur lors de la mise à jour : {$e->getMessage()}");
+        }
+    }
+
+    /**
+     * Renvoyer l'email d'invitation à un agent en attente.
+     */
+    public function resend_invitation(Request $request, string $type, int $id)
+    {
+        try {
+            $otp = random_int(100000, 999999);
+
+            switch ($type) {
+                case 'agent':
+                    $agent = Agent::findOrFail($id);
+                    $agent->update([
+                        'otp_code'       => $otp,
+                        'otp_expires_at' => now()->addHours(48),
+                    ]);
+                    $agent->notify(new AgentInvitationNotification((string) $otp));
+                    break;
+
+                case 'mairie':
+                    $agent = Mairie::findOrFail($id);
+                    $agent->update([
+                        'otp_code'       => $otp,
+                        'otp_expires_at' => now()->addHours(48),
+                        'status'         => 'pending',
+                    ]);
+                    $agent->notify(new MairieAgentInvitationNotification((string) $otp));
+                    break;
+
+                case 'finance':
+                    $agent = Finance::findOrFail($id);
+                    $agent->update([
+                        'otp_code'       => $otp,
+                        'otp_expires_at' => now()->addHours(48),
+                        'status'         => 'pending',
+                    ]);
+                    $agent->notify(new MairieAgentInvitationNotification((string) $otp));
+                    break;
+
+                case 'financier':
+                    $agent = Financier::findOrFail($id);
+                    $agent->update([
+                        'otp_code'       => $otp,
+                        'otp_expires_at' => now()->addHours(48),
+                        'status'         => 'pending',
+                    ]);
+                    $agent->notify(new MairieAgentInvitationNotification((string) $otp));
+                    break;
+
+                default:
+                    return back()->with('error', "Type d'agent invalide.");
+            }
+
+            return back()->with('success', "L'email d'invitation a été renvoyé à {$agent->name}.");
+        } catch (\Exception $e) {
+            return back()->with('error', "Erreur lors du renvoi : {$e->getMessage()}");
+        }
     }
 }
